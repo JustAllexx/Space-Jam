@@ -1,0 +1,22 @@
+{
+  "Song Title": "test song",
+
+  "Notes": [
+    //Note pitch, note time, note length, note velocity
+    //Broken down by bar
+    //bar 1 (lately I've been)
+    [ "D", 2.00 ],
+    [ "D#", 2.00 ]
+    //[ "A#", 5.00 ],
+    //[ "B", 5.00 ],
+    //[ "C", 5.00 ],
+    //[ "C#", 5.00 ],
+    //[ "D", 5.00 ],
+    //[ "D#", 5.00 ],
+    //[ "E", 5.00 ],
+    //[ "F", 5.00 ],
+    //[ "F#", 5.00 ],
+    //[ "G", 5.00 ],
+    //[ "G#", 5.00 ]
+  ]
+}

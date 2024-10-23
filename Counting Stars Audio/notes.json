@@ -1,0 +1,20 @@
+{
+  "Song Title": "Counting Stars",
+
+  "Notes": [
+    //Note pitch, note time, note length, note velocity
+    //Broken down by bar
+    //bar 1 (lately I've been)
+    [ "F#", 0.590 ],
+    [ "G#", 1.5 ],
+    [ "B", 2.1 ],
+    [ "G#", 2.65 ],
+    //bar 2 (I've been losing sleep)
+    [ "F#", 3.077], //I've
+    [ "G#", 3.3], //been
+    [ "F#", 3.5], //Los--
+    [ "E", 3.75],  //ing
+    [ "G#", 4.07] //sleep
+
+  ]
+}
