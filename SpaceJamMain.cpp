@@ -1,4 +1,5 @@
 #include "SpaceJamMain.h"
+#include <cmath>
 #include <glm/ext/vector_float3.hpp>
 //Use radians instead of degrees
 #define GLM_FORCE_RADIANS
@@ -11,7 +12,7 @@ int screenWidth = 854;
 //A constant global variable that defines the mathematical constant pi
 //3.1415....
 const double rotpi = 2 * acos(0.0);
-const int kernelSize = 5;
+const size_t kernelSize = 5;
 
 //Time keeping variables
 //dt is used by the audioManager to gauge how much time has passed since audio capture started
@@ -95,8 +96,8 @@ void updateGaussianKernel(float standardDeviation, GLuint program) {
 	kernelValues[0] = 1.f;
 	float sumValue = 1.f;
 	//Because (when x = 0) is always 1 for out version of the distribution we can avoid this calculation
-	for (int x = 1; x < kernelSize; x++) {
-		float gaussianValue = gaussianDistribution(x, standardDeviation);
+	for (size_t x = 1; x < kernelSize; x++) {
+		float gaussianValue = gaussianDistribution(static_cast<float>(x), standardDeviation);
 		kernelValues[x] = gaussianValue;
 		//Multiply by two here because the gaussian kernel is symmetrical
 		sumValue += 2 * gaussianValue;
@@ -107,7 +108,7 @@ void updateGaussianKernel(float standardDeviation, GLuint program) {
 
 	//Iterate through the kernel updating each value in the gaussian fragment shader's weight array
 	//The weight array are what are used by the shader to calculate the gaussian blur
-	for (int j = 0; j < kernelSize; j++) {
+	for (size_t j = 0; j < kernelSize; j++) {
 		//We need to access each weight value individually. So we create the weight location for the weight value we want
 		//So weight[0] is the first value of our kernel
 		std::string weightLocation = "weight[" + std::to_string(j) + "]";
@@ -241,7 +242,8 @@ GLuint loadShader(GLenum shaderType, string filename) {
 	if (!bCompiled) {
 		GLint logLength;
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
-		GLchar* log = new GLchar[logLength + 1];
+		size_t logSize = static_cast<size_t>(logLength) + 1;
+		GLchar* log = new GLchar[logSize];
 		glGetShaderInfoLog(shader, logLength, &logLength, log);
 		cout << "Shader Compile Error\n" << log << endl;
 	}
@@ -251,11 +253,11 @@ GLuint loadShader(GLenum shaderType, string filename) {
 
 //This function creates programs
 //programs are the name for a combination of a vertex and a fragment shader, this tells OpenGL to create a program that I can use later on when rendering and to link them to each other
-GLuint createProgram(GLuint vertexShader, GLuint fragmentShader) {
+GLuint createProgram(GLuint inVertexShader, GLuint inFragmentShader) {
 	//Creates a program and attaches the compiled vertex and fragment shader to it
 	GLuint program = glCreateProgram();
-	glAttachShader(program, vertexShader);
-	glAttachShader(program, fragmentShader);
+	glAttachShader(program, inVertexShader);
+	glAttachShader(program, inFragmentShader);
 	GLint bLinked;
 	glLinkProgram(program);
 	glGetProgramiv(program, GL_LINK_STATUS, &bLinked);
@@ -266,7 +268,8 @@ GLuint createProgram(GLuint vertexShader, GLuint fragmentShader) {
 	else {
 		GLint logLength;
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
-		GLchar* log = new GLchar[logLength + 1];
+		size_t logSize = static_cast<size_t>(logLength) + 1;
+		GLchar* log = new GLchar[logSize];
 		glGetProgramInfoLog(program, logLength, &logLength, log);
 		cout << "Shader Compile Error\n" << log << endl;
 	}
@@ -375,7 +378,7 @@ void reshape(int x, int y) {
 }
 
 //Called when the user clicks down on the mouse
-void mouse(int button, int state, int x, int y) {
+void mouse([[maybe_unused]] int button, int state, int x, int y) {
 	if (state == 1) {
 		GUIManager::checkCollisions(x, screenHeight - y, 1);
 	}
@@ -388,12 +391,10 @@ void mouseMotion(int x, int y) {
 }
 
 //This is the function that is called to indicate a new frame should be rendered
-void newFrame(int value) {
-	float deltaSpeed;
-	
+void newFrame(int value) {	
 	//Calculates the time since the last frame in seconds and stores the value in a float
 	newt = glutGet(GLUT_ELAPSED_TIME);
-	dt = (newt - oldt) / 1000.f;
+	dt = static_cast<float>(newt - oldt) / 1000.f;
 	oldt = newt;
 	
 	//Asks the audio manager if there is a new frequency to be calculated
@@ -409,8 +410,9 @@ void newFrame(int value) {
 		double key = (12 * log2(note / 440.f) + 49);
 		//Can use this to determine the note was being sung
 		key = std::fmod(key, 12);
+		int keyInd = static_cast<int>(std::round(key));
 		//this is passed on to a static function that calculates the height that the player should be on screen based on the value of the note sung
-		float targetY = AudioManager::getHeightOfNote(key, GameManager::fovy, GameManager::dist);
+		float targetY = AudioManager::getHeightOfNote(keyInd, GameManager::fovy, GameManager::dist);
 		player.targetY = targetY;
 	}
 	//Update the players movement
@@ -418,15 +420,16 @@ void newFrame(int value) {
 	player.controlUpdate(keyMap, dt);
 	//Call the display function
 	glutPostRedisplay();
-	glutTimerFunc(1000.0f / 60.0f, newFrame, value); // waits 16 ms before calling this function again
+	unsigned int nextFrameTime = static_cast<unsigned int>(1000.f / 60.f);
+	glutTimerFunc(nextFrameTime, newFrame, value); // waits 16 ms before calling this function again
 }
 
 //Changes the keyMap to true or false depending on if a key has been pressed down or released
-void keyPress(unsigned char key, int x, int y) {
+void keyPress(unsigned char key, [[maybe_unused]] int x, [[maybe_unused]] int y) {
 	keyMap[key] = true;
 }
 
-void keyUp(unsigned char key, int x, int y) {
+void keyUp(unsigned char key, [[maybe_unused]] int x, [[maybe_unused]] int y) {
 	keyMap[key] = false;
 }
 
