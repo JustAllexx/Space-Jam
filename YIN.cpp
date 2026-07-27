@@ -1,10 +1,10 @@
 #include "YIN.h"
-#include <bit>
 #include <cassert>
 #include <cmath>
 #include <complex>
 #include <cstddef>
 #include <valarray>
+#include <bit>
 
 //Constants needed for calculating the fourier transforms
 const double pi = acos(0.0f) * 2;
