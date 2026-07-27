@@ -15,9 +15,9 @@ private:
 	static std::valarray<std::complex<double>> range(int N);
 	static std::valarray<std::complex<double>> fourierTransform(std::valarray<std::complex<double>> P);
 	static std::valarray<std::complex<double>> inverseFourierTransform(std::valarray<std::complex<double>> P);
-	static std::valarray<std::complex<double>> differenceFunction(std::valarray<std::complex<double>> signal, size_t chunkSize, int tauMax);
+	static std::valarray<std::complex<double>> differenceFunction(std::valarray<std::complex<double>> signal, size_t chunkSize, size_t tauMax);
 	static std::valarray<std::complex<double>> cumulativeMeanNormalizedDifferenceFunction(std::valarray<std::complex<double>> df, int tauMax);
-	static int calculatePitch(std::valarray<std::complex<double>> cmndf, int tauMin, int tauMax);
+	static int calculatePitch(std::valarray<std::complex<double>> cmndf, size_t tauMin, size_t tauMax);
 public:
 	//Main call for the pitch detection algorithm
 	static float YINalgorithm(std::valarray<std::complex<double>> signal);

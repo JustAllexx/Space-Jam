@@ -5,7 +5,6 @@
 #include <complex>
 #include <cstddef>
 #include <valarray>
-#include <iostream>
 
 //Constants needed for calculating the fourier transforms
 const double pi = acos(0.0f) * 2;
@@ -114,7 +113,7 @@ std::valarray<std::complex<double>> YIN::inverseFourierTransform(std::valarray<s
 }
 
 //The difference function, the first step in the YIN algorithm
-std::valarray<std::complex<double>> YIN::differenceFunction(std::valarray<std::complex<double>> signal, size_t chunkSize, int tauMax) {
+std::valarray<std::complex<double>> YIN::differenceFunction(std::valarray<std::complex<double>> signal, size_t chunkSize, size_t tauMax) {
 
 	//Calculating the Cumulative sum of the signal squared
 	std::valarray<std::complex<double>> signalSquared = signal * signal;
@@ -144,7 +143,7 @@ std::valarray<std::complex<double>> YIN::differenceFunction(std::valarray<std::c
 	//Because the 2 Energy Terms have no lag value, it makes sense we can find these values by squaring the signal
 	std::valarray<std::complex<double>> convolutionInput = forwardFFT * forwardFFTconj;
 	std::valarray<std::complex<double>> convolution = inverseFourierTransform(convolutionInput)[std::slice(0, tauMax, 1)];
-	convolution /= FFTpaddingSize;
+	convolution /= static_cast<double>(FFTpaddingSize);
 	std::complex<double> firstEnergyTerms = cumSum[chunkSize];
 	std::valarray<std::complex<double>> secondEnergyTerms = cumSum[std::slice(0, tauMax, 1)];
 	secondEnergyTerms = cumSum[chunkSize] - secondEnergyTerms;
@@ -164,15 +163,15 @@ std::valarray<std::complex<double>> YIN::cumulativeMeanNormalizedDifferenceFunct
 }
 
 //This function cycles through all the possible periods and returns the period that is under the harmony threshold
-int YIN::calculatePitch(std::valarray<std::complex<double>> cmndf, int tauMin, int tauMax) {
+int YIN::calculatePitch(std::valarray<std::complex<double>> cmndf, size_t tauMin, size_t tauMax) {
 	float harmonyThreshold = 0.2f;
-	int tau = tauMin;
+	size_t tau = tauMin;
 	for (; tau < tauMax; tau++) {
 		if (abs(cmndf[tau]) < harmonyThreshold) {
 			while (tau + 1 < tauMax && abs(cmndf[tau + 1]) < abs(cmndf[tau])) {
 				tau += 1;
 			}
-			return tau;
+			return static_cast<int>(tau);
 		}
 	}
 
@@ -183,21 +182,20 @@ float YIN::YINalgorithm(std::valarray<std::complex<double>> signal)
 {
 	//Might be reverse of what you expect, tau means latency (or the period of the wave) so the minimum latency to calculate for would be the period of the maximum frequency and vice versa
 	//44100 is the (expected) sampling rate
-	int tauMin = floor(44100 / frequencyMax);
-	int tauMax = floor(44100 / frequencyMin);
+	size_t tauMin = static_cast<size_t>(std::floor(44100 / frequencyMax));
+	size_t tauMax = static_cast<size_t>(std::floor(44100 / frequencyMin));
 	//Calculates the differenceFunction of the signal
 	std::valarray<std::complex<double>> df = differenceFunction(signal, signal.size(), tauMax);
 	//Very long name for a relatively simple function, follows eq(6) of the YIN paper but pairwise rather than individually
-	std::valarray<std::complex<double>> cmndf = cumulativeMeanNormalizedDifferenceFunction(df, tauMax);
+	std::valarray<std::complex<double>> cmndf = cumulativeMeanNormalizedDifferenceFunction(df, static_cast<int>(tauMax));
 	//Find the tau value of the fundamental period
 	int fundamentalPeriod = calculatePitch(cmndf, tauMin, tauMax);
-
 
 	if (fundamentalPeriod == 0) {
 		return 0.f;
 	}
 	//Convert that period into a frequency if it is not 0
-	float f0 = (44100.f / fundamentalPeriod);
+	float f0 = 44100.f / static_cast<float>(fundamentalPeriod);
 
 	return f0;
 }
