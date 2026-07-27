@@ -1,4 +1,7 @@
 #include "GUIManager.h"
+#include <cmath>
+#include <limits>
+#include <stdexcept>
 
 #include FT_FREETYPE_H
 
@@ -58,19 +61,30 @@ buttonGUI::buttonGUI(std::string inText, float inX, float inY, float inScale, GL
 		std::string::const_iterator tempIt;
 		for (tempIt = text.begin(); tempIt != text.end(); tempIt++) {
 			TypeChar tempChar = fontMap[*tempIt];
-			advanceSum += (tempChar.Advance >> 6) * scale;
+			advanceSum += static_cast<float>(tempChar.Advance >> 6) * scale;
 			//Gets the maximum height by comparing the height of every character in the text
 			maxHeight = std::max(maxHeight, tempChar.Size.y * scale);
 		}
 		advanceSum = advanceSum / 2;
 
 		//Clickable Directions (Coordinates for where the click region starts and ends based on the text
-		right = x + advanceSum;
-		left = x - advanceSum;
-		top = inY + std::ceil(maxHeight);
-		bottom = inY;
-		top -= (maxHeight) / 2;
-		bottom -= (maxHeight / 2);
+		float rightBound = x + advanceSum;
+		float leftBound = x - advanceSum;
+		if (rightBound > static_cast<float>(std::numeric_limits<int>::max()) ||
+			leftBound < static_cast<float>(std::numeric_limits<int>::min())) {
+			throw std::runtime_error("Button horizontal bounds too big, overflowed/underflowed the integer limit");
+		}
+		right = static_cast<int>(rightBound);
+		left = static_cast<int>(leftBound);
+
+		float topBound = inY + std::ceil(maxHeight/2);
+		float bottomBound = inY - std::floor(maxHeight/2);
+		if (topBound > static_cast<float>(std::numeric_limits<int>::max()) ||
+			bottomBound < static_cast<float>(std::numeric_limits<int>::min())) {
+			throw std::runtime_error("Button vertical bounds too big, overflowed/underflowed the integer limit");
+		}
+		top = static_cast<int>(topBound);
+		bottom = static_cast<int>(bottomBound);
 		
 		//Enable the button
 		enable = true;
