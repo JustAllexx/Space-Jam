@@ -13,8 +13,8 @@ float newTime = 0.f;
 float oldTIme = 0.f;
 float deltaTime = 0.f;
 
-const char* noteModelLocation = "Models\\newRedCube.obj";
-const char* noteTextureLocation = "Textures\\newRedNote.png";
+const char* noteModelLocation = "Models/newRedCube.obj";
+const char* noteTextureLocation = "Textures/newRedNote.png";
 
 //The construction function for the DrawObject class
 DrawObject::DrawObject(const char* modelPath, const char* texturePath, bool bHasCollision, float inOpacity, float inAmbient, bool hasBloom,
@@ -271,8 +271,8 @@ NoteHighlight::NoteHighlight(float inNoteTime, DrawObject* inParentNote, AudioMa
 	ambient = 1.f;
 	noteTime = inNoteTime;
 
-	texture = ObjectLoader::loadTexture("Textures\\green.png");
-	ObjectLoader::loadOBJ("Models\\noteOutline.obj", vertexData, uvData, normalData);
+	texture = ObjectLoader::loadTexture("Textures/green.png");
+	ObjectLoader::loadOBJ("Models/noteOutline.obj", vertexData, uvData, normalData);
 	//Same code for buffering in the vertex, uv and normal data as the DrawObject class
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
@@ -306,7 +306,7 @@ void NoteHighlight::Update()
 	}
 }
 
-const char* filePath = "Models\\plane.obj";
+const char* filePath = "Models/plane.obj";
 const char* texturePath;
 GLuint planeOpacityPos, planeAmbientPos;
 
@@ -342,7 +342,7 @@ void PlayerController::Setup(const char* tPath, GLuint planeShaderProgram)
 
 	playerCollision = CollisionBox(3.f, 1.5f, 6.0f);
 	//Loads in vertex, normal and uv data; same as the default draw object function
-	ObjectLoader::loadOBJ("Models\\planeUV2.obj", vertexData, uvData, normalData);
+	ObjectLoader::loadOBJ("Models/planeUV2.obj", vertexData, uvData, normalData);
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 

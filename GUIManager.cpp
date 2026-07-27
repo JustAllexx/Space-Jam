@@ -232,7 +232,7 @@ void GUIManager::Setup(GLuint program) {
 			texture,
 			glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
 			glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-			face->glyph->advance.x
+			(unsigned int) face->glyph->advance.x
 		};
 		//Insert the struct into a map so that properties about the character being rendered can be requested on rendering
 		fontMap.insert(std::pair<char, TypeChar>(c, character));

@@ -1,4 +1,6 @@
 #include "YIN.h"
+#include <complex>
+#include <valarray>
 
 //Constants needed for calculating the fourier transforms
 const double pi = acos(0.0f) * 2;
@@ -32,6 +34,9 @@ std::valarray<std::complex<double>> YIN::range(int N) {
 
 //Cooley-Tukey optimised forward Fourier transform. Uses recursion to optimise 
 std::valarray<std::complex<double>> YIN::fourierTransform(std::valarray<std::complex<double>> P) {
+	//std::cout << "DEBUG: Fourier Transform Disabled" << std::endl;
+	//return P;
+	
 	int n = P.size();
 
 	if (n == 1) { //Base case, a Fourier transform of an element size 1, is itself
@@ -41,15 +46,18 @@ std::valarray<std::complex<double>> YIN::fourierTransform(std::valarray<std::com
 	std::complex<double> omega = exp((negi) / (std::complex<double>)n);
 	std::complex<double> calc;
 	//Splits up the P into its even Indices and it's odd indices so [1,2,3,4] -> [1,3] and [2,4]
-	std::valarray<std::complex<double>> Pe, Po, Y;
 
+	std::valarray<std::complex<double>> Pe(n/2);
+	std::valarray<std::complex<double>> Po(n/2);
+	std::valarray<std::complex<double>> Y(n);
 	Pe = P[std::slice(0, n / 2, 2)];
 	Po = P[std::slice(1, n / 2, 2)];
+
 	//Recursive call of the main function
 	Pe = fourierTransform(Pe);
 	Po = fourierTransform(Po);
 
-	Y.resize(n);
+	//Y.resize(n);
 
 	int Ysize = floor(n / 2);
 	std::complex<double> running = std::complex<double>(1.f, 0.f);
@@ -77,7 +85,9 @@ std::valarray<std::complex<double>> YIN::inverseFourierTransform(std::valarray<s
 	//std::complex<double> omega = omegaMapInv[n];
 	std::complex<double> calc;
 
-	std::valarray<std::complex<double>> Pe, Po, Y;
+	std::valarray<std::complex<double>> Pe(n/2);
+	std::valarray<std::complex<double>> Po(n/2);
+	std::valarray<std::complex<double>> Y(n);
 
 	Pe = P[std::slice(0, n / 2, 2)];
 	Po = P[std::slice(1, n / 2, 2)];

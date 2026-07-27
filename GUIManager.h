@@ -1,4 +1,4 @@
-#include "AudioManager.h";
+#include "AudioManager.h"
 
 #include <string>
 #include <glm/glm.hpp>

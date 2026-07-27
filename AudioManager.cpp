@@ -11,7 +11,7 @@ double pi = 2 * acos(0.0);
 std::complex<double> posi = std::complex<double>(0.f, 1.f);
 
 //The buffer that is written to when capturing microphone input
-INT16 CaptureBuffer[22050];
+int16_t CaptureBuffer[22050];
 float deltaCheck;
 
 

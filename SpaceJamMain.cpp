@@ -432,7 +432,7 @@ void keyUp(unsigned char key, int x, int y) {
 //Function that is called to start the game, calls the startGame function of the GameManager
 void startGame() {
 	GUIManager::showGameGUI();
-	GameManager::startGame("Counting Stars Audio\\notes30s.json", "Counting Stars Audio\\CS_30s.ogg", &player);
+	GameManager::startGame("Counting Stars Audio/notes30s.json", "Counting Stars Audio/CS_30s.ogg", &player);
 }
 
 //Terminates the program (with a 0 to signify no errors occured), the function that is called when quit is pressed from the main menu
@@ -450,14 +450,14 @@ GLuint loadProgram(const char* vertexShaderLoc, const char* fragmentShaderLoc) {
 void createPrograms() {
 	//Loads in the gaussian vertex and fragment shaders, this program creates the bloom effect by blurring certain objects on the screen
 	//This gives them the appearance that they are glowing
-	gaussianProgram = loadProgram("Shaders\\gaussianBlur.vert", "Shaders\\gaussianBlur.frag");
+	gaussianProgram = loadProgram("Shaders/gaussianBlur.vert", "Shaders/gaussianBlur.frag");
 	glUseProgram(gaussianProgram);
 	//Update the weights of the kernel inside the gaussian blur program, horizontal is a boolean value which dictates whether the function should blur horizontally or vertically
 	updateGaussianKernel(3.f, gaussianProgram);
 	gaussianHorizontalPos = glGetUniformLocation(gaussianProgram, "horizontal");
 
 	//Loads the program that is responsible for displaying the final framebuffer to the user
-	screenProgram = loadProgram("Shaders\\screenShader.vert", "Shaders\\screenShader.frag");
+	screenProgram = loadProgram("Shaders/screenShader.vert", "Shaders/screenShader.frag");
 
 	//Because the screenShader combines the bloomed texture and the rendered texture, it needs access to both textures
 	//Here I specify which colour attachment belongs to which texture
@@ -469,12 +469,12 @@ void createPrograms() {
 
 	//Program responsible for displaying text (and all GUI Elements)
 	//Uses orthogonal projection instead of perspective projection (like the objects in the scene). (Orthogonal projection makes it so that no matter how far away an object is from the screen, it's the same size)
-	textShaderProgram = loadProgram("Shaders\\GUIShader.vert", "Shaders\\GUIShader.frag");
+	textShaderProgram = loadProgram("Shaders/GUIShader.vert", "Shaders/GUIShader.frag");
 	glm::mat4 textProjection = glm::ortho(0.0f, static_cast<float>(500.0f), 0.0f, static_cast<float>(500.0f));
 
 	glUniformMatrix4fv(glGetUniformLocation(textShaderProgram, "textprojection"), 1, GL_FALSE, &textProjection[0][0]);
 	//shaderProgram = loadProgram("vert.vert", "frag.frag");
-	shaderProgram = loadProgram("Shaders\\PhongLighting.vert", "Shaders\\PhongLighting.frag");
+	shaderProgram = loadProgram("Shaders/PhongLighting.vert", "Shaders/PhongLighting.frag");
 
 	// Get the positions of the uniform variables
 	projectionPos = glGetUniformLocation(shaderProgram, "projection");
@@ -528,7 +528,7 @@ int main(int argc, char** argv) {
 	createPrograms();
 
 	//Class initialisation functions
-	player.Setup("Textures\\goldenPlane2.png", shaderProgram);
+	player.Setup("Textures/goldenPlane2.png", shaderProgram);
 	ObjectManager::Init(shaderProgram);
 	GUIManager::Setup(textShaderProgram);
 	OptionsManager::Initialise();
@@ -547,8 +547,8 @@ int main(int argc, char** argv) {
 	GUIManager::showMainMenu();
 
 	//Adds new objects to the scene to be rendered
-	DrawObject* background = new DrawObject("Models\\nightSkyObj.obj", "Textures\\nightsky.png", false, 1.f, 1.f, false, glm::vec3(0.f, 4.f, 0.0f), glm::vec3(4.f, 4.f, 4.f), glm::vec3(0.f, rotpi, 0.f), glm::vec3(1.f, 1.f, 1.f));
-	DrawObject* MoonObj = new DrawObject("Models\\moon.obj", "Textures\\moon.png", false, 1.f, 1.f, true, glm::vec3(50.f, 50.f, -100.f), glm::vec3(30.f, 30.f, 30.f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.f, 1.f, 1.f));
+	DrawObject* background = new DrawObject("Models/nightSkyObj.obj", "Textures/nightsky.png", false, 1.f, 1.f, false, glm::vec3(0.f, 4.f, 0.0f), glm::vec3(4.f, 4.f, 4.f), glm::vec3(0.f, rotpi, 0.f), glm::vec3(1.f, 1.f, 1.f));
+	DrawObject* MoonObj = new DrawObject("Models/moon.obj", "Textures/moon.png", false, 1.f, 1.f, true, glm::vec3(50.f, 50.f, -100.f), glm::vec3(30.f, 30.f, 30.f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.f, 1.f, 1.f));
 	MoonObj->setRotationalVelocity(glm::vec3(0.01f, 0.1f, 0.0f));
 	
 	//Start capturing audio for pitch calculations

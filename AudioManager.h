@@ -1,7 +1,7 @@
 #include <AL/alc.h>
 #include <AL/al.h>
 #include <sndfile.h>
-#include <Windows.h>
+//#include <Windows.h>
 #include <valarray>
 #include <complex>
 #include <chrono>
