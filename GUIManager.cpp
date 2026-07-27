@@ -144,7 +144,7 @@ void buttonGUI::Render() {
 		// render quad
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		charx += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+		charx += static_cast<float>(ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 	//Clear the vertex array and the texture once finished rendering
 	glBindVertexArray(0);
@@ -178,8 +178,8 @@ void imageGUI::Render() {
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(VAO);
 
-	float h = (imgHeight * scale) * 0.5f;
-	float w = (imgWidth * scale) * 0.5f;
+	float h = static_cast<float>(imgHeight) * scale * 0.5f;
+	float w = static_cast<float>(imgWidth) * scale * 0.5f;
 
 	float vertices[6][4] = {
 			{ posX - w,     posY + h,   0.0f, 0.0f },
@@ -340,8 +340,8 @@ std::vector<Clickable*> GUIManager::scoreMenuClickables = std::vector<Clickable*
 
 void GUIManager::createOptionsMenu()
 {
-	int screenHeight = 480;
-	int screenWidth = 854;
+	float screenHeight = 480.0f;
+	float screenWidth = 854.0f;
 
 	GUIObject* background = new imageGUI("Textures\\holder.png", screenWidth / 2, screenHeight / 2, 10);
 	
@@ -396,10 +396,10 @@ void GUIManager::showOptionsMenu()
 
 void GUIManager::createMainMenu()
 {
-	int screenHeight = 480;
-	int screenWidth = 854;
+	float screenHeight = 480.0f;
+	float screenWidth = 854.0f;
 
-	GUIObject* logoImage = new imageGUI("Textures\\logo.png", screenWidth / 2, screenHeight - 100.f, 1.4f);
+	GUIObject* logoImage = new imageGUI("Textures/logo.png", screenWidth / 2, screenHeight - 100.f, 1.4f);
 
 	buttonGUI* startButton = new buttonGUI("Start", screenWidth / 2, 250, 1,
 		0.5f, 0.5f, 0.5f,
@@ -418,8 +418,6 @@ void GUIManager::createMainMenu()
 		0.7f, 0.7f, 0.7f,
 		nullptr);
 	GUIManager::MainMenu_QuitButtonClick = quitButton;
-
-	GUIObject* testImage = new imageGUI("Textures\\pop_cat.png", 175, 200, 1);
 
 	mainMenuVector.push_back(logoImage);
 	mainMenuVector.push_back(startButton);
@@ -441,13 +439,13 @@ void GUIManager::showMainMenu()
 
 void GUIManager::createGameGUI()
 {
-	int screenHeight = 480;
-	int screenWidth = 854;
+	float screenHeight = 480.0f;
+	float screenWidth = 854.0f;
 
 	std::vector<std::string> noteText = { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#" };
 
 	for (int i = 1; i < 13; i++) {
-		float percentHeight = (i / 13.f);
+		float percentHeight = static_cast<float>(i) / 13.f;
 		float textHeight = percentHeight * screenHeight;
 
 		//std::cout << noteText[i - 1] << " " << percentHeight << std::endl;
@@ -469,10 +467,10 @@ void GUIManager::showGameGUI()
 
 void GUIManager::createScoreMenu()
 {
-	int screenHeight = 480;
-	int screenWidth = 854;
+	float screenHeight = 480.f;
+	float screenWidth = 854.f;
 
-	GUIObject* background = new imageGUI("Textures\\holder.png", screenWidth / 2, screenHeight / 2, 10);
+	GUIObject* background = new imageGUI("Textures/holder.png", screenWidth / 2, screenHeight / 2, 10);
 
 	buttonGUI* backButton = new buttonGUI("Back", screenWidth / 2, 100.f, 1,
 		0.5f, 0.5f, 0.5f,
