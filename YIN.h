@@ -1,6 +1,7 @@
 #include <valarray>
 #include <complex>
-#include <iostream>
+#include <bit>
+#include <bitset>
 
 #pragma once
 
@@ -14,7 +15,7 @@ private:
 	static std::valarray<std::complex<double>> range(int N);
 	static std::valarray<std::complex<double>> fourierTransform(std::valarray<std::complex<double>> P);
 	static std::valarray<std::complex<double>> inverseFourierTransform(std::valarray<std::complex<double>> P);
-	static std::valarray<std::complex<double>> differenceFunction(std::valarray<std::complex<double>> signal, int chunkSize, int tauMax);
+	static std::valarray<std::complex<double>> differenceFunction(std::valarray<std::complex<double>> signal, size_t chunkSize, int tauMax);
 	static std::valarray<std::complex<double>> cumulativeMeanNormalizedDifferenceFunction(std::valarray<std::complex<double>> df, int tauMax);
 	static int calculatePitch(std::valarray<std::complex<double>> cmndf, int tauMin, int tauMax);
 public:

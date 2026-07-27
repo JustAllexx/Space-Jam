@@ -1,6 +1,11 @@
 #include "YIN.h"
+#include <bit>
+#include <cassert>
+#include <cmath>
 #include <complex>
+#include <cstddef>
 #include <valarray>
+#include <iostream>
 
 //Constants needed for calculating the fourier transforms
 const double pi = acos(0.0f) * 2;
@@ -14,10 +19,10 @@ int frequencyMin = 70.f;
 //Calculates the cumulative sum, so [1, 2, 3, 4] -> [1, 3, 6, 10]. Keeps a running total over each index, needed in the differenceFunction
 std::valarray<std::complex<double>> YIN::cumulativeSum(std::valarray<std::complex<double>> P) {
 	std::complex<double> runningTotal = std::complex<double>(0.f, 0.f);
-	int Psize = P.size();
+	size_t Psize = P.size();
 	std::valarray<std::complex<double>> cumulativeSum;
 	cumulativeSum.resize(Psize);
-	for (int i = 0; i < Psize; i++) {
+	for (size_t i = 0; i < Psize; i++) {
 		runningTotal += P[i];
 		cumulativeSum[i] = runningTotal;
 	}
@@ -27,23 +32,21 @@ std::valarray<std::complex<double>> YIN::cumulativeSum(std::valarray<std::comple
 //An implementation of the range function from python
 std::valarray<std::complex<double>> YIN::range(int N) {
 	std::valarray < std::complex < double>> r;
-	r.resize(N);
-	for (int i = 0; i < N; i++) { r[i] = i; }
+	size_t size = static_cast<size_t>(N);
+	r.resize(size);
+	for (size_t i = 0; i < size; i++) { r[i] = std::complex<double>(static_cast<double>(i), 0.0f); }
 	return r;
 }
 
 //Cooley-Tukey optimised forward Fourier transform. Uses recursion to optimise 
 std::valarray<std::complex<double>> YIN::fourierTransform(std::valarray<std::complex<double>> P) {
-	//std::cout << "DEBUG: Fourier Transform Disabled" << std::endl;
-	//return P;
-	
-	int n = P.size();
+	size_t n = P.size();
 
 	if (n == 1) { //Base case, a Fourier transform of an element size 1, is itself
 		return P;
 	}
-
-	std::complex<double> omega = exp((negi) / (std::complex<double>)n);
+	double N = static_cast<double>(n);
+	std::complex<double> omega = exp((negi) / N);
 	std::complex<double> calc;
 	//Splits up the P into its even Indices and it's odd indices so [1,2,3,4] -> [1,3] and [2,4]
 
@@ -57,11 +60,10 @@ std::valarray<std::complex<double>> YIN::fourierTransform(std::valarray<std::com
 	Pe = fourierTransform(Pe);
 	Po = fourierTransform(Po);
 
-	//Y.resize(n);
-
-	int Ysize = floor(n / 2);
+	//int Ysize = floor(n / 2);
+	size_t Ysize = n / 2;
 	std::complex<double> running = std::complex<double>(1.f, 0.f);
-	for (int i = 0; i < Ysize; i++) {
+	for (size_t i = 0; i < Ysize; i++) {
 		//Calculates the twiddle factor (as define dy Cooley-Tukey) another method of maintaining performance
 		calc = running * Po[i];
 		Y[i] = Pe[i] + calc;
@@ -75,13 +77,14 @@ std::valarray<std::complex<double>> YIN::fourierTransform(std::valarray<std::com
 //Actually the same as the previous function, but the exponent of the omega value is made positive and not negative, this acts as inversing a Fourier Transform
 //Comes from a property of complex conjugates that negates the fourier transform
 std::valarray<std::complex<double>> YIN::inverseFourierTransform(std::valarray<std::complex<double>> P) {
-	int n = P.size();
+	size_t n = P.size();
 
 	if (n == 1) {
 		return P;
 	}
 
-	std::complex<double> omega = exp((posi) / (std::complex<double>)n);
+	double N = static_cast<double>(n);
+	std::complex<double> omega = exp((negi) / N);
 	//std::complex<double> omega = omegaMapInv[n];
 	std::complex<double> calc;
 
@@ -98,9 +101,9 @@ std::valarray<std::complex<double>> YIN::inverseFourierTransform(std::valarray<s
 	//Y.reserve(n);
 	Y.resize(n);
 
-	int Ysize = floor(n / 2);
+	size_t Ysize = n / 2;
 	std::complex<double> running = std::complex<double>(1.f, 0.f);
-	for (int i = 0; i < Ysize; i++) {
+	for (size_t i = 0; i < Ysize; i++) {
 		calc = running * Po[i];
 		Y[i] = Pe[i] + calc;
 		Y[i + Ysize] = Pe[i] - calc;
@@ -111,7 +114,7 @@ std::valarray<std::complex<double>> YIN::inverseFourierTransform(std::valarray<s
 }
 
 //The difference function, the first step in the YIN algorithm
-std::valarray<std::complex<double>> YIN::differenceFunction(std::valarray<std::complex<double>> signal, int chunkSize, int tauMax) {
+std::valarray<std::complex<double>> YIN::differenceFunction(std::valarray<std::complex<double>> signal, size_t chunkSize, int tauMax) {
 
 	//Calculating the Cumulative sum of the signal squared
 	std::valarray<std::complex<double>> signalSquared = signal * signal;
@@ -121,7 +124,8 @@ std::valarray<std::complex<double>> YIN::differenceFunction(std::valarray<std::c
 	cumSum[std::slice(1, chunkSize, 1)] = cumulativeSum(signalSquared);
 
 	//Find the minimum size padding of our array, returns the next biggest power of 2 for the size of the window
-	int FFTpaddingSize = pow(2, (int)floor(log2(chunkSize)) + 1);
+	int power = std::bit_width(static_cast<unsigned>(chunkSize));
+	size_t FFTpaddingSize = 2ul << power;
 
 	//Application of the Wiener-Khinchin formula for the efficient computation of an autocorrelation
 
@@ -131,7 +135,7 @@ std::valarray<std::complex<double>> YIN::differenceFunction(std::valarray<std::c
 
 	std::valarray<std::complex<double>> forwardFFTconj;
 	forwardFFTconj.resize(FFTpaddingSize);
-	for (int i = 0; i < FFTpaddingSize; i++) {
+	for (size_t i = 0; i < FFTpaddingSize; i++) {
 		forwardFFTconj[i] = std::complex<double>(forwardFFT[i].real(), forwardFFT[i].imag() * -1);
 	}
 
