@@ -58,7 +58,7 @@ GLuint screenVAO, screenVBO;
 AudioManager audioManager;
 PlayerController player;
 
-std::map<char, bool> keyMap;
+std::map<unsigned char, bool> keyMap;
 
 //The vertex and UV coordinates of a quad
 //This used when a framebuffer is rendered to the screen, the quad fills up the screen corner to corner
@@ -567,7 +567,7 @@ int main(int argc, char** argv) {
 //Defines the samplesGUI out of the scope of the header file
 //These members belong to the class OptionsManager, but need to be defined out of the scope of the class before they can be used, because they are static values
 buttonGUI* OptionsManager::samplesGUI = nullptr;
-int OptionsManager::samplesOptionIndex = 0;
+size_t OptionsManager::samplesOptionIndex = 0;
 std::vector<std::string> OptionsManager::samplesOptionsText = {
 	"1024 Samples",
 	"2048 Samples",

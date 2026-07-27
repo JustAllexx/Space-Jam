@@ -24,7 +24,7 @@ std::string readShaderFile(std::string filename);
 //This class also defines all the button behaviours for every GUI Element on the screen
 class OptionsManager {
 private:
-	static int samplesOptionIndex;
+	static size_t samplesOptionIndex;
 	static buttonGUI* samplesGUI;
 	static std::vector<std::string> samplesOptionsText;
 public:

@@ -364,7 +364,7 @@ void PlayerController::Setup(const char* tPath, GLuint planeShaderProgram)
 }
 
 //Function is called every frame
-void PlayerController::controlUpdate(std::map<char, bool> keyMap, float dt) {
+void PlayerController::controlUpdate(std::map<unsigned char, bool> keyMap, float dt) {
 	//if the user is pressing a or d, the plane will move accordingly
 	//Keymap stores all the keys which are being held down by the user. keyMap['a'] returns true if a is being pressed
 	if (keyMap['a']) {

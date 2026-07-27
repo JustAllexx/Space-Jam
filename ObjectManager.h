@@ -89,7 +89,7 @@ public:
 	float posX, posY, targetY, velocityY, velocityX;
 	void Setup(const char* tPath, GLuint planeShaderProgram);
 	void Update();
-	void controlUpdate(std::map<char, bool> keyMap, float dt);
+	void controlUpdate(std::map<unsigned char, bool> keyMap, float dt);
 	//The player's collision
 	CollisionBox playerCollision;
 
