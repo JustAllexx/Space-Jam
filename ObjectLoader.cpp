@@ -48,13 +48,13 @@ bool ObjectLoader::loadOBJ(const char* path, std::vector<glm::vec3>& out_vertice
 		//Face instructions use the indexes of previous data, specifically vertex (v), UV (u) and normal(n) data
 		//this comes in the order v/u/n v/u/n v/u/n, we append each instruction to the out arrays for rendering
 		else if (splitData[0] == "f") {
-			int faceIndices[9];
+			size_t faceIndices[9];
 			std::stringstream combinedData(splitData[1] + "/" + splitData[2] + "/" + splitData[3]);
 			std::string index;
 			int count = 0;
 			//Get the indices in the form of integers
 			while (std::getline(combinedData, index, '/')) {
-				faceIndices[count] = std::stoi(index) - 1;
+				faceIndices[count] = static_cast<size_t>(std::stoi(index)) - 1;
 				count += 1;
 			}
 			out_vertices.push_back(vertexArray[faceIndices[0]]);
