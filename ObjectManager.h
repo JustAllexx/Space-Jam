@@ -113,7 +113,7 @@ public:
 	static std::vector<glm::vec3> noteTargetVertices, noteTargetNormals;
 	static std::vector<glm::vec2> noteTargetUvs;
 	//Note Target Constructor Function
-	NoteTarget(float xPos, float noteKey, float noteTime, float noteLength, float noteVelocity, AudioManager* inAudioManager, PlayerController* playerObject);
+	NoteTarget(float xPos, float noteKey, float noteTime, float noteVelocity, AudioManager* inAudioManager, PlayerController* playerObject);
 	void Update(); //Override
 };
 

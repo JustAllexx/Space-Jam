@@ -9,8 +9,8 @@ GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos;
 std::map<const char*, GLuint> textureLoaderMap;
 
 float objRot;
-float newTime = 0.f;
-float oldTIme = 0.f;
+int newTime = 0;
+int oldTIme = 0;
 float deltaTime = 0.f;
 
 const char* noteModelLocation = "Models/newRedCube.obj";
@@ -106,7 +106,8 @@ void DrawObject::Draw()
 		(void*)0
 	);
 	//Draw the Object
-	glDrawArrays(GL_TRIANGLES, 0, vertexData.size());
+	int numberOfTriangles = static_cast<int>(vertexData.size());
+	glDrawArrays(GL_TRIANGLES, 0, numberOfTriangles);
 }
 
 //Default setter function for private variables
@@ -132,7 +133,7 @@ void ObjectManager::addObjectToQueue(DrawObject* obj)
 void ObjectManager::renderQueue() {
 	glUniform1i(bloomPos, false); //Bloom should be false by defauly
 	newTime = glutGet(GLUT_ELAPSED_TIME);
-	deltaTime = (newTime - oldTIme) / 1000.f;
+	deltaTime = static_cast<float>(newTime - oldTIme) / 1000.f;
 	oldTIme = newTime;
 
 	objRot += 0.01f;
@@ -144,7 +145,7 @@ void ObjectManager::renderQueue() {
 void ObjectManager::renderQueue(std::vector<DrawObject*> &rendQueue)
 {
 	//Iterate through all the objects in the render queue
-	for (int objIndex = 0; objIndex < rendQueue.size(); objIndex++) {
+	for (size_t objIndex = 0; objIndex < rendQueue.size(); objIndex++) {
 		DrawObject* renderObj = rendQueue[objIndex];
 		//Update the object
 		renderObj->Update();
@@ -163,9 +164,9 @@ void ObjectManager::renderQueue(std::vector<DrawObject*> &rendQueue)
 		renderObj->Draw();
 	}
 	//Delete all objects flagged for deletion
-	for (int delCount = 0; delCount < rendQueue.size(); delCount++) {
+	for (size_t delCount = 0; delCount < rendQueue.size(); delCount++) {
 		if (rendQueue[delCount]->bToDelete) {
-			rendQueue.erase(rendQueue.begin() + delCount);
+			rendQueue.erase(rendQueue.begin() + static_cast<signed>(delCount));
 		}
 	}
 }
@@ -184,7 +185,7 @@ void ObjectManager::Init(GLuint program)
 }
 
 //Note Target Constructor Function
-NoteTarget::NoteTarget(float xPos, float noteKey, float noteTime, float noteLength, float noteVelocity, AudioManager* inAudioManager, PlayerController* playerObject)
+NoteTarget::NoteTarget(float xPos, float noteKey, float noteTime, float noteVelocity, AudioManager* inAudioManager, PlayerController* playerObject)
 {
 	//DrawObject inherited properties defined for this class
 	hasCollision = true;
@@ -227,7 +228,7 @@ NoteTarget::NoteTarget(float xPos, float noteKey, float noteTime, float noteLeng
 	glBufferData(GL_ARRAY_BUFFER, normalData.size() * sizeof(glm::vec3), &normalData[0], GL_STATIC_DRAW);
 
 	//Calls for the creation of a NoteHighlight, a note highlight outlines on the screen where a note is going to be
-	DrawObject* noteHighlight = new NoteHighlight(noteTime, this, inAudioManager);
+	new NoteHighlight(noteTime, this, inAudioManager);
 	objRenderQueue.push_back(this);
 }
 
@@ -456,8 +457,8 @@ glm::mat4 MatrixFunctions::rotate(glm::quat rot) {
 
 glm::mat4 MatrixFunctions::rotateX(float angle)
 {
-	float sinPheta = sin(angle);
-	float cosPheta = cos(angle);
+	float sinPheta = sinf(angle);
+	float cosPheta = cosf(angle);
 
 	glm::mat4 rot = glm::mat4(
 		1, 0, 0, 0,
@@ -470,8 +471,8 @@ glm::mat4 MatrixFunctions::rotateX(float angle)
 
 glm::mat4 MatrixFunctions::rotateY(float angle)
 {
-	float sinPheta = sin(angle);
-	float cosPheta = cos(angle);
+	float sinPheta = sinf(angle);
+	float cosPheta = cosf(angle);
 
 	glm::mat4 rot = glm::mat4(
 		cosPheta, 0, sinPheta, 0,
@@ -484,8 +485,8 @@ glm::mat4 MatrixFunctions::rotateY(float angle)
 
 glm::mat4 MatrixFunctions::rotateZ(float angle)
 {
-	float sinPheta = sin(angle);
-	float cosPheta = cos(angle);
+	float sinPheta = sinf(angle);
+	float cosPheta = cosf(angle);
 
 	glm::mat4 rot = glm::mat4(
 		cosPheta, sinPheta, 0, 0,

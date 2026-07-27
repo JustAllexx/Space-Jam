@@ -63,7 +63,7 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath, 
 
 		float height = AudioManager::getHeightOfNote(noteIndex, fovy, dist);
 
-		DrawObject* noteObject = new NoteTarget(0.f, height, time, 1.f, 40.f, &songSource, player);
+		DrawObject* noteObject = new NoteTarget(0.f, height, time, 40.f, &songSource, player);
 		ObjectManager::addObjectToQueue(noteObject);
 	}
 	//Finally plays the song
