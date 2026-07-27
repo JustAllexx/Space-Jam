@@ -1,6 +1,8 @@
 #include "AudioManager.h"
 
 #include <iostream>
+#include <limits>
+#include <stdexcept>
 
 const ALCuint rate = 44100;
 const ALCuint size = 1024;
@@ -88,16 +90,20 @@ ALuint AudioManager::addAudioBuffer(const char* path) {
 	}
 
 	//How big the filesize is going to be in bytes
-	int fileSize = info.frames * info.channels * sizeof(short);
+	int64_t fileSize = info.frames * info.channels * sizeof(short);
 	//Allocate that much memory to a short pointer
 	short* memory = static_cast<short*>(malloc(fileSize));
 	//Buffer in the soundfile to that memory pointer
 	sf_readf_short(soundFile, memory, info.frames);
+	if (fileSize >= std::numeric_limits<int>::max()) {
+		throw std::runtime_error("File size is too big to allocate OpenAL buffer");
+	}
+	int bufferSize = static_cast<int>(fileSize);
 
 	//Buffer it into an openAl buffer which can then be played by a source
 	ALuint buffer;
 	alGenBuffers(1, &buffer);
-	alBufferData(buffer, format, memory, fileSize, info.samplerate);
+	alBufferData(buffer, format, memory, bufferSize, info.samplerate);
 	//Delete the memory taken up by the memoryPointer and close the sound file
 	free(memory);
 	sf_close(soundFile);
@@ -128,9 +134,9 @@ float AudioManager::getPlayPos() {
 //Trigonometry calculation to figure out how high on screen a note should be
 float AudioManager::getHeightOfNote(int ind, float fovy, float dist)
 {
-	float heightAtZero = dist * tan((fovy / 2.f)); // horizontal height
+	float heightAtZero = dist * tanf((fovy / 2.f)); // horizontal height
 	float height = heightAtZero * 2;
-	float percentHeight = (ind + 1) / (13.f);
+	float percentHeight = static_cast<float>(ind + 1) / (13.f);
 	float noteHeight = (percentHeight - 0.5f) * height;
 
 	return noteHeight;
@@ -141,14 +147,12 @@ void AudioManager::updateFrequency(float dt, double &note, double &volume)
 
 	deltaCheck += dt;
 	
-	ALint samplesAvailable;
+	ALCint samplesAvailable;
 	std::vector<std::complex<double>> fourierOutput;
-	double max_mag = 0;
-	int mag_i = 0;
 
 	alcGetIntegerv(captureDev, ALC_CAPTURE_SAMPLES, 1, &samplesAvailable);
 	
-	if (samplesAvailable < size) {
+	if (samplesAvailable < static_cast<ALCint>(size)) {
 		note = 0;
 		return;
 	}
