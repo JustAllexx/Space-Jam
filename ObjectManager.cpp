@@ -18,7 +18,7 @@ const char* noteTextureLocation = "Textures/newRedNote.png";
 
 //The construction function for the DrawObject class
 DrawObject::DrawObject(const char* modelPath, const char* texturePath, bool bHasCollision, float inOpacity, float inAmbient, bool hasBloom,
-	glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation, glm::vec3 collisionBoxSize)
+	glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation)
 {
 	//Set class properties
 	hasCollision = bHasCollision;

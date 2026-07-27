@@ -51,7 +51,7 @@ public:
 	glm::vec3 rotation;
 	//Constructor Function
 	DrawObject(const char* modelPath, const char* texturePath, bool bHasCollision, float inOpacity, float inAmbient, bool hasBloom,
-		glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation, glm::vec3 collisionBoxSize);
+		glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation);
 	//Constructor should have default implementation
 	DrawObject() = default;
 	//Overridable draw function
