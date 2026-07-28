@@ -68,13 +68,6 @@ void AudioManager::playAudioBuffer(std::string_view audioIdentifier) {
 }
 
 ALuint AudioManager::addAudioBuffer(std::string_view path, std::string_view audioIdentifier) {
-	//SF_INFO info;
-	//SNDFILE* soundFile = sf_open(path.data(), SFM_READ, &info);
-	//if (!soundFile) { 
-	//	std::cout << "Failed to open soundfile" << std::endl; 
-	//	sf_close(soundFile);
-	//	return 0;
-	//}
 	SoundFile soundFile = SoundFile(path.data());
 	int channels = soundFile.getChannels();
 	sf_count_t frames = soundFile.getFrameCount();
@@ -92,7 +85,7 @@ ALuint AudioManager::addAudioBuffer(std::string_view path, std::string_view audi
 	//How big the filesize is going to be in bytes
 	size_t fileSize = static_cast<size_t>(frames) * static_cast<size_t>(channels) * sizeof(short);
 	std::vector<short> memory(fileSize);
-	
+
 	//Buffer in the soundfile to that memory pointer
 	soundFile.readSamples(memory);
 	if (fileSize >= std::numeric_limits<int>::max()) {
