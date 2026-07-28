@@ -6,7 +6,6 @@
 #include <limits>
 #include <stdexcept>
 #include <map>
-#include <string>
 #include <valarray>
 #include <vector>
 #include <complex>
@@ -66,19 +65,20 @@ void AudioManager::setupDevice() {
 }
 
 //Play audio
-void AudioManager::playAudioBuffer(const char* audioIdentifier) {
+void AudioManager::playAudioBuffer(std::string_view audioIdentifier) {
 	//Buffers the audio content into the source
-	ALint buffer = static_cast<ALint>(audioBuffers[audioIdentifier]);
+	std::string audioKey(audioIdentifier);
+	ALint buffer = static_cast<ALint>(audioBuffers[audioKey]);
 	alSourcei(source, AL_BUFFER, buffer);
 	//Starts playing
 	alSourcePlay(source);
 	startedPlaying = true;
 }
 
-ALuint AudioManager::addAudioBuffer(const char* path, const char* audioIdentifier) {
+ALuint AudioManager::addAudioBuffer(std::string_view path, std::string_view audioIdentifier) {
 	SF_INFO info;
 
-	SNDFILE* soundFile = sf_open(path, SFM_READ, &info);
+	SNDFILE* soundFile = sf_open(path.data(), SFM_READ, &info);
 	if (!soundFile) { 
 		std::cout << "Failed to open soundfile" << std::endl; 
 		sf_close(soundFile);
@@ -114,8 +114,8 @@ ALuint AudioManager::addAudioBuffer(const char* path, const char* audioIdentifie
 	//Delete the memory taken up by the memoryPointer and close the sound file
 	sf_close(soundFile);
 
-	//audioBuffers.push_back(buffer);
-	audioBuffers.insert({audioIdentifier, buffer});
+	std::string audioKey(audioIdentifier);
+	audioBuffers.insert({audioKey, buffer});
 	return buffer;
 }
 

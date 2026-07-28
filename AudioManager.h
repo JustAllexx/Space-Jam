@@ -1,6 +1,8 @@
 #include <AL/alc.h>
 #include <AL/al.h>
 #include <sndfile.h>
+#include <string>
+#include <string_view>
 #include <unordered_map>
 //#include <string>
 
@@ -11,7 +13,7 @@ private:
 	ALCdevice* device;
 	ALCdevice* captureDev;
 	ALCcontext* context;
-	std::unordered_map<const char*, ALuint> audioBuffers;
+	std::unordered_map<std::string, ALuint> audioBuffers;
 
 	//The main code checks if a buffer is finished playing by getting the second offset
 	//The second offset is 0 when the song ends
@@ -25,8 +27,8 @@ public:
 	ALuint source;
 	bool startedPlaying = false;
 	AudioManager();
-	ALuint addAudioBuffer(const char* path, const char* audioIdentifier);
-	void playAudioBuffer(const char* audioIdentifier);
+	ALuint addAudioBuffer(std::string_view, std::string_view audioIdentifier);
+	void playAudioBuffer(std::string_view audioIdentifier);
 	void StartCapture();
 	void updateFrequency(float dt, double &note, double &volume);
 	float getPlayPos();
