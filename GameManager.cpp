@@ -76,7 +76,7 @@ void GameManager::gameUpdate()
 {
 	float currentPlayPosition =  songSource.getPlayPos();
 	//The code that checks if the game should finish
-	if (gamePlaying == true && currentPlayPosition == 0 && songSource.startedPlaying == false) {
+	if (gamePlaying == true && currentPlayPosition == 0 && songSource.isPlaying() == false) {
 		gamePlaying = false;
 		//If the game is finished update the score screen and direct the player to it
 		GUIManager::scoreScreen_FinalScoreText->text = std::to_string(currentPlayer->playerScore);

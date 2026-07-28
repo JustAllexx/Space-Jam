@@ -18,12 +18,13 @@ private:
 	ALuint source;
 	std::unordered_map<std::string, ALuint> audioBuffers;
 	std::vector<int16_t> captureBuffer;
+	bool startedPlaying = false;
 
 	void setupDevice();
 	void setupSource();
 public:
+	bool isPlaying() const noexcept {return startedPlaying;}
 
-	bool startedPlaying = false;
 	AudioManager();
 	ALuint addAudioBuffer(std::string_view, std::string_view audioIdentifier);
 	void playAudioBuffer(std::string_view audioIdentifier);
@@ -34,6 +35,7 @@ public:
 	static float getHeightOfNote(int ind, float fovy, float dist);
 };
 
+// RAII Class for loading audio using the libsound c library
 class SoundFile {
 private:
 	SNDFILE* file{};
