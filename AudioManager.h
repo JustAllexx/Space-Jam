@@ -1,7 +1,6 @@
 #include <AL/alc.h>
 #include <AL/al.h>
 #include <sndfile.h>
-//#include <Windows.h>
 #include <vector>
 
 #pragma once

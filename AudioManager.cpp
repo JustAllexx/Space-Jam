@@ -97,9 +97,10 @@ ALuint AudioManager::addAudioBuffer(const char* path) {
 	//How big the filesize is going to be in bytes
 	int64_t fileSize = info.frames * info.channels * sizeof(short);
 	//Allocate that much memory to a short pointer
-	short* memory = static_cast<short*>(malloc(fileSize));
+	//short* memory = static_cast<short*>(malloc(fileSize));
+	std::vector<short> memory(fileSize);
 	//Buffer in the soundfile to that memory pointer
-	sf_readf_short(soundFile, memory, info.frames);
+	sf_readf_short(soundFile, memory.data(), info.frames);
 	if (fileSize >= std::numeric_limits<int>::max()) {
 		throw std::runtime_error("File size is too big to allocate OpenAL buffer");
 	}
@@ -108,9 +109,8 @@ ALuint AudioManager::addAudioBuffer(const char* path) {
 	//Buffer it into an openAl buffer which can then be played by a source
 	ALuint buffer;
 	alGenBuffers(1, &buffer);
-	alBufferData(buffer, format, memory, bufferSize, info.samplerate);
+	alBufferData(buffer, format, memory.data(), bufferSize, info.samplerate);
 	//Delete the memory taken up by the memoryPointer and close the sound file
-	free(memory);
 	sf_close(soundFile);
 
 	audioBuffers.push_back(buffer);
