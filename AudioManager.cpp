@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <iostream>
 #include <limits>
+#include <sndfile.h>
 #include <stdexcept>
 #include <valarray>
 #include <complex>
@@ -67,32 +68,33 @@ void AudioManager::playAudioBuffer(std::string_view audioIdentifier) {
 }
 
 ALuint AudioManager::addAudioBuffer(std::string_view path, std::string_view audioIdentifier) {
-	SF_INFO info;
-
-	SNDFILE* soundFile = sf_open(path.data(), SFM_READ, &info);
-	if (!soundFile) { 
-		std::cout << "Failed to open soundfile" << std::endl; 
-		sf_close(soundFile);
-		return 0;
-	}
+	//SF_INFO info;
+	//SNDFILE* soundFile = sf_open(path.data(), SFM_READ, &info);
+	//if (!soundFile) { 
+	//	std::cout << "Failed to open soundfile" << std::endl; 
+	//	sf_close(soundFile);
+	//	return 0;
+	//}
+	SoundFile soundFile = SoundFile(path.data());
+	int channels = soundFile.getChannels();
+	sf_count_t frames = soundFile.getFrameCount();
+	int samplerate = soundFile.getSampleRate();
 
 	//Find out what format the audio is in
 	ALenum format = AL_NONE;
-	if (info.channels == 1) { format = AL_FORMAT_MONO16; }
-	else if (info.channels == 2) { format = AL_FORMAT_STEREO16; }
+	if (channels == 1) { format = AL_FORMAT_MONO16; }
+	else if (channels == 2) { format = AL_FORMAT_STEREO16; }
 	else { 
 		std::cout << "Incorrect Format: more than 2 channels" << std::endl; 
-		sf_close(soundFile);
 		return 0; 
 	}
 
 	//How big the filesize is going to be in bytes
-	size_t fileSize = static_cast<size_t>(info.frames) * static_cast<size_t>(info.channels) * sizeof(short);
-	//Allocate that much memory to a short pointer
-	//short* memory = static_cast<short*>(malloc(fileSize));
+	size_t fileSize = static_cast<size_t>(frames) * static_cast<size_t>(channels) * sizeof(short);
 	std::vector<short> memory(fileSize);
+	
 	//Buffer in the soundfile to that memory pointer
-	sf_readf_short(soundFile, memory.data(), info.frames);
+	soundFile.readSamples(memory);
 	if (fileSize >= std::numeric_limits<int>::max()) {
 		throw std::runtime_error("File size is too big to allocate OpenAL buffer");
 	}
@@ -101,9 +103,7 @@ ALuint AudioManager::addAudioBuffer(std::string_view path, std::string_view audi
 	//Buffer it into an openAl buffer which can then be played by a source
 	ALuint buffer;
 	alGenBuffers(1, &buffer);
-	alBufferData(buffer, format, memory.data(), bufferSize, info.samplerate);
-	//Delete the memory taken up by the memoryPointer and close the sound file
-	sf_close(soundFile);
+	alBufferData(buffer, format, memory.data(), bufferSize, samplerate);
 
 	std::string audioKey(audioIdentifier);
 	audioBuffers.insert({audioKey, buffer});

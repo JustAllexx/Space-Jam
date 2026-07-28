@@ -1,6 +1,7 @@
 #include <AL/alc.h>
 #include <AL/al.h>
 #include <sndfile.h>
+#include <stdexcept>
 #include <string>
 #include <vector>
 #include <string_view>
@@ -13,19 +14,15 @@ private:
 	ALCdevice* device;
 	ALCdevice* captureDev;
 	ALCcontext* context;
+	//TODO Add multiple audio sources, probably for GUI stuff
+	ALuint source;
 	std::unordered_map<std::string, ALuint> audioBuffers;
 	std::vector<int16_t> captureBuffer;
-
-	//The main code checks if a buffer is finished playing by getting the second offset
-	//The second offset is 0 when the song ends
-	//But it is also 0 when the song starts, so create a boolean that keeps track of if the play command has just been sent
-	//That then becomes false as soon as the play position increments past 0
 
 	void setupDevice();
 	void setupSource();
 public:
 
-	ALuint source;
 	bool startedPlaying = false;
 	AudioManager();
 	ALuint addAudioBuffer(std::string_view, std::string_view audioIdentifier);
@@ -35,5 +32,31 @@ public:
 	float getPlayPos();
 
 	static float getHeightOfNote(int ind, float fovy, float dist);
+};
+
+class SoundFile {
+private:
+	SNDFILE* file{};
+	SF_INFO info{};
+
+public:
+	int getChannels() const noexcept {return info.channels;}
+	int getSampleRate() const noexcept {return info.samplerate;}
+	sf_count_t getFrameCount() const noexcept {return info.frames;}
+	int getFormat() const noexcept {return info.format;}
+
+	void readSamples(std::vector<short>& sampleBuffer) {
+		sf_readf_short(file, sampleBuffer.data(), info.frames);
+	}
+
+	SoundFile(const char* filepath) {
+		file = sf_open(filepath, SFM_READ, &info);
+		if (!file) {throw std::runtime_error(sf_strerror(nullptr));}
+	}
+	~SoundFile() {
+		if (file) {sf_close(file);}
+	}
+	SoundFile (const SoundFile&) = delete;
+	SoundFile& operator=(const SoundFile&) = delete;
 };
 
