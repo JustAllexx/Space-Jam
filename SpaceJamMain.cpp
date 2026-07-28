@@ -1,5 +1,6 @@
 #include "SpaceJamMain.h"
 #include <cmath>
+#include <valarray>
 #include <glm/ext/vector_float3.hpp>
 //Use radians instead of degrees
 #define GLM_FORCE_RADIANS

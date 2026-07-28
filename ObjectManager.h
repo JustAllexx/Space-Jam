@@ -9,7 +9,7 @@
 #include <GL/glut.h>
 #include <vector>
 #include <string>
-#include <iostream>
+#include <map>
 
 //The class that contains information about collisions and can check if overlapping with another collision box
 class CollisionBox

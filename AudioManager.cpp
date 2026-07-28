@@ -1,8 +1,13 @@
 #include "AudioManager.h"
+#include "YIN.h"
 
 #include <iostream>
 #include <limits>
 #include <stdexcept>
+#include <map>
+#include <string>
+#include <valarray>
+#include <complex>
 
 const ALCuint rate = 44100;
 const ALCuint size = 1024;

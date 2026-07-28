@@ -2,13 +2,7 @@
 #include <AL/al.h>
 #include <sndfile.h>
 //#include <Windows.h>
-#include <valarray>
-#include <complex>
-#include <chrono>
 #include <vector>
-#include <map>
-#include <string>
-#include "YIN.h"
 
 #pragma once
 class AudioManager
