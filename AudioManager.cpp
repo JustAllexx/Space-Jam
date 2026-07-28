@@ -6,17 +6,15 @@
 #include <limits>
 #include <stdexcept>
 #include <valarray>
-#include <vector>
 #include <complex>
 
 const ALCuint rate = 44100;
 const ALCuint size = 1024;
+const size_t captureBufferSize = 22050;
 const std::vector<std::string> notes = { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#" };
 
-//The buffer that is written to when capturing microphone input
-int16_t CaptureBuffer[22050];
-
 AudioManager::AudioManager() {
+	captureBuffer.resize(captureBufferSize);
 	//Connect to the two audio devices (connects to the microphone and connects to the speakers)
 	setupDevice();
 	//Create an OpenAL source that can start playing audio
@@ -154,9 +152,9 @@ void AudioManager::updateFrequency(double &note, double &volume)
 	}
 	
 	//If the capture buffer is full enough then copy the samples over into the capture Buffer
-	alcCaptureSamples(captureDev, (ALvoid*)CaptureBuffer, samplesAvailable);
+	alcCaptureSamples(captureDev, static_cast<ALvoid*>(captureBuffer.data()), samplesAvailable);
 	//Copies only a sample size number of the capture buffer (to make sure the size is always a power of 2 and consistent)
-	std::vector<std::complex<double>> captureOutput(CaptureBuffer, CaptureBuffer + (size));
+	std::vector<std::complex<double>> captureOutput(captureBuffer.data(), captureBuffer.data() + (size));
 	//Copy data over from the vector to the a valarray (which is the input type of the YIN algorithm)
 	std::valarray<std::complex<double>> captureOutputVal(captureOutput.data(), captureOutput.size());
 	//Calculate the pitch with the YIN algorithm

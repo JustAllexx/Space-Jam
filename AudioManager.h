@@ -2,9 +2,9 @@
 #include <AL/al.h>
 #include <sndfile.h>
 #include <string>
+#include <vector>
 #include <string_view>
 #include <unordered_map>
-//#include <string>
 
 #pragma once
 class AudioManager
@@ -14,6 +14,7 @@ private:
 	ALCdevice* captureDev;
 	ALCcontext* context;
 	std::unordered_map<std::string, ALuint> audioBuffers;
+	std::vector<int16_t> captureBuffer;
 
 	//The main code checks if a buffer is finished playing by getting the second offset
 	//The second offset is 0 when the song ends
