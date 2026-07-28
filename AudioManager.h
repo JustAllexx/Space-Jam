@@ -30,7 +30,7 @@ public:
 	ALuint addAudioBuffer(std::string_view, std::string_view audioIdentifier);
 	void playAudioBuffer(std::string_view audioIdentifier);
 	void StartCapture();
-	void updateFrequency(float dt, double &note, double &volume);
+	void updateFrequency(double &note, double &volume);
 	float getPlayPos();
 
 	static float getHeightOfNote(int ind, float fovy, float dist);

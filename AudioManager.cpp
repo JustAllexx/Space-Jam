@@ -5,7 +5,6 @@
 #include <iostream>
 #include <limits>
 #include <stdexcept>
-#include <map>
 #include <valarray>
 #include <vector>
 #include <complex>
@@ -13,15 +12,9 @@
 const ALCuint rate = 44100;
 const ALCuint size = 1024;
 const std::vector<std::string> notes = { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#" };
-std::map<std::string, int> noteIndexes;
-
-double pi = 2 * acos(0.0);
-std::complex<double> posi = std::complex<double>(0.f, 1.f);
 
 //The buffer that is written to when capturing microphone input
 int16_t CaptureBuffer[22050];
-float deltaCheck;
-
 
 AudioManager::AudioManager() {
 	//Connect to the two audio devices (connects to the microphone and connects to the speakers)
@@ -122,7 +115,6 @@ ALuint AudioManager::addAudioBuffer(std::string_view path, std::string_view audi
 //Starts capturing audio using the capture device
 void AudioManager::StartCapture() {
 	alcCaptureStart(captureDev);
-	deltaCheck = 0.f;
 }
 
 //Get the ammount of seconds through an audio the source is
@@ -149,11 +141,8 @@ float AudioManager::getHeightOfNote(int ind, float fovy, float dist)
 	return noteHeight;
 }
 
-void AudioManager::updateFrequency(float dt, double &note, double &volume) 
-{
-
-	deltaCheck += dt;
-	
+void AudioManager::updateFrequency(double &note, double &volume) 
+{	
 	ALCint samplesAvailable;
 	std::vector<std::complex<double>> fourierOutput;
 
@@ -164,7 +153,6 @@ void AudioManager::updateFrequency(float dt, double &note, double &volume)
 		return;
 	}
 	
-	deltaCheck = 0.f;
 	//If the capture buffer is full enough then copy the samples over into the capture Buffer
 	alcCaptureSamples(captureDev, (ALvoid*)CaptureBuffer, samplesAvailable);
 	//Copies only a sample size number of the capture buffer (to make sure the size is always a power of 2 and consistent)
