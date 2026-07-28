@@ -24,13 +24,14 @@ private:
 	//The second offset is 0 when the song ends
 	//But it is also 0 when the song starts, so create a boolean that keeps track of if the play command has just been sent
 	//That then becomes false as soon as the play position increments past 0
+
+	void setupDevice();
+	void setupSource();
 public:
 
 	ALuint source;
 	bool startedPlaying = false;
 	AudioManager();
-	void setupDevice();
-	void setupSource();
 	ALuint addAudioBuffer(const char* path);
 	void playAudioBuffer(ALuint buffer);
 	void StartCapture();

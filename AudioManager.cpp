@@ -33,7 +33,7 @@ void AudioManager::setupSource() {
 	alSource3f(source, AL_VELOCITY, 0.f, 0.f, 0.f);
 	alSourcei(source, AL_LOOPING, false);
 	//The OpenAL location of the audio being played
-	alSourcei(source, AL_BUFFER, playingBuffer);
+	//alSourcei(source, AL_BUFFER, playingBuffer);
 }
 
 void AudioManager::setupDevice() {
