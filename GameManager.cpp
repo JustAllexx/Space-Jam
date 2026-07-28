@@ -51,7 +51,8 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath, 
 	gamePlaying = true;
 
 	songSource = AudioManager();
-	ALuint songBuffer = songSource.addAudioBuffer(noteSongPath);
+	// IMPORTANT: For now the audio identifier will be the sound path, this will change later
+	songSource.addAudioBuffer(noteSongPath, noteSongPath);
 
 	int x = notes.size();
 	//This loop places down all the notes in a file into the object manager queues so that they can be rendered and sent towards the player
@@ -67,7 +68,7 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath, 
 		ObjectManager::addObjectToQueue(noteObject);
 	}
 	//Finally plays the song
-	songSource.playAudioBuffer(songBuffer);
+	songSource.playAudioBuffer(noteSongPath);
 }
 
 //Called every frame

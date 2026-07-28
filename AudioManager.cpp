@@ -1,12 +1,14 @@
 #include "AudioManager.h"
 #include "YIN.h"
 
+#include <cstddef>
 #include <iostream>
 #include <limits>
 #include <stdexcept>
 #include <map>
 #include <string>
 #include <valarray>
+#include <vector>
 #include <complex>
 
 const ALCuint rate = 44100;
@@ -37,8 +39,6 @@ void AudioManager::setupSource() {
 	alSource3f(source, AL_POSITION, 0.f, 0.f, 0.f);
 	alSource3f(source, AL_VELOCITY, 0.f, 0.f, 0.f);
 	alSourcei(source, AL_LOOPING, false);
-	//The OpenAL location of the audio being played
-	//alSourcei(source, AL_BUFFER, playingBuffer);
 }
 
 void AudioManager::setupDevice() {
@@ -66,15 +66,16 @@ void AudioManager::setupDevice() {
 }
 
 //Play audio
-void AudioManager::playAudioBuffer(ALuint buffer) {
+void AudioManager::playAudioBuffer(const char* audioIdentifier) {
 	//Buffers the audio content into the source
+	ALint buffer = static_cast<ALint>(audioBuffers[audioIdentifier]);
 	alSourcei(source, AL_BUFFER, buffer);
 	//Starts playing
 	alSourcePlay(source);
 	startedPlaying = true;
 }
 
-ALuint AudioManager::addAudioBuffer(const char* path) {
+ALuint AudioManager::addAudioBuffer(const char* path, const char* audioIdentifier) {
 	SF_INFO info;
 
 	SNDFILE* soundFile = sf_open(path, SFM_READ, &info);
@@ -95,7 +96,7 @@ ALuint AudioManager::addAudioBuffer(const char* path) {
 	}
 
 	//How big the filesize is going to be in bytes
-	int64_t fileSize = info.frames * info.channels * sizeof(short);
+	size_t fileSize = static_cast<size_t>(info.frames) * static_cast<size_t>(info.channels) * sizeof(short);
 	//Allocate that much memory to a short pointer
 	//short* memory = static_cast<short*>(malloc(fileSize));
 	std::vector<short> memory(fileSize);
@@ -113,7 +114,8 @@ ALuint AudioManager::addAudioBuffer(const char* path) {
 	//Delete the memory taken up by the memoryPointer and close the sound file
 	sf_close(soundFile);
 
-	audioBuffers.push_back(buffer);
+	//audioBuffers.push_back(buffer);
+	audioBuffers.insert({audioIdentifier, buffer});
 	return buffer;
 }
 
