@@ -93,6 +93,13 @@ Mesh::Mesh(const char* filepath)
 	return;
 }
 
+Mesh::~Mesh() {
+	glDeleteVertexArrays(1, &vertexArrayID);
+	glDeleteBuffers(1, &vertexBuffer);
+	glDeleteBuffers(1, &uvBuffer);
+	glDeleteBuffers(1, &normalBuffer);
+}
+
 Texture::Texture(const char* filepath) {
 	STBIImage image(filepath);
 	glGenTextures(1, &textureID);

@@ -39,7 +39,7 @@ private:
     GLuint vertexArrayID;
 public:
     Mesh(const char* filepath);
-    ~Mesh() = default;
+    ~Mesh();
     Mesh(const Mesh&) = delete;
     Mesh& operator=(const Mesh&) = delete;
 
