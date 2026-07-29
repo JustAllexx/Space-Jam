@@ -52,23 +52,22 @@ void AudioManager::setupDevice() {
 	const ALCchar* devices;
 	
 	device = alcOpenDevice(nullptr);
-	if (!device) { std::cout << "Couldn't open sound device" << std::endl; return; }
+	if (!device) { throw std::runtime_error("Couldn't open sound device");}
 
 	context = alcCreateContext(device, nullptr);
-	if (!context) { std::cout << "Failed to create context" << std::endl; return; }
+	if (!context) { throw std::runtime_error("Failed to create context"); }
 
 	alcMakeContextCurrent(context);
 	devices = alcGetString(NULL, ALC_CAPTURE_DEVICE_SPECIFIER);
 	//checks that a device was found
 	if (devices == NULL) {
-		std::cout << "Input device not found" << std::endl;
-		return;
+		throw std::runtime_error("Input device not found");
 	}
 	//Opens the capture device in "Mono" format, this means that only one integer will be recorder per sample (and it will be of type integer 16 or 16 bits).
 	captureDev = alcCaptureOpenDevice(NULL, rate, AL_FORMAT_MONO16, size);
 
 	if (captureDev == NULL) {
-		printf("Failed to open Input Device");
+		throw std::runtime_error("Failed to open capture device");
 	}
 }
 
@@ -175,7 +174,7 @@ void AudioManager::updateFrequency(double &note, double &volume)
 
 	//Calculate average volume
 	volume = 0.f;
-	for (std::complex<double> samp : captureOutput) { volume += abs(samp); }
+	for (const auto& samp : captureOutput) { volume += abs(samp); }
 	volume = volume / size;
 	
 	return;
