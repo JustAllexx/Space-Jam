@@ -38,8 +38,8 @@ private:
 protected:
 	//Information needed for rendering the geometry of a Rendered Object, it's texture data, and geometry data
 	Texture texture;
-	std::vector<glm::vec3> vertexData, normalData;
-	std::vector<glm::vec2> uvData;
+	Mesh mesh;
+	//TODO: Move all this data inside a Mesh
 	GLuint vertexBuffer, uvBuffer, VertexArrayID, normalBuffer;
 	//Default values for the fragment shader
 	float opacity = 1.f;

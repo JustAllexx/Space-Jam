@@ -19,7 +19,7 @@ const char* noteTextureLocation = "Textures/newRedNote.png";
 
 //The construction function for the DrawObject class
 DrawObject::DrawObject(const char* modelPath, const char* texturePath, bool bHasCollision, float inOpacity, float inAmbient, bool hasBloom,
-	glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation) : texture(texturePath)
+	glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation) : texture(texturePath), mesh(modelPath)
 {
 	//Set class properties
 	hasCollision = bHasCollision;
@@ -34,8 +34,9 @@ DrawObject::DrawObject(const char* modelPath, const char* texturePath, bool bHas
 	objAcceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 	objRotationalVelocity = glm::vec3(0.0f, 0.f, 0.f);
 
-	//Loads the wavefront file with the obj loader and returns the details into these 3 array: vertexData, uvData, normalData
-	ObjectLoader::loadOBJ(modelPath, vertexData, uvData, normalData);
+	const std::vector<glm::vec3> vertexData = mesh.getVertices();
+	const std::vector<glm::vec3> normalData = mesh.getNormals();
+	const std::vector<glm::vec2> uvData = mesh.getUVs();
 	
 	//Buffers all the vertex and uv and normal data into their own buffers, these buffers store the data so it can be binded and then rendered
 	glGenVertexArrays(1, &VertexArrayID);
@@ -98,7 +99,9 @@ void DrawObject::Draw()
 		0,
 		(void*)0
 	);
+
 	//Draw the Object
+	const std::vector<glm::vec3> vertexData = mesh.getVertices();
 	int numberOfTriangles = static_cast<int>(vertexData.size());
 	glDrawArrays(GL_TRIANGLES, 0, numberOfTriangles);
 }
@@ -195,10 +198,11 @@ NoteTarget::NoteTarget(float xPos, float noteKey, float noteTime, float noteVelo
 	bloomAmmount = 2.5f;
 	//How big object's collision should be
 	noteCollisionBox = CollisionBox(1.f, 1.f, 1.f);
-
 	velocity = noteVelocity;
 
-	ObjectLoader::loadOBJ(noteModelLocation, vertexData, uvData, normalData);
+	const std::vector<glm::vec3> vertexData = mesh.getVertices();
+	const std::vector<glm::vec3> normalData = mesh.getNormals();
+	const std::vector<glm::vec2> uvData = mesh.getUVs();
 
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
@@ -262,7 +266,10 @@ NoteHighlight::NoteHighlight(float inNoteTime, DrawObject* inParentNote, AudioMa
 	ambient = 1.f;
 	noteTime = inNoteTime;
 
-	ObjectLoader::loadOBJ("Models/noteOutline.obj", vertexData, uvData, normalData);
+	const std::vector<glm::vec3> vertexData = mesh.getVertices();
+	const std::vector<glm::vec3> normalData = mesh.getNormals();
+	const std::vector<glm::vec2> uvData = mesh.getUVs();
+
 	//Same code for buffering in the vertex, uv and normal data as the DrawObject class
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
@@ -333,7 +340,10 @@ void PlayerController::Setup(const char* tPath, GLuint planeShaderProgram)
 
 	playerCollision = CollisionBox(3.f, 1.5f, 6.0f);
 	//Loads in vertex, normal and uv data; same as the default draw object function
-	ObjectLoader::loadOBJ("Models/planeUV2.obj", vertexData, uvData, normalData);
+	const std::vector<glm::vec3> vertexData = mesh.getVertices();
+	const std::vector<glm::vec3> normalData = mesh.getNormals();
+	const std::vector<glm::vec2> uvData = mesh.getUVs();
+	
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 

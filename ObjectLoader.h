@@ -7,23 +7,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <stb/stb_image.h>
 
-//The class that is reponsible for loading wavefront files and buffering textures into OpenGL
-class ObjectLoader
-{
-public:
-    static void loadOBJ(
-        const char* path,
-        std::vector < glm::vec3 >& out_vertices,
-        std::vector < glm::vec2 >& out_uvs,
-        std::vector < glm::vec3 >& out_normals
-    );
-
-    /*
-    static GLuint loadTexture(
-        const char* path
-    );*/
-};
-
 class STBIImage {
 private:
     int imageWidth{0};
@@ -45,6 +28,22 @@ public:
     int getImageHeight() const noexcept {return imageHeight;}
     int getChannels() const noexcept {return numChannels;}
     stbi_uc* getData() const noexcept {return data;}
+};
+
+class Mesh {
+private:
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> uvs;
+public:
+    Mesh(const char* filepath);
+    ~Mesh() = default;
+    Mesh(const Mesh&) = delete;
+    Mesh& operator=(const Mesh&) = delete;
+
+    const std::vector<glm::vec3>& getVertices() const noexcept {return vertices;}
+    const std::vector<glm::vec3>& getNormals() const noexcept {return normals;}
+    const std::vector<glm::vec2>& getUVs() const noexcept {return uvs;}
 };
 
 class Texture {

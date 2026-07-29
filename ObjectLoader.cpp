@@ -4,18 +4,17 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <iostream>
 
 //This class takes in a wavefront file path as an argument
 //The program decodes the wavefront file and outputs 3 vectors.
 //Each vector has a size a multiple of 3, every 3 is a face that needs to be rendered and each vector contains details about where that face should be, how to texture it and which way it should be facing for lighting calculations
-void ObjectLoader::loadOBJ(const char* path, std::vector<glm::vec3>& out_vertices, std::vector<glm::vec2>& out_uvs, std::vector<glm::vec3>& out_normals)
+Mesh::Mesh(const char* filepath)
 {
 	std::vector<glm::vec3> vertexArray;
 	std::vector<glm::vec3> normalArray;
 	std::vector<glm::vec2> uvArray;
 
-	std::fstream in(path);
+	std::fstream in(filepath);
 	std::string nextLine;
 	while (getline(in, nextLine)) {
 		std::stringstream data(nextLine);
@@ -61,17 +60,17 @@ void ObjectLoader::loadOBJ(const char* path, std::vector<glm::vec3>& out_vertice
 				faceIndices[count] = static_cast<size_t>(std::stoi(index)) - 1;
 				count += 1;
 			}
-			out_vertices.push_back(vertexArray[faceIndices[0]]);
-			out_uvs.push_back(uvArray[faceIndices[1]]);
-			out_normals.push_back(normalArray[faceIndices[2]]);
+			vertices.push_back(vertexArray[faceIndices[0]]);
+			uvs.push_back(uvArray[faceIndices[1]]);
+			normals.push_back(normalArray[faceIndices[2]]);
 
-			out_vertices.push_back(vertexArray[faceIndices[3]]);
-			out_uvs.push_back(uvArray[faceIndices[4]]);
-			out_normals.push_back(normalArray[faceIndices[5]]);
+			vertices.push_back(vertexArray[faceIndices[3]]);
+			uvs.push_back(uvArray[faceIndices[4]]);
+			normals.push_back(normalArray[faceIndices[5]]);
 
-			out_vertices.push_back(vertexArray[faceIndices[6]]);
-			out_uvs.push_back(uvArray[faceIndices[7]]);
-			out_normals.push_back(normalArray[faceIndices[8]]);
+			vertices.push_back(vertexArray[faceIndices[6]]);
+			uvs.push_back(uvArray[faceIndices[7]]);
+			normals.push_back(normalArray[faceIndices[8]]);
 
 		}
 	}
