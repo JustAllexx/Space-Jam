@@ -2,6 +2,7 @@
 #include "YIN.h"
 
 #include <al.h>
+#include <alc.h>
 #include <cstddef>
 #include <iostream>
 #include <limits>
@@ -31,6 +32,10 @@ AudioManager::~AudioManager() {
 	for (const auto& [_, bufferID] : audioBuffers) {
 		alDeleteBuffers(1, &bufferID);
 	}
+
+	alcDestroyContext(context);
+	alcCloseDevice(device);
+	alcCloseDevice(captureDev);
 }
 
 //Creates an OpenAl source with specific properties
