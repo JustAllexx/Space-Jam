@@ -23,3 +23,25 @@ public:
     );
 };
 
+class STBIImage {
+private:
+    int imageWidth{0};
+    int imageHeight{0};
+    int numChannels{0};
+    stbi_uc* data{0};
+public:
+    STBIImage(const char* filepath) {
+        stbi_set_flip_vertically_on_load(true);
+        data = stbi_load(filepath, &imageWidth, &imageHeight, &numChannels, 0);
+    }
+    ~STBIImage() {
+        stbi_image_free(data);
+    }
+    STBIImage(const STBIImage&) = delete;
+    STBIImage& operator=(const STBIImage&) = delete;
+
+    int getImageWidth() const noexcept {return imageWidth;}
+    int getImageHeight() const noexcept {return imageHeight;}
+    int getChannels() const noexcept {return numChannels;}
+    stbi_uc* getData() const noexcept {return data;}
+};

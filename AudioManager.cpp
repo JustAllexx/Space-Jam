@@ -18,7 +18,6 @@ const size_t captureBufferSize = 22050;
 const std::vector<std::string> notes = { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#" };
 
 AudioManager::AudioManager() {
-	std::cout << "Audio manager created" << std::endl;
 	captureBuffer.resize(captureBufferSize);
 	//Connect to the two audio devices (connects to the microphone and connects to the speakers)
 	setupDevice();
@@ -27,7 +26,6 @@ AudioManager::AudioManager() {
 }
 
 AudioManager::~AudioManager() {
-	std::cout << "Audio manager deleted" << std::endl;
 	alDeleteSources(1, &source);
 	for (const auto& [_, bufferID] : audioBuffers) {
 		alDeleteBuffers(1, &bufferID);

@@ -82,19 +82,14 @@ void ObjectLoader::loadOBJ(const char* path, std::vector<glm::vec3>& out_vertice
 GLuint ObjectLoader::loadTexture(const char* path)
 {
 	GLuint retTexture;
-	stbi_set_flip_vertically_on_load(true);
-	int imgWidth, imgHeight, numChannels;
-	//Opens the images file in raw byte form, also returns information about image height, width and the number of colour channels in the image
-	unsigned char* bytes = stbi_load(path, &imgWidth, &imgHeight, &numChannels, 0);
+	STBIImage image(path);
 
 	//Generate the texture and then buffer in the loaded image
 	glGenTextures(1, &retTexture);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, retTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getImageWidth(), image.getImageHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getData());
 
 	glGenerateMipmap(GL_TEXTURE_2D);
-	//Explicitly free the memory because it isn't needed anymore and can take up a lot of memory if not explicitly cleared
-	stbi_image_free(bytes);
 	return retTexture;
 }
