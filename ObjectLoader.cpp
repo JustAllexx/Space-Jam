@@ -1,11 +1,14 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #define STB_IMAGE_IMPLEMENTATION
 #include "ObjectLoader.h"
+#include <string>
+#include <fstream>
+#include <sstream>
 
 //This class takes in a wavefront file path as an argument
 //The program decodes the wavefront file and outputs 3 vectors.
 //Each vector has a size a multiple of 3, every 3 is a face that needs to be rendered and each vector contains details about where that face should be, how to texture it and which way it should be facing for lighting calculations
-bool ObjectLoader::loadOBJ(const char* path, std::vector<glm::vec3>& out_vertices, std::vector<glm::vec2>& out_uvs, std::vector<glm::vec3>& out_normals)
+void ObjectLoader::loadOBJ(const char* path, std::vector<glm::vec3>& out_vertices, std::vector<glm::vec2>& out_uvs, std::vector<glm::vec3>& out_normals)
 {
 	std::vector<glm::vec3> vertexArray;
 	std::vector<glm::vec3> normalArray;
@@ -71,7 +74,7 @@ bool ObjectLoader::loadOBJ(const char* path, std::vector<glm::vec3>& out_vertice
 
 		}
 	}
-	return false;
+	return;
 }
 
 //Loads a texture file, buffers it into openGL and then returns the texture ID
