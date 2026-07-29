@@ -75,21 +75,50 @@ Mesh::Mesh(const char* filepath)
 		}
 	}
 
-	//Create OpenGL resources
+	// Create Vertex Array Object
+	// Stores the drawing configuration so we only need to bind the vertex array id to draw the mesh
 	glGenVertexArrays(1, &vertexArrayID);
 	glBindVertexArray(vertexArrayID);
 
+	//Setup vertex buffer
 	glGenBuffers(1, &vertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(0,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		0,
+		(void*)0
+	);
+	glEnableVertexAttribArray(0);
 
+	//Same for the UV buffer
 	glGenBuffers(1, &uvBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
 	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(1,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		0,
+		(void*)0
+	);
+	glEnableVertexAttribArray(1);
+
 
 	glGenBuffers(1, &normalBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
 	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(2,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		0,
+		(void*)0
+	);
+	glEnableVertexAttribArray(2);
+
 	return;
 }
 

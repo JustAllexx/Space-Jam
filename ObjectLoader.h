@@ -49,6 +49,7 @@ public:
     GLuint getVertexBuffer() const noexcept {return vertexBuffer;}
     GLuint getNormalBuffer() const noexcept {return normalBuffer;}
     GLuint getUVBuffer() const noexcept {return uvBuffer;}
+    GLuint getVAO() const noexcept {return vertexArrayID;}
 };
 
 class Texture {

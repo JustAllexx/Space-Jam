@@ -7,8 +7,6 @@ glm::mat4 objIdentity = glm::mat4(1.f);
 std::vector <glm::mat4> objModelviewStack;
 GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos;
 
-std::map<const char*, GLuint> textureLoaderMap;
-
 float objRot;
 int newTime = 0;
 int oldTIme = 0;
@@ -48,41 +46,10 @@ void DrawObject::Draw()
 
 	//Binds the texture for the object into OpenGL so it can be used by the texture sampler in the fragment shader
 	glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
-	GLuint vertexBuffer = mesh.getVertexBuffer();
-	GLuint uvBuffer = mesh.getUVBuffer();
-	GLuint normalBuffer = mesh.getNormalBuffer();
 
-	//Load all the buffers into OpenGL so they can be used in the vertex and fragment shaders
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glVertexAttribPointer(0,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		0,
-		(void*)0
-	);
-
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-	glVertexAttribPointer(1,
-		2,
-		GL_FLOAT,
-		GL_FALSE,
-		0,
-		(void*)0
-	);
-
-	glEnableVertexAttribArray(2);
-	glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
-	
-	glVertexAttribPointer(2,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		0,
-		(void*)0
-	);
+	//Bind the vertex array ID, this remembers the locations of the vertex, normals and uv buffers so we don't have to manually bind them
+	GLuint vertexArrayID = mesh.getVAO();
+	glBindVertexArray(vertexArrayID);
 
 	//Draw the Object
 	const std::vector<glm::vec3> vertexData = mesh.getVertices();
