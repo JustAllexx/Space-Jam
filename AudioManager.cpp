@@ -1,6 +1,7 @@
 #include "AudioManager.h"
 #include "YIN.h"
 
+#include <al.h>
 #include <cstddef>
 #include <iostream>
 #include <limits>
@@ -26,6 +27,10 @@ AudioManager::AudioManager() {
 
 AudioManager::~AudioManager() {
 	std::cout << "Audio manager deleted" << std::endl;
+	alDeleteSources(1, &source);
+	for (const auto& [_, bufferID] : audioBuffers) {
+		alDeleteBuffers(1, &bufferID);
+	}
 }
 
 //Creates an OpenAl source with specific properties
