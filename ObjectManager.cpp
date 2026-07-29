@@ -34,26 +34,6 @@ DrawObject::DrawObject(const char* modelPath, const char* texturePath, bool bHas
 	objAcceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 	objRotationalVelocity = glm::vec3(0.0f, 0.f, 0.f);
 
-	const std::vector<glm::vec3> vertexData = mesh.getVertices();
-	const std::vector<glm::vec3> normalData = mesh.getNormals();
-	const std::vector<glm::vec2> uvData = mesh.getUVs();
-	
-	//Buffers all the vertex and uv and normal data into their own buffers, these buffers store the data so it can be binded and then rendered
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
-
-	glGenBuffers(1, &vertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(glm::vec3), &vertexData[0], GL_STATIC_DRAW);
-
-	glGenBuffers(1, &uvBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-	glBufferData(GL_ARRAY_BUFFER, uvData.size() * sizeof(glm::vec2), &uvData[0], GL_STATIC_DRAW);
-
-	glGenBuffers(1, &normalBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
-	glBufferData(GL_ARRAY_BUFFER, normalData.size() * sizeof(glm::vec3), &normalData[0], GL_STATIC_DRAW);
-
 	objRenderQueue.push_back(this);
 }
 
@@ -68,6 +48,10 @@ void DrawObject::Draw()
 
 	//Binds the texture for the object into OpenGL so it can be used by the texture sampler in the fragment shader
 	glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
+	GLuint vertexBuffer = mesh.getVertexBuffer();
+	GLuint uvBuffer = mesh.getUVBuffer();
+	GLuint normalBuffer = mesh.getNormalBuffer();
+
 	//Load all the buffers into OpenGL so they can be used in the vertex and fragment shaders
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -200,25 +184,6 @@ NoteTarget::NoteTarget(float xPos, float noteKey, float noteTime, float noteVelo
 	noteCollisionBox = CollisionBox(1.f, 1.f, 1.f);
 	velocity = noteVelocity;
 
-	const std::vector<glm::vec3> vertexData = mesh.getVertices();
-	const std::vector<glm::vec3> normalData = mesh.getNormals();
-	const std::vector<glm::vec2> uvData = mesh.getUVs();
-
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
-
-	glGenBuffers(1, &vertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(glm::vec3), &vertexData[0], GL_STATIC_DRAW);
-
-	glGenBuffers(1, &uvBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-	glBufferData(GL_ARRAY_BUFFER, uvData.size() * sizeof(glm::vec2), &uvData[0], GL_STATIC_DRAW);
-
-	glGenBuffers(1, &normalBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
-	glBufferData(GL_ARRAY_BUFFER, normalData.size() * sizeof(glm::vec3), &normalData[0], GL_STATIC_DRAW);
-
 	//Calls for the creation of a NoteHighlight, a note highlight outlines on the screen where a note is going to be
 	new NoteHighlight(noteTime, this, inAudioManager);
 	objRenderQueue.push_back(this);
@@ -265,26 +230,6 @@ NoteHighlight::NoteHighlight(float inNoteTime, DrawObject* inParentNote, AudioMa
 	highlightTime = 1.f;
 	ambient = 1.f;
 	noteTime = inNoteTime;
-
-	const std::vector<glm::vec3> vertexData = mesh.getVertices();
-	const std::vector<glm::vec3> normalData = mesh.getNormals();
-	const std::vector<glm::vec2> uvData = mesh.getUVs();
-
-	//Same code for buffering in the vertex, uv and normal data as the DrawObject class
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
-
-	glGenBuffers(1, &vertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(glm::vec3), &vertexData[0], GL_STATIC_DRAW);
-
-	glGenBuffers(1, &uvBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-	glBufferData(GL_ARRAY_BUFFER, uvData.size() * sizeof(glm::vec2), &uvData[0], GL_STATIC_DRAW);
-
-	glGenBuffers(1, &normalBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
-	glBufferData(GL_ARRAY_BUFFER, normalData.size() * sizeof(glm::vec3), &normalData[0], GL_STATIC_DRAW);
 
 	objRenderQueue.push_back(this);
 
@@ -339,26 +284,6 @@ void PlayerController::Setup(const char* tPath, GLuint planeShaderProgram)
 	planeAmbientPos = glGetUniformLocation(planeShaderProgram, "ambient");
 
 	playerCollision = CollisionBox(3.f, 1.5f, 6.0f);
-	//Loads in vertex, normal and uv data; same as the default draw object function
-	const std::vector<glm::vec3> vertexData = mesh.getVertices();
-	const std::vector<glm::vec3> normalData = mesh.getNormals();
-	const std::vector<glm::vec2> uvData = mesh.getUVs();
-	
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
-
-	glGenBuffers(1, &vertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(glm::vec3), &vertexData[0], GL_STATIC_DRAW);
-
-	glGenBuffers(1, &uvBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-	glBufferData(GL_ARRAY_BUFFER, uvData.size() * sizeof(glm::vec2), &uvData[0], GL_STATIC_DRAW);
-
-	glGenBuffers(1, &normalBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
-	glBufferData(GL_ARRAY_BUFFER, normalData.size() * sizeof(glm::vec3), &normalData[0], GL_STATIC_DRAW);
-
 	ObjectManager::addObjectToQueue(this);
 }
 

@@ -74,6 +74,22 @@ Mesh::Mesh(const char* filepath)
 
 		}
 	}
+
+	//Create OpenGL resources
+	glGenVertexArrays(1, &vertexArrayID);
+	glBindVertexArray(vertexArrayID);
+
+	glGenBuffers(1, &vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+
+	glGenBuffers(1, &uvBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
+	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+
+	glGenBuffers(1, &normalBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
+	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
 	return;
 }
 

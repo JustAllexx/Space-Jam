@@ -40,7 +40,7 @@ protected:
 	Texture texture;
 	Mesh mesh;
 	//TODO: Move all this data inside a Mesh
-	GLuint vertexBuffer, uvBuffer, VertexArrayID, normalBuffer;
+	//GLuint vertexBuffer, uvBuffer, VertexArrayID, normalBuffer;
 	//Default values for the fragment shader
 	float opacity = 1.f;
 	float ambient = 0.0f;

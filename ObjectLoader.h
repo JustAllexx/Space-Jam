@@ -35,6 +35,8 @@ private:
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> normals;
     std::vector<glm::vec2> uvs;
+    GLuint vertexBuffer, normalBuffer, uvBuffer;
+    GLuint vertexArrayID;
 public:
     Mesh(const char* filepath);
     ~Mesh() = default;
@@ -44,6 +46,9 @@ public:
     const std::vector<glm::vec3>& getVertices() const noexcept {return vertices;}
     const std::vector<glm::vec3>& getNormals() const noexcept {return normals;}
     const std::vector<glm::vec2>& getUVs() const noexcept {return uvs;}
+    GLuint getVertexBuffer() const noexcept {return vertexBuffer;}
+    GLuint getNormalBuffer() const noexcept {return normalBuffer;}
+    GLuint getUVBuffer() const noexcept {return uvBuffer;}
 };
 
 class Texture {
