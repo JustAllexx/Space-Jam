@@ -6,6 +6,7 @@
 #include <limits>
 #include <sndfile.h>
 #include <stdexcept>
+#include <string>
 #include <valarray>
 #include <complex>
 
@@ -15,11 +16,16 @@ const size_t captureBufferSize = 22050;
 const std::vector<std::string> notes = { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#" };
 
 AudioManager::AudioManager() {
+	std::cout << "Audio manager created" << std::endl;
 	captureBuffer.resize(captureBufferSize);
 	//Connect to the two audio devices (connects to the microphone and connects to the speakers)
 	setupDevice();
 	//Create an OpenAL source that can start playing audio
 	setupSource();
+}
+
+AudioManager::~AudioManager() {
+	std::cout << "Audio manager deleted" << std::endl;
 }
 
 //Creates an OpenAl source with specific properties
@@ -68,7 +74,8 @@ void AudioManager::playAudioBuffer(std::string_view audioIdentifier) {
 }
 
 ALuint AudioManager::addAudioBuffer(std::string_view path, std::string_view audioIdentifier) {
-	SoundFile soundFile = SoundFile(path.data());
+	std::string path_str(path);
+	SoundFile soundFile = SoundFile(path_str.c_str());
 	int channels = soundFile.getChannels();
 	sf_count_t frames = soundFile.getFrameCount();
 	int samplerate = soundFile.getSampleRate();
@@ -162,6 +169,4 @@ void AudioManager::updateFrequency(double &note, double &volume)
 	volume = volume / size;
 	
 	return;
-
 }
-

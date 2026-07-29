@@ -23,14 +23,18 @@ private:
 	void setupDevice();
 	void setupSource();
 public:
-	bool isPlaying() const noexcept {return startedPlaying;}
-
 	AudioManager();
+	~AudioManager();
+	AudioManager(const AudioManager&) = delete;
+	AudioManager& operator=(const AudioManager&) = default;
+
 	ALuint addAudioBuffer(std::string_view, std::string_view audioIdentifier);
 	void playAudioBuffer(std::string_view audioIdentifier);
 	void StartCapture();
 	void updateFrequency(double &note, double &volume);
 	float getPlayPos();
+	bool isPlaying() const noexcept {return startedPlaying;}
+
 
 	static float getHeightOfNote(int ind, float fovy, float dist);
 };
