@@ -18,9 +18,10 @@ public:
         std::vector < glm::vec3 >& out_normals
     );
 
+    /*
     static GLuint loadTexture(
         const char* path
-    );
+    );*/
 };
 
 class STBIImage {

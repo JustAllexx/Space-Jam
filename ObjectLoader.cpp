@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 //This class takes in a wavefront file path as an argument
 //The program decodes the wavefront file and outputs 3 vectors.
@@ -77,23 +78,6 @@ void ObjectLoader::loadOBJ(const char* path, std::vector<glm::vec3>& out_vertice
 	return;
 }
 
-//Loads a texture file, buffers it into openGL and then returns the texture ID
-//This function uses stbi to load png files.
-GLuint ObjectLoader::loadTexture(const char* path)
-{
-	GLuint retTexture;
-	STBIImage image(path);
-
-	//Generate the texture and then buffer in the loaded image
-	glGenTextures(1, &retTexture);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, retTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getImageWidth(), image.getImageHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getData());
-
-	glGenerateMipmap(GL_TEXTURE_2D);
-	return retTexture;
-}
-
 Texture::Texture(const char* filepath) {
 	STBIImage image(filepath);
 	glGenTextures(1, &textureID);
@@ -101,4 +85,8 @@ Texture::Texture(const char* filepath) {
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getImageWidth(), image.getImageHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getData());
 	glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+Texture::~Texture() {
+	glDeleteTextures(1, &textureID);
 }

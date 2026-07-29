@@ -1,5 +1,7 @@
 #include "SpaceJamMain.h"
+#include "ObjectManager.h"
 #include <cmath>
+#include <optional>
 #include <valarray>
 #include <glm/ext/vector_float3.hpp>
 //Use radians instead of degrees
@@ -57,7 +59,8 @@ GLuint screenVAO, screenVBO;
 
 //This is the audioManager instance that is responsible for recording audio to the capture buffer
 AudioManager audioManager;
-PlayerController player;
+//Remove this later
+std::optional<PlayerController> player;
 
 std::map<unsigned char, bool> keyMap;
 
@@ -308,7 +311,7 @@ void display() {
 	glUseProgram(shaderProgram);
 
 	GLuint lightPosPos = glGetUniformLocation(shaderProgram, "lightPos");
-	glUniform3f(lightPosPos, player.posX, player.posY+2.f, 0.f);
+	glUniform3f(lightPosPos, player->posX, player->posY+2.f, 0.f);
 
 	GameManager::gameUpdate();
 	ObjectManager::renderQueue();
@@ -414,11 +417,11 @@ void newFrame(int value) {
 		int keyInd = static_cast<int>(std::round(key));
 		//this is passed on to a static function that calculates the height that the player should be on screen based on the value of the note sung
 		float targetY = AudioManager::getHeightOfNote(keyInd, GameManager::fovy, GameManager::dist);
-		player.targetY = targetY;
+		player->targetY = targetY;
 	}
 	//Update the players movement
 	//Keymap contains what keys are being pressed down during this frame, dt is the time since last frame
-	player.controlUpdate(keyMap, dt);
+	player->controlUpdate(keyMap, dt);
 	//Call the display function
 	glutPostRedisplay();
 	unsigned int nextFrameTime = static_cast<unsigned int>(1000.f / 60.f);
@@ -437,7 +440,7 @@ void keyUp(unsigned char key, [[maybe_unused]] int x, [[maybe_unused]] int y) {
 //Function that is called to start the game, calls the startGame function of the GameManager
 void startGame() {
 	GUIManager::showGameGUI();
-	GameManager::startGame("Counting Stars Audio/notes30s.json", "Counting Stars Audio/CS_30s.ogg", &player);
+	GameManager::startGame("Counting Stars Audio/notes30s.json", "Counting Stars Audio/CS_30s.ogg", &player.value());
 }
 
 //Terminates the program (with a 0 to signify no errors occured), the function that is called when quit is pressed from the main menu
@@ -533,7 +536,9 @@ int main(int argc, char** argv) {
 	createPrograms();
 
 	//Class initialisation functions
-	player.Setup("Textures/goldenPlane2.png", shaderProgram);
+	// Again, TODO: Replace this optional, it is only temporary
+	player.emplace();
+	player->Setup("Textures/goldenPlane2.png", shaderProgram);
 	ObjectManager::Init(shaderProgram);
 	GUIManager::Setup(textShaderProgram);
 	OptionsManager::Initialise();
@@ -592,7 +597,7 @@ void OptionsManager::Initialise()
 
 	//Here we assign the string pointer of the score button gui to the player score text
 	//This is what increments when a note is hit
-	player.playerScoreText = &(GUIManager::GameGUI_ScoreText->text);
+	player->playerScoreText = &(GUIManager::GameGUI_ScoreText->text);
 }
 
 void OptionsManager::IncrementSamplesOption()

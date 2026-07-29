@@ -1,4 +1,5 @@
 #include "ObjectManager.h"
+#include "ObjectLoader.h"
 
 std::vector<DrawObject*> objRenderQueue;
 glm::mat4 objModelview;
@@ -18,7 +19,7 @@ const char* noteTextureLocation = "Textures/newRedNote.png";
 
 //The construction function for the DrawObject class
 DrawObject::DrawObject(const char* modelPath, const char* texturePath, bool bHasCollision, float inOpacity, float inAmbient, bool hasBloom,
-	glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation)
+	glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation) : texture(texturePath)
 {
 	//Set class properties
 	hasCollision = bHasCollision;
@@ -32,15 +33,7 @@ DrawObject::DrawObject(const char* modelPath, const char* texturePath, bool bHas
 	objVelocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	objAcceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 	objRotationalVelocity = glm::vec3(0.0f, 0.f, 0.f);
-	//If the texture is already loaded it doesn't need to be loaded again
-	//Texture loader map keeps track of the paths of textures that have been buffered into OpenGL
-	if (textureLoaderMap[texturePath] == 0) {
-		texture = ObjectLoader::loadTexture(texturePath);
-		textureLoaderMap[texturePath] = texture;
-	}
-	else {
-		texture = textureLoaderMap[texturePath];
-	}
+
 	//Loads the wavefront file with the obj loader and returns the details into these 3 array: vertexData, uvData, normalData
 	ObjectLoader::loadOBJ(modelPath, vertexData, uvData, normalData);
 	
@@ -73,7 +66,7 @@ void DrawObject::Draw()
 	glUniform1f(brightnessPos, bloomAmmount);
 
 	//Binds the texture for the object into OpenGL so it can be used by the texture sampler in the fragment shader
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
 	//Load all the buffers into OpenGL so they can be used in the vertex and fragment shaders
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -185,8 +178,10 @@ void ObjectManager::Init(GLuint program)
 }
 
 //Note Target Constructor Function
-NoteTarget::NoteTarget(float xPos, float noteKey, float noteTime, float noteVelocity, AudioManager* inAudioManager, PlayerController* playerObject)
-{
+NoteTarget::NoteTarget(float xPos, float noteKey, float noteTime, float noteVelocity, AudioManager* inAudioManager, PlayerController* playerObject) 
+	: DrawObject(noteModelLocation, noteTextureLocation, true, 1.f, 0.4f, true, glm::vec3(xPos, noteKey, (noteTime * -noteVelocity)),
+	 glm::vec3(2.f, 2.f, 2.f), glm::vec3(0.f, 0.f, 0.f))
+	{
 	//DrawObject inherited properties defined for this class
 	hasCollision = true;
 	time = noteTime;
@@ -203,13 +198,6 @@ NoteTarget::NoteTarget(float xPos, float noteKey, float noteTime, float noteVelo
 
 	velocity = noteVelocity;
 
-	//Same code to buffer vertex, normal and uv data as in the default constructor in the DrawObject class, does the same thing here
-	if (textureLoaderMap[noteTextureLocation] == 0) {
-		texture = ObjectLoader::loadTexture(noteTextureLocation);
-	}
-	else {
-		texture = textureLoaderMap[noteTextureLocation];
-	}
 	ObjectLoader::loadOBJ(noteModelLocation, vertexData, uvData, normalData);
 
 	glGenVertexArrays(1, &VertexArrayID);
@@ -258,7 +246,9 @@ void NoteTarget::Update()
 }
 
 //Constructor for the note highlight
-NoteHighlight::NoteHighlight(float inNoteTime, DrawObject* inParentNote, AudioManager* audioIn)
+NoteHighlight::NoteHighlight(float inNoteTime, DrawObject* inParentNote, AudioManager* audioIn) :
+	DrawObject("Models/noteOutline.obj", "Textures/green.png", false, 0.f, 1.f, false, glm::vec3(inParentNote->pos.x, inParentNote->pos.y, 0.f),
+	glm::vec3(2.f, 2.f, 2.f), glm::vec3(0.f, 1.570796327f, 0.f))
 {
 	hasCollision = false;
 	DrawObject* parentNote = inParentNote;
@@ -272,7 +262,6 @@ NoteHighlight::NoteHighlight(float inNoteTime, DrawObject* inParentNote, AudioMa
 	ambient = 1.f;
 	noteTime = inNoteTime;
 
-	texture = ObjectLoader::loadTexture("Textures/green.png");
 	ObjectLoader::loadOBJ("Models/noteOutline.obj", vertexData, uvData, normalData);
 	//Same code for buffering in the vertex, uv and normal data as the DrawObject class
 	glGenVertexArrays(1, &VertexArrayID);
@@ -312,7 +301,8 @@ const char* texturePath;
 GLuint planeOpacityPos, planeAmbientPos;
 
 //Default Player Constructor Function
-PlayerController::PlayerController()
+PlayerController::PlayerController() : DrawObject("Models/planeUV2.obj", "Textures/goldenPlane2.png", true, 1.f, 0.7f, false,
+	glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.f, 0.f, 0.f))
 {
 	//Constants about player movement
 	velocityX = 20.f;
@@ -359,7 +349,6 @@ void PlayerController::Setup(const char* tPath, GLuint planeShaderProgram)
 	glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
 	glBufferData(GL_ARRAY_BUFFER, normalData.size() * sizeof(glm::vec3), &normalData[0], GL_STATIC_DRAW);
 
-	texture = ObjectLoader::loadTexture(tPath);
 	ObjectManager::addObjectToQueue(this);
 }
 

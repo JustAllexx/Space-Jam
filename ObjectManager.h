@@ -37,7 +37,7 @@ private:
 	glm::vec3 objRotationalVelocity;
 protected:
 	//Information needed for rendering the geometry of a Rendered Object, it's texture data, and geometry data
-	GLuint texture;
+	Texture texture;
 	std::vector<glm::vec3> vertexData, normalData;
 	std::vector<glm::vec2> uvData;
 	GLuint vertexBuffer, uvBuffer, VertexArrayID, normalBuffer;
@@ -53,7 +53,6 @@ public:
 	DrawObject(const char* modelPath, const char* texturePath, bool bHasCollision, float inOpacity, float inAmbient, bool hasBloom,
 		glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation);
 	//Constructor should have default implementation
-	DrawObject() = default;
 	//Overridable draw function
 	virtual void Draw();
 	//set To true when the object should be deleted
