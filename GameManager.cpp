@@ -50,7 +50,7 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath, 
 
 	gamePlaying = true;
 
-	songSource = AudioManager();
+	//songSource = AudioManager();
 	// IMPORTANT: For now the audio identifier will be the sound path, this will change later
 	songSource.addAudioBuffer(noteSongPath, noteSongPath);
 
