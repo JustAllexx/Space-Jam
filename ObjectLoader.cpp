@@ -93,3 +93,12 @@ GLuint ObjectLoader::loadTexture(const char* path)
 	glGenerateMipmap(GL_TEXTURE_2D);
 	return retTexture;
 }
+
+Texture::Texture(const char* filepath) {
+	STBIImage image(filepath);
+	glGenTextures(1, &textureID);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getImageWidth(), image.getImageHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getData());
+	glGenerateMipmap(GL_TEXTURE_2D);
+}

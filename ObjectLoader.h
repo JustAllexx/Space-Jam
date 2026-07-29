@@ -45,3 +45,15 @@ public:
     int getChannels() const noexcept {return numChannels;}
     stbi_uc* getData() const noexcept {return data;}
 };
+
+class Texture {
+private:
+    GLuint textureID{0};
+public:
+    Texture(const char* filepath);
+    ~Texture();
+    Texture(const Texture&) = delete;
+    Texture& operator=(const Texture&) = delete;
+
+    GLuint getTextureID() const noexcept {return textureID;}
+};
