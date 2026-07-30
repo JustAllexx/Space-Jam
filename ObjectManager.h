@@ -8,6 +8,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <GL/glew.h>
 #include <GL/glut.h>
+#include <optional>
 #include <vector>
 #include <string>
 #include <map>
@@ -32,20 +33,20 @@ public:
 	glm::vec3 pos, scale;
 	glm::vec3 rotation;
 	//Constructor Function
-	DrawObject(const char* modelPath, const char* texturePath, bool bHasCollision, float inOpacity, float inAmbient, bool hasBloom,
+	DrawObject(const char* modelPath, const char* texturePath, float inOpacity, float inAmbient, bool hasBloom,
 		glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation);
-	//Overridable draw function
-	virtual void Draw();
+
 	//set To true when the object should be deleted
 	bool bToDelete = false;
-	CollisionBox noteCollisionBox;
-	bool hasCollision;
+	std::optional<CollisionBox> noteCollisionBox;
 
 	//Setter functions for private variables
 	void setRotationalVelocity(glm::vec3 newRotationalVelocity);
 	void setNewVelocity(glm::vec3 newVelocity);
 	void setNewAcceleration(glm::vec3 newAcceleration);
-
+	
+	//Overridable draw and update functions
+	virtual void Draw();
 	virtual void Update();
 };
 

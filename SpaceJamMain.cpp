@@ -559,8 +559,8 @@ int main(int argc, char** argv) {
 	GUIManager::showMainMenu();
 
 	//Adds new objects to the scene to be rendered
-	DrawObject* background = new DrawObject("Models/nightSkyObj.obj", "Textures/nightsky.png", false, 1.f, 1.f, false, glm::vec3(0.f, 4.f, 0.0f), glm::vec3(4.f, 4.f, 4.f), glm::vec3(0.f, rotpi, 0.f));
-	DrawObject* MoonObj = new DrawObject("Models/moon.obj", "Textures/moon.png", false, 1.f, 1.f, true, glm::vec3(50.f, 50.f, -100.f), glm::vec3(30.f, 30.f, 30.f), glm::vec3(0.0f, 0.0f, 0.0f));
+	DrawObject* background = new DrawObject("Models/nightSkyObj.obj", "Textures/nightsky.png", 1.f, 1.f, false, glm::vec3(0.f, 4.f, 0.0f), glm::vec3(4.f, 4.f, 4.f), glm::vec3(0.f, rotpi, 0.f));
+	DrawObject* MoonObj = new DrawObject("Models/moon.obj", "Textures/moon.png", 1.f, 1.f, true, glm::vec3(50.f, 50.f, -100.f), glm::vec3(30.f, 30.f, 30.f), glm::vec3(0.0f, 0.0f, 0.0f));
 	MoonObj->setRotationalVelocity(glm::vec3(0.01f, 0.1f, 0.0f));
 	background->setRotationalVelocity(glm::vec3(0.f, 0.01f, 0.f));
 	

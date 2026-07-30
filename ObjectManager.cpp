@@ -19,12 +19,10 @@ const char* noteModelLocation = "Models/newRedCube.obj";
 const char* noteTextureLocation = "Textures/newRedNote.png";
 
 //The construction function for the DrawObject class
-DrawObject::DrawObject(const char* modelPath, const char* texturePath, bool bHasCollision, float inOpacity, float inAmbient, bool hasBloom,
+DrawObject::DrawObject(const char* modelPath, const char* texturePath, float inOpacity, float inAmbient, bool hasBloom,
 	glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation) : texture(texturePath), mesh(modelPath),
 	opacity(inOpacity), ambient(inAmbient), bloom(hasBloom), 
-	pos(inPos), scale(inScale), rotation(inRotation),
-	hasCollision(bHasCollision)
-{
+	pos(inPos), scale(inScale), rotation(inRotation) {
 	//set Default properties
 	objVelocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	objAcceleration = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -131,11 +129,10 @@ void ObjectManager::Init(GLuint program)
 
 //Note Target Constructor Function
 NoteTarget::NoteTarget(float xPos, float noteKey, float noteTime, float noteVelocity, AudioManager* inAudioManager, PlayerController* playerObject) 
-	: DrawObject(noteModelLocation, noteTextureLocation, true, 1.f, 0.4f, true, glm::vec3(xPos, noteKey, (noteTime * -noteVelocity)),
+	: DrawObject(noteModelLocation, noteTextureLocation, 1.f, 0.4f, true, glm::vec3(xPos, noteKey, (noteTime * -noteVelocity)),
 	 glm::vec3(2.f, 2.f, 2.f), glm::vec3(0.f, 0.f, 0.f))
 	{
 	//DrawObject inherited properties defined for this class
-	hasCollision = true;
 	time = noteTime;
 	pos = glm::vec3(xPos, noteKey, (noteTime * -noteVelocity));
 	scale = glm::vec3(2.f, 2.f, 2.f);
@@ -181,10 +178,9 @@ void NoteTarget::Update()
 
 //Constructor for the note highlight
 NoteHighlight::NoteHighlight(float inNoteTime, DrawObject* inParentNote, AudioManager* audioIn) :
-	DrawObject("Models/noteOutline.obj", "Textures/green.png", false, 0.f, 1.f, false, glm::vec3(inParentNote->pos.x, inParentNote->pos.y, 0.f),
+	DrawObject("Models/noteOutline.obj", "Textures/green.png", 0.f, 1.f, false, glm::vec3(inParentNote->pos.x, inParentNote->pos.y, 0.f),
 	glm::vec3(2.f, 2.f, 2.f), glm::vec3(0.f, 1.570796327f, 0.f))
 {
-	hasCollision = false;
 	DrawObject* parentNote = inParentNote;
 	pos = glm::vec3(parentNote->pos.x, parentNote->pos.y, 0.f);
 	scale = glm::vec3(2.f, 2.f, 2.f);
@@ -215,8 +211,8 @@ const char* texturePath;
 GLuint planeOpacityPos, planeAmbientPos;
 
 //Default Player Constructor Function
-PlayerController::PlayerController() : DrawObject("Models/planeUV2.obj", "Textures/goldenPlane2.png", true, 1.f, 0.7f, false,
-	glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.f, 0.f, 0.f))
+PlayerController::PlayerController() : DrawObject("Models/planeUV2.obj", "Textures/goldenPlane2.png", 1.f, 0.7f,
+	false, glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.f, 0.f, 0.f))
 {
 	//Constants about player movement
 	velocityX = 20.f;
