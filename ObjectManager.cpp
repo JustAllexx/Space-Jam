@@ -138,11 +138,6 @@ NoteTarget::NoteTarget(float xPos, float noteKey, float noteTime, float noteVelo
 	bloomAmmount = 2.5f;
 	//How big object's collision should be
 	collisionBox.emplace(1.f, 1.f, 1.f);
-	velocity = noteVelocity;
-
-	//Calls for the creation of a NoteHighlight, a note highlight outlines on the screen where a note is going to be
-	//NoteHighlight* highlight = new NoteHighlight(noteTime, this, inAudioManager);
-	//ObjectManager::addObjectToQueue(highlight);
 }
 
 //Updates the note to move closer to the player as the song progresses
@@ -224,14 +219,8 @@ void PlayerController::Update() {
 }
 
 //Setup function needed because some OpenGL calls can't be made until glut has been initialised and the program shaders have been compiled
-void PlayerController::Setup(const char* tPath, GLuint planeShaderProgram)
+void PlayerController::Setup(GLuint planeShaderProgram)
 {
-	scale = glm::vec3(1.f, 1.f, 1.f);
-	opacity = 1.f;
-	ambient = 0.7f;
-
-	texturePath = tPath;
-
 	planeOpacityPos = glGetUniformLocation(planeShaderProgram, "opacity");
 	planeAmbientPos = glGetUniformLocation(planeShaderProgram, "ambient");
 

@@ -538,7 +538,7 @@ int main(int argc, char** argv) {
 	//Class initialisation functions
 	// Again, TODO: Replace this optional, it is only temporary
 	player.emplace();
-	player->Setup("Textures/goldenPlane2.png", shaderProgram);
+	player->Setup(shaderProgram);
 	ObjectManager::addObjectToQueue(&player.value());
 
 	ObjectManager::Init(shaderProgram);
