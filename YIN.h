@@ -1,7 +1,7 @@
+#pragma once
+
 #include <valarray>
 #include <complex>
-
-#pragma once
 
 //The YIN Algorithm is the algorithm that determines the fundamental frequency of the capture buffer
 //The capture buffer is converted into an array of a size of a power of 2 (of type complex<double>)

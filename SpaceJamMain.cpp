@@ -1,5 +1,10 @@
 #include "SpaceJamMain.h"
 #include "ObjectManager.h"
+#include "AudioManager.h"
+#include "DrawObjects/PlayerController.h"
+#include "GUIManager.h"
+#include "GameManager.h"
+
 #include <cmath>
 #include <optional>
 #include <valarray>

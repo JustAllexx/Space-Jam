@@ -1,4 +1,4 @@
-#include "AudioManager.h"
+#pragma once
 
 #include <string>
 #include <glm/glm.hpp>
@@ -12,7 +12,6 @@
 
 #include <stb/stb_image.h>
 
-#pragma once
 //The GUI Object is the parent class of all GUI Elements
 //Contains the overridable function render, this is what is called by the GUIManager when rendering a frame
 //Most GUI elements will override this element, so by default it returns nothing

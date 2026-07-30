@@ -2,20 +2,23 @@
 //This is in every header file
 #pragma once
 
-#include "GameManager.h"
-
 #include <iostream>
 #include <string>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <GL/glew.h>
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <map>
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <vector>
 #include <string>
 #include <stb/stb_image.h>
+
+//Forward Delcare GUI objects
+class buttonGUI;
 
 
 std::string readShaderFile(std::string filename);

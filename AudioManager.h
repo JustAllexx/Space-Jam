@@ -1,3 +1,5 @@
+#pragma once
+
 #include <AL/alc.h>
 #include <AL/al.h>
 #include <sndfile.h>
@@ -7,7 +9,6 @@
 #include <string_view>
 #include <unordered_map>
 
-#pragma once
 class AudioManager
 {
 private:

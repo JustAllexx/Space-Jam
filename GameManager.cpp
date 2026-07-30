@@ -1,5 +1,11 @@
 #include "GameManager.h"
+#include "GUIManager.h"
 #include "ObjectManager.h"
+#include "DrawObjects/PlayerController.h"
+#include "DrawObjects/NoteTarget.h"
+#include "DrawObjects/NoteHighlight.h"
+
+#include <fstream>
 
 //Class variables defined out of scope
 AudioManager GameManager::songSource;
