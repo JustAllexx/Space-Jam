@@ -72,7 +72,7 @@ public:
 	void Update();
 	void controlUpdate(std::map<unsigned char, bool> keyMap, float dt);
 	//The player's collision
-	CollisionBox playerCollision;
+	//CollisionBox playerCollision;
 
 	int playerScore; //Score
 	std::string* playerScoreText;

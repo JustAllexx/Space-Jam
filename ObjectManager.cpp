@@ -160,7 +160,7 @@ void NoteTarget::Update()
 
 	glm::vec3 planePos = glm::vec3(currentPlayer->posX, currentPlayer->posY, 0);
 	//Is the player object is colliding with the player, the score should be incremented and the note should be deleted
-	if (CollisionBox::checkCollision(pos, colBox, planePos, currentPlayer->playerCollision)) {
+	if (CollisionBox::checkCollision(pos, colBox, planePos, currentPlayer->collisionBox.value())) {
 		if (!bToDelete) {
 			currentPlayer->playerScore += 100; //Increase score by 100
 			*currentPlayer->playerScoreText = std::to_string(currentPlayer->playerScore);
@@ -241,7 +241,8 @@ void PlayerController::Setup(const char* tPath, GLuint planeShaderProgram)
 	planeOpacityPos = glGetUniformLocation(planeShaderProgram, "opacity");
 	planeAmbientPos = glGetUniformLocation(planeShaderProgram, "ambient");
 
-	playerCollision = CollisionBox(3.f, 1.5f, 6.0f);
+	collisionBox.emplace(3.f, 1.5f, 6.0f);
+	//playerCollision = CollisionBox(3.f, 1.5f, 6.0f);
 }
 
 //Function is called every frame
