@@ -1,5 +1,8 @@
 #include "ObjectManager.h"
 #include "ObjectLoader.h"
+#include <glm/ext/matrix_float4x4.hpp>
+#include <glm/fwd.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 std::vector<DrawObject*> objRenderQueue;
 glm::mat4 objModelview;
@@ -92,16 +95,16 @@ void ObjectManager::renderQueue(std::vector<DrawObject*> &rendQueue)
 		//Update the object
 		renderObj->Update();
 		//Calculate the modelview
-		glm::mat4 translateMatrix = MatrixFunctions::translate(renderObj->pos);
-		glm::mat4 scaleMatrix = MatrixFunctions::scale(renderObj->scale);
+		glm::mat4 model(1.f);
 
-		glm::vec3 vec3rot = renderObj->rotation;
+		model = glm::translate(model, renderObj->pos);
+		model =  glm::scale(model, renderObj->scale);
+		model = glm::rotate(model, renderObj->rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, renderObj->rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, renderObj->rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
 
-		glm::mat4 rotMatrix = MatrixFunctions::rotateZ(vec3rot.z) * MatrixFunctions::rotateY(vec3rot.y) * MatrixFunctions::rotateX(vec3rot.x);
-
-		glm::mat4 transformMat = translateMatrix * rotMatrix * scaleMatrix;
 		//Update the vertex and fragment shader
-		glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(objModelview * transformMat)[0][0]);
+		glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(objModelview * model)[0][0]);
 		//Call that object's draw function
 		renderObj->Draw();
 	}
@@ -267,91 +270,4 @@ void PlayerController::controlUpdate(std::map<unsigned char, bool> keyMap, float
 			posY -= velocityY * dt;
 		}
 	}
-}
-
-//Matrix Functions
-glm::mat4 MatrixFunctions::translate(glm::vec3 position) {
-	glm::mat4 transMat =  glm::mat4(
-		1, 0, 0, position.x,
-		0, 1, 0, position.y,
-		0, 0, 1, position.z,
-		0, 0, 0, 1
-	);
-	
-	//The way GLM defines it's parameter order when called mat4 means every matrix has to be transposed before it can be used
-	return glm::transpose(transMat);
-}
-
-glm::mat4 MatrixFunctions::scale(glm::vec3 scale) {
-	glm::mat4 scaleMat = glm::mat4(
-		scale.x, 0, 0, 0,
-		0, scale.y, 0, 0,
-		0, 0, scale.z, 0,
-		0, 0, 0, 1
-	);
-	return glm::transpose(scaleMat);
-}
-
-glm::mat4 MatrixFunctions::rotate(glm::quat rot) {
-	
-	float a = rot.x;
-	float b = rot.y;
-	float c = rot.z;
-	float d = rot.w;
-	float a2 = a * a; float b2 = b * b; float c2 = c * c; float d2 = d * d;
-	
-	glm::mat4 rotMat = glm::mat4(
-		(2.f * (a2 + b2)) - 1.f, 2.f * ((b * c) - (a * d)), 2.f * ((b * d) + (a * c)), 0,
-
-		2.f * ((b * c) + (a * d)), (2.f * (a2 + c2)) - 1.f, 2.f * ((c * d) - (a * b)), 0,
-
-		2.f * ((b * d) - (a * c)), 2.f * ((c * d) + (a * b)), (2.f * (a2 + d2)) - 1.f, 0,
-
-		0, 0, 0, 1
-	);
-
-	//return rotMat;
-	return glm::transpose(rotMat);
-}
-
-glm::mat4 MatrixFunctions::rotateX(float angle)
-{
-	float sinPheta = sinf(angle);
-	float cosPheta = cosf(angle);
-
-	glm::mat4 rot = glm::mat4(
-		1, 0, 0, 0,
-		0, cosPheta, sinPheta, 0,
-		0, -sinPheta, cosPheta, 0,
-		0, 0, 0, 1
-	);
-	return glm::transpose(rot);
-}
-
-glm::mat4 MatrixFunctions::rotateY(float angle)
-{
-	float sinPheta = sinf(angle);
-	float cosPheta = cosf(angle);
-
-	glm::mat4 rot = glm::mat4(
-		cosPheta, 0, sinPheta, 0,
-		0, 1, 0, 0,
-		-sinPheta, 0, cosPheta, 0,
-		0, 0, 0, 1
-	);
-	return glm::transpose(rot);
-}
-
-glm::mat4 MatrixFunctions::rotateZ(float angle)
-{
-	float sinPheta = sinf(angle);
-	float cosPheta = cosf(angle);
-
-	glm::mat4 rot = glm::mat4(
-		cosPheta, sinPheta, 0, 0,
-		-sinPheta, cosPheta, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1
-	);
-	return glm::transpose(rot);
 }

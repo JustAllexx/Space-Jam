@@ -107,18 +107,3 @@ public:
 	NoteHighlight(float inNoteTime, DrawObject* inParentNote, AudioManager* audioIn);
 	void Update();
 };
-
-
-//Model Manipulation functions
-//These are used to update the modelview on a draw call
-class MatrixFunctions {
-public:
-	static glm::mat4 translate(glm::vec3 position);
-	static glm::mat4 scale(glm::vec3 scale);
-	static glm::mat4 rotate(glm::quat rot);
-
-	static glm::mat4 rotateX(float angle);
-	static glm::mat4 rotateY(float angle);
-	static glm::mat4 rotateZ(float angle);
-};
-
