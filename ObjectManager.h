@@ -45,6 +45,12 @@ public:
 	void setNewVelocity(glm::vec3 newVelocity);
 	void setNewAcceleration(glm::vec3 newAcceleration);
 	
+	//Getters for fragment shader
+	float getOpacity() const noexcept {return opacity;}
+	float getAmbient() const noexcept {return ambient;}
+	bool isBloom() const noexcept {return bloom;}
+	float getBloomAmmount() const noexcept {return bloomAmmount;}
+	
 	//Overridable draw and update functions
 	virtual void Draw();
 	virtual void Update();
@@ -71,8 +77,6 @@ public:
 	void Setup(const char* tPath, GLuint planeShaderProgram);
 	void Update();
 	void controlUpdate(std::map<unsigned char, bool> keyMap, float dt);
-	//The player's collision
-	//CollisionBox playerCollision;
 
 	int playerScore; //Score
 	std::string* playerScoreText;

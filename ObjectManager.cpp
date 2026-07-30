@@ -34,12 +34,6 @@ DrawObject::DrawObject(const char* modelPath, const char* texturePath, float inO
 //The Default Draw Function
 void DrawObject::Draw()
 {
-	//Update the fragment shader with these details
-	glUniform1f(opacityPos, opacity);
-	glUniform1f(ambientPos, ambient);
-	glUniform1i(bloomPos, bloom);
-	glUniform1f(brightnessPos, bloomAmmount);
-
 	//Binds the texture for the object into OpenGL so it can be used by the texture sampler in the fragment shader
 	glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
 
@@ -103,6 +97,13 @@ void ObjectManager::renderQueue(std::vector<DrawObject*> &rendQueue)
 
 		//Update the vertex and fragment shader
 		glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(objModelview * model)[0][0]);
+		
+		//Update the fragment shader with these details
+		glUniform1f(opacityPos, renderObj->getOpacity());
+		glUniform1f(ambientPos, renderObj->getAmbient());
+		glUniform1i(bloomPos, renderObj->isBloom());
+		glUniform1f(brightnessPos, renderObj->getBloomAmmount());
+		
 		//Call that object's draw function
 		renderObj->Draw();
 	}
@@ -242,7 +243,6 @@ void PlayerController::Setup(const char* tPath, GLuint planeShaderProgram)
 	planeAmbientPos = glGetUniformLocation(planeShaderProgram, "ambient");
 
 	collisionBox.emplace(3.f, 1.5f, 6.0f);
-	//playerCollision = CollisionBox(3.f, 1.5f, 6.0f);
 }
 
 //Function is called every frame
