@@ -1,4 +1,5 @@
 #include "GameManager.h"
+#include "ObjectManager.h"
 
 //Class variables defined out of scope
 AudioManager GameManager::songSource;
@@ -65,7 +66,9 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath, 
 		float height = AudioManager::getHeightOfNote(noteIndex, fovy, dist);
 
 		DrawObject* noteObject = new NoteTarget(0.f, height, time, 40.f, &songSource, player);
+		DrawObject* noteHighlight = new NoteHighlight(time, noteObject, &songSource);
 		ObjectManager::addObjectToQueue(noteObject);
+		ObjectManager::addObjectToQueue(noteHighlight);
 	}
 	//Finally plays the song
 	songSource.playAudioBuffer(noteSongPath);

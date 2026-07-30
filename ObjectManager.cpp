@@ -68,7 +68,7 @@ void ObjectManager::addObjectToQueue(DrawObject* obj)
 
 //Default renderQueue function called outside the class, updates the change in time 
 void ObjectManager::renderQueue() {
-	glUniform1i(bloomPos, false); //Bloom should be false by defauly
+	glUniform1i(bloomPos, false); //Bloom should be false by default
 	newTime = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = static_cast<float>(newTime - oldTIme) / 1000.f;
 	oldTIme = newTime;
@@ -130,26 +130,19 @@ void ObjectManager::Init(GLuint program)
 
 //Note Target Constructor Function
 NoteTarget::NoteTarget(float xPos, float noteKey, float noteTime, float noteVelocity, AudioManager* inAudioManager, PlayerController* playerObject) 
-	: DrawObject(noteModelLocation, noteTextureLocation, 1.f, 0.4f, true, glm::vec3(xPos, noteKey, (noteTime * -noteVelocity)),
-	 glm::vec3(2.f, 2.f, 2.f), glm::vec3(0.f, 0.f, 0.f))
+	: DrawObject(noteModelLocation, noteTextureLocation, 1.f, 0.4f,
+	 true, glm::vec3(xPos, noteKey, (noteTime * -noteVelocity)),
+	 glm::vec3(2.f, 2.f, 2.f), glm::vec3(0.f, 0.f, 0.f)),
+	 objAudioManager(inAudioManager), currentPlayer(playerObject), time(noteTime), velocity(noteVelocity)
 	{
-	//DrawObject inherited properties defined for this class
-	time = noteTime;
-	pos = glm::vec3(xPos, noteKey, (noteTime * -noteVelocity));
-	scale = glm::vec3(2.f, 2.f, 2.f);
-	rotation = glm::vec3(0.f, 0.f, 0.f);
-	bloom = true;
-	objAudioManager = inAudioManager;
-	currentPlayer = playerObject;
-	ambient = 0.4f;
 	bloomAmmount = 2.5f;
 	//How big object's collision should be
-	collisionBox = CollisionBox(1.f, 1.f, 1.f);
+	collisionBox.emplace(1.f, 1.f, 1.f);
 	velocity = noteVelocity;
 
 	//Calls for the creation of a NoteHighlight, a note highlight outlines on the screen where a note is going to be
-	NoteHighlight* highlight = new NoteHighlight(noteTime, this, inAudioManager);
-	ObjectManager::addObjectToQueue(highlight);
+	//NoteHighlight* highlight = new NoteHighlight(noteTime, this, inAudioManager);
+	//ObjectManager::addObjectToQueue(highlight);
 }
 
 //Updates the note to move closer to the player as the song progresses
