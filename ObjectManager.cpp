@@ -27,8 +27,6 @@ DrawObject::DrawObject(const char* modelPath, const char* texturePath, float inO
 	objVelocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	objAcceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 	objRotationalVelocity = glm::vec3(0.0f, 0.f, 0.f);
-
-	//objRenderQueue.push_back(this);
 }
 
 //The Default Draw Function
@@ -194,9 +192,6 @@ void NoteHighlight::Update()
 		bToDelete = true;
 	}
 }
-
-const char* filePath = "Models/plane.obj";
-const char* texturePath;
 
 //Default Player Constructor Function
 PlayerController::PlayerController() : DrawObject("Models/planeUV2.obj", "Textures/goldenPlane2.png", 1.f, 0.7f,
