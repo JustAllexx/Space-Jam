@@ -197,7 +197,6 @@ void NoteHighlight::Update()
 
 const char* filePath = "Models/plane.obj";
 const char* texturePath;
-GLuint planeOpacityPos, planeAmbientPos;
 
 //Default Player Constructor Function
 PlayerController::PlayerController() : DrawObject("Models/planeUV2.obj", "Textures/goldenPlane2.png", 1.f, 0.7f,
@@ -219,11 +218,8 @@ void PlayerController::Update() {
 }
 
 //Setup function needed because some OpenGL calls can't be made until glut has been initialised and the program shaders have been compiled
-void PlayerController::Setup(GLuint planeShaderProgram)
+void PlayerController::Setup()
 {
-	planeOpacityPos = glGetUniformLocation(planeShaderProgram, "opacity");
-	planeAmbientPos = glGetUniformLocation(planeShaderProgram, "ambient");
-
 	collisionBox.emplace(3.f, 1.5f, 6.0f);
 }
 

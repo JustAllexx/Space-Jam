@@ -538,7 +538,7 @@ int main(int argc, char** argv) {
 	//Class initialisation functions
 	// Again, TODO: Replace this optional, it is only temporary
 	player.emplace();
-	player->Setup(shaderProgram);
+	player->Setup();
 	ObjectManager::addObjectToQueue(&player.value());
 
 	ObjectManager::Init(shaderProgram);

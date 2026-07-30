@@ -74,7 +74,7 @@ class PlayerController : public DrawObject
 public:
 	PlayerController();
 	float posX, posY, targetY, velocityY, velocityX;
-	void Setup(GLuint planeShaderProgram);
+	void Setup();
 	void Update();
 	void controlUpdate(std::map<unsigned char, bool> keyMap, float dt);
 
