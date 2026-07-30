@@ -38,7 +38,7 @@ public:
 
 	//set To true when the object should be deleted
 	bool bToDelete = false;
-	std::optional<CollisionBox> noteCollisionBox;
+	std::optional<CollisionBox> collisionBox;
 
 	//Setter functions for private variables
 	void setRotationalVelocity(glm::vec3 newRotationalVelocity);

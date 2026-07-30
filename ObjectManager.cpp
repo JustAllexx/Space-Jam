@@ -143,7 +143,7 @@ NoteTarget::NoteTarget(float xPos, float noteKey, float noteTime, float noteVelo
 	ambient = 0.4f;
 	bloomAmmount = 2.5f;
 	//How big object's collision should be
-	noteCollisionBox = CollisionBox(1.f, 1.f, 1.f);
+	collisionBox = CollisionBox(1.f, 1.f, 1.f);
 	velocity = noteVelocity;
 
 	//Calls for the creation of a NoteHighlight, a note highlight outlines on the screen where a note is going to be
