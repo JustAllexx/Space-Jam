@@ -148,7 +148,6 @@ NoteTarget::NoteTarget(float xPos, float noteKey, float noteTime, float noteVelo
 
 	//Calls for the creation of a NoteHighlight, a note highlight outlines on the screen where a note is going to be
 	new NoteHighlight(noteTime, this, inAudioManager);
-	objRenderQueue.push_back(this);
 }
 
 //Updates the note to move closer to the player as the song progresses
@@ -192,9 +191,6 @@ NoteHighlight::NoteHighlight(float inNoteTime, DrawObject* inParentNote, AudioMa
 	highlightTime = 1.f;
 	ambient = 1.f;
 	noteTime = inNoteTime;
-
-	objRenderQueue.push_back(this);
-
 }
 
 //Updates similarly to the noteObject update function, based on time
@@ -246,7 +242,6 @@ void PlayerController::Setup(const char* tPath, GLuint planeShaderProgram)
 	planeAmbientPos = glGetUniformLocation(planeShaderProgram, "ambient");
 
 	playerCollision = CollisionBox(3.f, 1.5f, 6.0f);
-	ObjectManager::addObjectToQueue(this);
 }
 
 //Function is called every frame
