@@ -6,7 +6,7 @@ SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 ADD_EXECUTABLE(
-    SpaceJam SpaceJamMain.cpp AudioManager.cpp GameManager.cpp GUIManager.cpp ObjectLoader.cpp ObjectManager.cpp YIN.cpp
+    SpaceJam SpaceJamMain.cpp AudioManager.cpp GameManager.cpp GUIManager.cpp ObjectLoader.cpp ObjectManager.cpp YIN.cpp Physics/CollisionBox.cpp
 )
 
 SET(JSONCPP_WITH_TESTS OFF CACHE BOOL "" FORCE)

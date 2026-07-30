@@ -1,5 +1,6 @@
 #include "ObjectLoader.h"
 #include "AudioManager.h"
+#include "Physics/CollisionBox.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -11,24 +12,6 @@
 #include <string>
 #include <map>
 
-//The class that contains information about collisions and can check if overlapping with another collision box
-class CollisionBox
-{
-private:
-public:
-	float x, y, z;
-	static bool checkCollision(glm::vec3 pos1, CollisionBox box1, glm::vec3 pos2, CollisionBox box2);
-
-	CollisionBox(float inputX, float inputY, float inputZ);
-	CollisionBox();
-
-	//Used for rendering A collision box in testing, no longer needed
-	GLuint vertBuffer, uvBuffer, VertexArrayID, texture;
-	std::vector<glm::vec3> boxVert;
-	std::vector<glm::vec2> boxVertUv;
-	std::vector<glm::vec3> boxVertNorm;
-};
-
 //Class containing the base class DrawObject
 class DrawObject {
 private:
@@ -39,8 +22,7 @@ protected:
 	//Information needed for rendering the geometry of a Rendered Object, it's texture data, and geometry data
 	Texture texture;
 	Mesh mesh;
-	//TODO: Move all this data inside a Mesh
-	//GLuint vertexBuffer, uvBuffer, VertexArrayID, normalBuffer;
+
 	//Default values for the fragment shader
 	float opacity = 1.f;
 	float ambient = 0.0f;
@@ -52,7 +34,6 @@ public:
 	//Constructor Function
 	DrawObject(const char* modelPath, const char* texturePath, bool bHasCollision, float inOpacity, float inAmbient, bool hasBloom,
 		glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation);
-	//Constructor should have default implementation
 	//Overridable draw function
 	virtual void Draw();
 	//set To true when the object should be deleted
