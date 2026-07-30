@@ -27,7 +27,7 @@ DrawObject::DrawObject(const char* modelPath, const char* texturePath, bool bHas
 	objAcceleration = glm::vec3(0.0f, 0.0f, 0.0f);
 	objRotationalVelocity = glm::vec3(0.0f, 0.f, 0.f);
 
-	objRenderQueue.push_back(this);
+	//objRenderQueue.push_back(this);
 }
 
 //The Default Draw Function
@@ -147,7 +147,8 @@ NoteTarget::NoteTarget(float xPos, float noteKey, float noteTime, float noteVelo
 	velocity = noteVelocity;
 
 	//Calls for the creation of a NoteHighlight, a note highlight outlines on the screen where a note is going to be
-	new NoteHighlight(noteTime, this, inAudioManager);
+	NoteHighlight* highlight = new NoteHighlight(noteTime, this, inAudioManager);
+	ObjectManager::addObjectToQueue(highlight);
 }
 
 //Updates the note to move closer to the player as the song progresses

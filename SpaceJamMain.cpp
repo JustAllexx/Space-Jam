@@ -539,6 +539,8 @@ int main(int argc, char** argv) {
 	// Again, TODO: Replace this optional, it is only temporary
 	player.emplace();
 	player->Setup("Textures/goldenPlane2.png", shaderProgram);
+	ObjectManager::addObjectToQueue(&player.value());
+
 	ObjectManager::Init(shaderProgram);
 	GUIManager::Setup(textShaderProgram);
 	OptionsManager::Initialise();
@@ -562,6 +564,10 @@ int main(int argc, char** argv) {
 	MoonObj->setRotationalVelocity(glm::vec3(0.01f, 0.1f, 0.0f));
 	background->setRotationalVelocity(glm::vec3(0.f, 0.01f, 0.f));
 	
+	//Add to render queue
+	ObjectManager::addObjectToQueue(background);
+	ObjectManager::addObjectToQueue(MoonObj);
+
 	//Start capturing audio for pitch calculations
 	audioManager.StartCapture();
 
