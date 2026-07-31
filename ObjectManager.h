@@ -20,12 +20,17 @@ private:
 	std::vector<glm::mat4> modelViewStack;
 	glm::mat4 modelView;
 	GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos;
+	//For calculating deltaTime
+	int lastFrameTime{0};
+	int currentFrameTime{0};
+	float deltaTime{0.f};
 public:
-	ObjectManager();
+	ObjectManager(GLuint shaderProgram);
 
 	//Add objects to the GUIManager Queue
 	void addObjectToQueue(DrawObject* obj);
 	void renderQueue();
 	void renderQueue(std::vector<DrawObject*> &rendQueue);
-	void Init(GLuint program);
+
+	float getDeltaTime() const noexcept {return deltaTime;}
 };

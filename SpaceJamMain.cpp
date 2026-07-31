@@ -543,8 +543,7 @@ int main(int argc, char** argv) {
 	createPrograms();
 
 	//Class initialisation functions
-	objectManager.emplace();
-	objectManager->Init(shaderProgram);
+	objectManager.emplace(shaderProgram);
 	// Again, TODO: Replace this optional, it is only temporary
 	player.emplace();
 	player->Setup();

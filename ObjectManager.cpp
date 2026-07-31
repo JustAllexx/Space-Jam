@@ -5,14 +5,16 @@
 #include <glm/fwd.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-//glm::mat4 objModelview;
-//GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos;
+ObjectManager::ObjectManager(GLuint shaderProgram) {
+	objModelviewPos = glGetUniformLocation(shaderProgram, "modelview");
+	modelView = glm::lookAt(glm::vec3(0, 0, 60.f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(modelView)[0][0]);
 
-int newTime = 0;
-int oldTIme = 0;
-float deltaTime = 0.f;
-
-ObjectManager::ObjectManager() {};
+	opacityPos = glGetUniformLocation(shaderProgram, "opacity"); //How "see-through" should an object be
+	ambientPos = glGetUniformLocation(shaderProgram, "ambient"); //Minimum brightness of an object
+	bloomPos = glGetUniformLocation(shaderProgram, "bBloom"); //Should the object have bloom
+	brightnessPos = glGetUniformLocation(shaderProgram, "brightness");
+};
 
 //Adds DrawObject to the render queue
 void ObjectManager::addObjectToQueue(DrawObject* obj)
@@ -23,9 +25,9 @@ void ObjectManager::addObjectToQueue(DrawObject* obj)
 //Default renderQueue function called outside the class, updates the change in time 
 void ObjectManager::renderQueue() {
 	glUniform1i(bloomPos, false); //Bloom should be false by default
-	newTime = glutGet(GLUT_ELAPSED_TIME);
-	deltaTime = static_cast<float>(newTime - oldTIme) / 1000.f;
-	oldTIme = newTime;
+	currentFrameTime = glutGet(GLUT_ELAPSED_TIME);
+	deltaTime = static_cast<float>(currentFrameTime - lastFrameTime) / 1000.f;
+	lastFrameTime = currentFrameTime;
 
 	renderQueue(objRenderQueue);
 }
@@ -66,17 +68,4 @@ void ObjectManager::renderQueue(std::vector<DrawObject*> &rendQueue)
 			rendQueue.erase(rendQueue.begin() + static_cast<signed>(delCount));
 		}
 	}
-}
-
-void ObjectManager::Init(GLuint program)
-{
-	//Retrieves the locations of uniform variables inside the shader
-	objModelviewPos = glGetUniformLocation(program, "modelview");
-	modelView = glm::lookAt(glm::vec3(0, 0, 60.f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-	glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(modelView)[0][0]);
-
-	opacityPos = glGetUniformLocation(program, "opacity"); //How "see-through" should an object be
-	ambientPos = glGetUniformLocation(program, "ambient"); //Minimum brightness of an object
-	bloomPos = glGetUniformLocation(program, "bBloom"); //Should the object have bloom
-	brightnessPos = glGetUniformLocation(program, "brightness");
 }
