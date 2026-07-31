@@ -68,7 +68,7 @@ void SceneManager::renderQueue(std::vector<DrawObject*> &rendQueue)
 	rendQueue.erase(
     std::remove_if(rendQueue.begin(), rendQueue.end(),
         [](const auto& obj) {
-            return obj->bToDelete;
+            return obj->IsDestroy();
         }),
     rendQueue.end());
 }
