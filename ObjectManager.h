@@ -16,6 +16,7 @@ class ObjectManager
 {
 private:
 	std::vector<DrawObject*> objRenderQueue;
+	std::vector<glm::mat4> modelViewStack;
 public:
 	ObjectManager();
 

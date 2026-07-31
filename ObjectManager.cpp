@@ -5,12 +5,9 @@
 #include <glm/fwd.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-//std::vector<DrawObject*> objRenderQueue;
 glm::mat4 objModelview;
-std::vector <glm::mat4> objModelviewStack;
 GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos;
 
-float objRot;
 int newTime = 0;
 int oldTIme = 0;
 float deltaTime = 0.f;
@@ -30,7 +27,6 @@ void ObjectManager::renderQueue() {
 	deltaTime = static_cast<float>(newTime - oldTIme) / 1000.f;
 	oldTIme = newTime;
 
-	objRot += 0.01f;
 	renderQueue(objRenderQueue);
 }
 
