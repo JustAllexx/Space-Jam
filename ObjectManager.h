@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 //#include <GL/glut.h>
+#include <glm/ext/matrix_float4x4.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -17,6 +18,7 @@ class ObjectManager
 private:
 	std::vector<DrawObject*> objRenderQueue;
 	std::vector<glm::mat4> modelViewStack;
+	glm::mat4 modelView;
 public:
 	ObjectManager();
 

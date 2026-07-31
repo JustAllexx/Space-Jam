@@ -5,7 +5,7 @@
 #include <glm/fwd.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-glm::mat4 objModelview;
+//glm::mat4 objModelview;
 GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos;
 
 int newTime = 0;
@@ -49,7 +49,7 @@ void ObjectManager::renderQueue(std::vector<DrawObject*> &rendQueue)
 		model = glm::rotate(model, renderObj->rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
 
 		//Update the vertex and fragment shader
-		glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(objModelview * model)[0][0]);
+		glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(modelView * model)[0][0]);
 		
 		//Update the fragment shader with these details
 		glUniform1f(opacityPos, renderObj->getOpacity());
@@ -72,8 +72,8 @@ void ObjectManager::Init(GLuint program)
 {
 	//Retrieves the locations of uniform variables inside the shader
 	objModelviewPos = glGetUniformLocation(program, "modelview");
-	objModelview = glm::lookAt(glm::vec3(0, 0, 60.f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-	glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(objModelview)[0][0]);
+	modelView = glm::lookAt(glm::vec3(0, 0, 60.f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(modelView)[0][0]);
 
 	opacityPos = glGetUniformLocation(program, "opacity"); //How "see-through" should an object be
 	ambientPos = glGetUniformLocation(program, "ambient"); //Minimum brightness of an object
