@@ -19,6 +19,7 @@ private:
 	std::vector<DrawObject*> objRenderQueue;
 	std::vector<glm::mat4> modelViewStack;
 	glm::mat4 modelView;
+	GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos;
 public:
 	ObjectManager();
 

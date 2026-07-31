@@ -6,7 +6,7 @@
 #include <glm/gtx/quaternion.hpp>
 
 //glm::mat4 objModelview;
-GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos;
+//GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos;
 
 int newTime = 0;
 int oldTIme = 0;
