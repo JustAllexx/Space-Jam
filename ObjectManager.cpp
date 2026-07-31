@@ -7,7 +7,6 @@
 
 //std::vector<DrawObject*> objRenderQueue;
 glm::mat4 objModelview;
-glm::mat4 objIdentity = glm::mat4(1.f);
 std::vector <glm::mat4> objModelviewStack;
 GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos;
 
