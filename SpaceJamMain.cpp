@@ -67,6 +67,7 @@ GLuint screenVAO, screenVBO;
 AudioManager audioManager;
 //Remove this later
 std::optional<PlayerController> player;
+std::optional<GameManager> gameManager;
 std::optional<SceneManager> objectManager;
 
 std::map<unsigned char, bool> keyMap;
@@ -320,7 +321,7 @@ void display() {
 	GLuint lightPosPos = glGetUniformLocation(shaderProgram, "lightPos");
 	glUniform3f(lightPosPos, player->posX, player->posY+2.f, 0.f);
 
-	GameManager::gameUpdate();
+	gameManager->gameUpdate();
 	objectManager->renderQueue();
 
 	if (bRenderGui) {
@@ -384,7 +385,7 @@ void reshape(int x, int y) {
 	glViewport(0, 0, (GLsizei)x, (GLsizei)y);
 	screenHeight = y;
 	screenWidth = x;
-	projection = glm::perspective(GameManager::fovy, (GLfloat)x/ (GLfloat)y, 1.0f, 200.0f);
+	projection = glm::perspective(gameManager->fovy, (GLfloat)x/ (GLfloat)y, 1.0f, 200.0f);
 	glUniformMatrix4fv(projectionPos, 1, GL_FALSE, &projection[0][0]);
 }
 
@@ -423,7 +424,7 @@ void newFrame(int value) {
 		key = std::fmod(key, 12);
 		int keyInd = static_cast<int>(std::round(key));
 		//this is passed on to a static function that calculates the height that the player should be on screen based on the value of the note sung
-		float targetY = AudioManager::getHeightOfNote(keyInd, GameManager::fovy, GameManager::dist);
+		float targetY = AudioManager::getHeightOfNote(keyInd, gameManager->fovy, gameManager->dist);
 		player->targetY = targetY;
 	}
 	//Update the players movement
@@ -447,7 +448,7 @@ void keyUp(unsigned char key, [[maybe_unused]] int x, [[maybe_unused]] int y) {
 //Function that is called to start the game, calls the startGame function of the GameManager
 void startGame() {
 	GUIManager::showGameGUI();
-	GameManager::startGame("Counting Stars Audio/notes30s.json", "Counting Stars Audio/CS_30s.ogg", &player.value(), &objectManager.value());
+	gameManager->startGame("Counting Stars Audio/notes30s.json", "Counting Stars Audio/CS_30s.ogg", &player.value(), &objectManager.value());
 }
 
 //Terminates the program (with a 0 to signify no errors occured), the function that is called when quit is pressed from the main menu
@@ -544,6 +545,7 @@ int main(int argc, char** argv) {
 
 	//Class initialisation functions
 	objectManager.emplace(shaderProgram);
+	gameManager.emplace();
 	// Again, TODO: Replace this optional, it is only temporary
 	player.emplace();
 	objectManager->addObjectToQueue(&player.value());

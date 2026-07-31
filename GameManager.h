@@ -3,8 +3,9 @@
 #include "AudioManager.h"
 
 #include <json/json.h>
+#include <numbers>
 #include <string>
-
+#include <glm/glm.hpp>
 
 //Forward declare player controller
 class PlayerController;
@@ -16,21 +17,22 @@ class SceneManager;
 class GameManager
 {
 private:
-	static PlayerController* currentPlayer;
+	PlayerController* currentPlayer{nullptr};
 public:
-	static void loadSongJson(const char* path, std::string& songTitle, Json::Value& notes);
-	static void startGame(const char* noteJsonPath, const char* noteSongPath, PlayerController* player, SceneManager* objectManager);
-	static void gameUpdate();
+	GameManager();
+
+	void loadSongJson(const char* path, std::string& songTitle, Json::Value& notes);
+	void startGame(const char* noteJsonPath, const char* noteSongPath, PlayerController* player, SceneManager* objectManager);
+	void gameUpdate();
 
 	//Properties about the field of view and the distance the camera is from the plane (player object)
-	const static float fovy;
-	const static float dist;
+	const float fovy{(45.f / 180.f) * static_cast<float>(std::numbers::pi)};
+	const float dist{60.f};
 
-	static int score;
-	static std::string* scoreStr;
-	static bool gamePlaying;
+	int score{0};
+	std::string* scoreStr{nullptr};
+	bool gamePlaying{false};
 
-	static AudioManager songSource;
-
+	AudioManager songSource;
 };
 

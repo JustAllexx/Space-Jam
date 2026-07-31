@@ -7,16 +7,6 @@
 
 #include <fstream>
 
-//Class variables defined out of scope
-AudioManager GameManager::songSource;
-int GameManager::score = 0;
-PlayerController* GameManager::currentPlayer = nullptr;
-std::string* GameManager::scoreStr = nullptr;
-bool GameManager::gamePlaying = false;
-
-const float GameManager::fovy = (45.f / 180.f) * glm::pi<float>();
-const float GameManager::dist = 60.f;
-
 //The index of each note counting up from 0
 const std::map<std::string, int> notePairings{
 	{"A", 0},
@@ -32,6 +22,8 @@ const std::map<std::string, int> notePairings{
 	{"G", 10},
 	{"G#", 11}
 };
+
+GameManager::GameManager() {}
 
 //The function that loads the song file
 void GameManager::loadSongJson(const char* path, std::string& songTitle, Json::Value& notes)
