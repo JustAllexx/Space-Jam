@@ -13,7 +13,7 @@
 class DrawObject;
 
 //Object Manager Class
-class ObjectManager
+class SceneManager
 {
 private:
 	std::vector<DrawObject*> objRenderQueue;
@@ -25,7 +25,7 @@ private:
 	int currentFrameTime{0};
 	float deltaTime{0.f};
 public:
-	ObjectManager(GLuint shaderProgram);
+	SceneManager(GLuint shaderProgram);
 
 	//Add objects to the GUIManager Queue
 	void addObjectToQueue(DrawObject* obj);

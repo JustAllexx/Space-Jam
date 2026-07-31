@@ -1,6 +1,6 @@
 #include "SpaceJamMain.h"
 #include "DrawObjects/DrawObject.h"
-#include "ObjectManager.h"
+#include "SceneManager.h"
 #include "AudioManager.h"
 #include "DrawObjects/PlayerController.h"
 #include "GUIManager.h"
@@ -67,7 +67,7 @@ GLuint screenVAO, screenVBO;
 AudioManager audioManager;
 //Remove this later
 std::optional<PlayerController> player;
-std::optional<ObjectManager> objectManager;
+std::optional<SceneManager> objectManager;
 
 std::map<unsigned char, bool> keyMap;
 

@@ -1,11 +1,12 @@
-#include "ObjectManager.h"
+#include "SceneManager.h"
 #include "DrawObjects/DrawObject.h"
 
+#include <algorithm>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/fwd.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-ObjectManager::ObjectManager(GLuint shaderProgram) {
+SceneManager::SceneManager(GLuint shaderProgram) {
 	objModelviewPos = glGetUniformLocation(shaderProgram, "modelview");
 	modelView = glm::lookAt(glm::vec3(0, 0, 60.f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(modelView)[0][0]);
@@ -17,13 +18,13 @@ ObjectManager::ObjectManager(GLuint shaderProgram) {
 };
 
 //Adds DrawObject to the render queue
-void ObjectManager::addObjectToQueue(DrawObject* obj)
+void SceneManager::addObjectToQueue(DrawObject* obj)
 {
 	objRenderQueue.push_back(obj);
 }
 
 //Default renderQueue function called outside the class, updates the change in time 
-void ObjectManager::renderQueue() {
+void SceneManager::renderQueue() {
 	glUniform1i(bloomPos, false); //Bloom should be false by default
 	currentFrameTime = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = static_cast<float>(currentFrameTime - lastFrameTime) / 1000.f;
@@ -34,7 +35,7 @@ void ObjectManager::renderQueue() {
 
 //Actually renders the renderQueue, called from the other function
 //This type of function has a parammeter overide (has the same name as another function, but different argument requirements)
-void ObjectManager::renderQueue(std::vector<DrawObject*> &rendQueue)
+void SceneManager::renderQueue(std::vector<DrawObject*> &rendQueue)
 {
 	//Iterate through all the objects in the render queue
 	for (size_t objIndex = 0; objIndex < rendQueue.size(); objIndex++) {
@@ -63,9 +64,10 @@ void ObjectManager::renderQueue(std::vector<DrawObject*> &rendQueue)
 		renderObj->Draw();
 	}
 	//Delete all objects flagged for deletion
-	for (size_t delCount = 0; delCount < rendQueue.size(); delCount++) {
-		if (rendQueue[delCount]->bToDelete) {
-			rendQueue.erase(rendQueue.begin() + static_cast<signed>(delCount));
-		}
-	}
+	rendQueue.erase(
+    std::remove_if(rendQueue.begin(), rendQueue.end(),
+        [](const auto& obj) {
+            return obj->bToDelete;
+        }),
+    rendQueue.end());
 }

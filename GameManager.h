@@ -8,7 +8,7 @@
 
 //Forward declare player controller
 class PlayerController;
-class ObjectManager;
+class SceneManager;
 
 //Class that is responsible for controlling the game
 //Is the owner of the object that plays the song the user listens to, and is the logic of the game
@@ -19,7 +19,7 @@ private:
 	static PlayerController* currentPlayer;
 public:
 	static void loadSongJson(const char* path, std::string& songTitle, Json::Value& notes);
-	static void startGame(const char* noteJsonPath, const char* noteSongPath, PlayerController* player, ObjectManager* objectManager);
+	static void startGame(const char* noteJsonPath, const char* noteSongPath, PlayerController* player, SceneManager* objectManager);
 	static void gameUpdate();
 
 	//Properties about the field of view and the distance the camera is from the plane (player object)
