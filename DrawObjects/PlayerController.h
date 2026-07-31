@@ -10,7 +10,6 @@ class PlayerController : public DrawObject
 public:
 	PlayerController();
 	float posX, posY, targetY, velocityY, velocityX;
-	void Setup();
 	void Update(float deltaTime) override;
 	void controlUpdate(std::map<unsigned char, bool> keyMap, float dt);
 

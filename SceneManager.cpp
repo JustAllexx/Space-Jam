@@ -45,11 +45,12 @@ void SceneManager::renderQueue(std::vector<DrawObject*> &rendQueue)
 		//Calculate the modelview
 		glm::mat4 model(1.f);
 
-		model = glm::translate(model, renderObj->pos);
-		model =  glm::scale(model, renderObj->scale);
-		model = glm::rotate(model, renderObj->rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, renderObj->rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, renderObj->rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::translate(model, renderObj->getPosition());
+		model =  glm::scale(model, renderObj->getScale());
+		glm::vec3 rotation = renderObj->getRotation();
+		model = glm::rotate(model, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
 
 		//Update the vertex and fragment shader
 		glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(modelView * model)[0][0]);

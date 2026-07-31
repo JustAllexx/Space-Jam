@@ -7,14 +7,17 @@
 
 //Class containing the base class DrawObject
 class DrawObject {
-private:
-	//Objects velocity and acceleration
-	glm::vec3 objVelocity, objAcceleration;
-	glm::vec3 objRotationalVelocity;
 protected:
 	//Information needed for rendering the geometry of a Rendered Object, it's texture data, and geometry data
 	Texture texture;
 	Mesh mesh;
+
+	//Transform information
+	glm::vec3 pos, scale;
+	glm::vec3 rotation;
+	//Physics information
+	glm::vec3 objVelocity, objAcceleration;
+	glm::vec3 objRotationalVelocity;
 
 	//Default values for the fragment shader
 	float opacity{1.f};
@@ -22,8 +25,6 @@ protected:
 	bool bloom{false};
 	float bloomAmmount{1.f};
 public:
-	glm::vec3 pos, scale;
-	glm::vec3 rotation;
 	//Constructor Function
 	DrawObject(const char* modelPath, const char* texturePath, float inOpacity, float inAmbient, bool hasBloom,
 		glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation);
@@ -42,6 +43,10 @@ public:
 	float getAmbient() const noexcept {return ambient;}
 	bool isBloom() const noexcept {return bloom;}
 	float getBloomAmmount() const noexcept {return bloomAmmount;}
+
+	glm::vec3 getPosition() const noexcept {return pos;}
+	glm::vec3 getScale() const noexcept {return scale;}
+	glm::vec3 getRotation() const noexcept {return rotation;}
 	
 	//Overridable draw and update functions
 	virtual void Draw();

@@ -546,7 +546,6 @@ int main(int argc, char** argv) {
 	objectManager.emplace(shaderProgram);
 	// Again, TODO: Replace this optional, it is only temporary
 	player.emplace();
-	player->Setup();
 	objectManager->addObjectToQueue(&player.value());
 
 	GUIManager::Setup(textShaderProgram);

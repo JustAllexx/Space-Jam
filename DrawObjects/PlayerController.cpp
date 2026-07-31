@@ -12,17 +12,12 @@ PlayerController::PlayerController() : DrawObject("Models/planeUV2.obj", "Textur
 	targetY = 0.f;
 	playerScore = 0;
 	playerScoreText = nullptr;
+	collisionBox.emplace(3.f, 1.5f, 6.0f);
 }
 
 //DrawObject position is updated to reflect the stored position inside the class
 void PlayerController::Update([[maybe_unused]] float deltaTime) {
 	pos = glm::vec3(posX, posY, 0.f);
-}
-
-//Setup function needed because some OpenGL calls can't be made until glut has been initialised and the program shaders have been compiled
-void PlayerController::Setup()
-{
-	collisionBox.emplace(3.f, 1.5f, 6.0f);
 }
 
 //Function is called every frame

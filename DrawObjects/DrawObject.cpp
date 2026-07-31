@@ -3,8 +3,8 @@
 //The construction function for the DrawObject class
 DrawObject::DrawObject(const char* modelPath, const char* texturePath, float inOpacity, float inAmbient, bool hasBloom,
 	glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation) : texture(texturePath), mesh(modelPath),
-	opacity(inOpacity), ambient(inAmbient), bloom(hasBloom), 
-	pos(inPos), scale(inScale), rotation(inRotation) {
+	pos(inPos), scale(inScale), rotation(inRotation), 
+	opacity(inOpacity), ambient(inAmbient), bloom(hasBloom) {
 	//set Default properties
 	objVelocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	objAcceleration = glm::vec3(0.0f, 0.0f, 0.0f);
