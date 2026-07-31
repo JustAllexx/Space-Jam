@@ -17,10 +17,10 @@ protected:
 	Mesh mesh;
 
 	//Default values for the fragment shader
-	float opacity = 1.f;
-	float ambient = 0.0f;
-	bool bloom = false;
-	float bloomAmmount = 1.f;
+	float opacity{1.f};
+	float ambient{0.0f};
+	bool bloom{false};
+	float bloomAmmount{1.f};
 public:
 	glm::vec3 pos, scale;
 	glm::vec3 rotation;
