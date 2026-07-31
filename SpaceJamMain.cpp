@@ -7,6 +7,7 @@
 #include "GameManager.h"
 
 #include <cmath>
+#include <memory>
 #include <optional>
 #include <valarray>
 #include <glm/ext/vector_float3.hpp>
@@ -68,7 +69,7 @@ AudioManager audioManager;
 //Remove this later
 std::optional<PlayerController> player;
 std::optional<GameManager> gameManager;
-std::optional<SceneManager> objectManager;
+std::unique_ptr<SceneManager> sceneManager;
 
 std::map<unsigned char, bool> keyMap;
 
@@ -322,7 +323,7 @@ void display() {
 	glUniform3f(lightPosPos, player->posX, player->posY+2.f, 0.f);
 
 	gameManager->gameUpdate();
-	objectManager->renderQueue();
+	//objectManager->renderQueue();
 
 	if (bRenderGui) {
 		glUseProgram(textShaderProgram);
@@ -448,7 +449,7 @@ void keyUp(unsigned char key, [[maybe_unused]] int x, [[maybe_unused]] int y) {
 //Function that is called to start the game, calls the startGame function of the GameManager
 void startGame() {
 	GUIManager::showGameGUI();
-	gameManager->startGame("Counting Stars Audio/notes30s.json", "Counting Stars Audio/CS_30s.ogg", &player.value(), &objectManager.value());
+	gameManager->startGame("Counting Stars Audio/notes30s.json", "Counting Stars Audio/CS_30s.ogg", &player.value());
 }
 
 //Terminates the program (with a 0 to signify no errors occured), the function that is called when quit is pressed from the main menu
@@ -544,11 +545,25 @@ int main(int argc, char** argv) {
 	createPrograms();
 
 	//Class initialisation functions
-	objectManager.emplace(shaderProgram);
-	gameManager.emplace();
+	//objectManager.emplace(shaderProgram);
+	sceneManager = std::make_unique<SceneManager>(shaderProgram);
 	// Again, TODO: Replace this optional, it is only temporary
 	player.emplace();
-	objectManager->addObjectToQueue(&player.value());
+	//TODO: Game Manager should be adding player to Render Queue, not Main
+	sceneManager->addObjectToQueue(&player.value());
+
+	//Adds new objects to the scene to be rendered
+	DrawObject* background = new DrawObject("Models/nightSkyObj.obj", "Textures/nightsky.png", 1.f, 1.f, false, glm::vec3(0.f, 4.f, 0.0f), glm::vec3(4.f, 4.f, 4.f), glm::vec3(0.f, rotpi, 0.f));
+	DrawObject* MoonObj = new DrawObject("Models/moon.obj", "Textures/moon.png", 1.f, 1.f, true, glm::vec3(50.f, 50.f, -100.f), glm::vec3(30.f, 30.f, 30.f), glm::vec3(0.0f, 0.0f, 0.0f));
+	MoonObj->setRotationalVelocity(glm::vec3(0.01f, 0.1f, 0.0f));
+	background->setRotationalVelocity(glm::vec3(0.f, 0.01f, 0.f));
+	
+	//Add to render queue
+	sceneManager->addObjectToQueue(background);
+	sceneManager->addObjectToQueue(MoonObj);
+
+	gameManager.emplace(std::move(sceneManager));
+
 
 	GUIManager::Setup(textShaderProgram);
 	OptionsManager::Initialise();
@@ -566,15 +581,6 @@ int main(int argc, char** argv) {
 
 	GUIManager::showMainMenu();
 
-	//Adds new objects to the scene to be rendered
-	DrawObject* background = new DrawObject("Models/nightSkyObj.obj", "Textures/nightsky.png", 1.f, 1.f, false, glm::vec3(0.f, 4.f, 0.0f), glm::vec3(4.f, 4.f, 4.f), glm::vec3(0.f, rotpi, 0.f));
-	DrawObject* MoonObj = new DrawObject("Models/moon.obj", "Textures/moon.png", 1.f, 1.f, true, glm::vec3(50.f, 50.f, -100.f), glm::vec3(30.f, 30.f, 30.f), glm::vec3(0.0f, 0.0f, 0.0f));
-	MoonObj->setRotationalVelocity(glm::vec3(0.01f, 0.1f, 0.0f));
-	background->setRotationalVelocity(glm::vec3(0.f, 0.01f, 0.f));
-	
-	//Add to render queue
-	objectManager->addObjectToQueue(background);
-	objectManager->addObjectToQueue(MoonObj);
 
 	//Start capturing audio for pitch calculations
 	audioManager.StartCapture();

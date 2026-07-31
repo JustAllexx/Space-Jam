@@ -1,15 +1,16 @@
 #pragma once
 
 #include "AudioManager.h"
+#include "SceneManager.h"
 
 #include <json/json.h>
+#include <memory>
 #include <numbers>
 #include <string>
 #include <glm/glm.hpp>
 
 //Forward declare player controller
 class PlayerController;
-class SceneManager;
 
 //Class that is responsible for controlling the game
 //Is the owner of the object that plays the song the user listens to, and is the logic of the game
@@ -18,11 +19,12 @@ class GameManager
 {
 private:
 	PlayerController* currentPlayer{nullptr};
+	std::unique_ptr<SceneManager> sceneManager;
 public:
-	GameManager();
+	GameManager(std::unique_ptr<SceneManager> inSceneManager);
 
 	void loadSongJson(const char* path, std::string& songTitle, Json::Value& notes);
-	void startGame(const char* noteJsonPath, const char* noteSongPath, PlayerController* player, SceneManager* objectManager);
+	void startGame(const char* noteJsonPath, const char* noteSongPath, PlayerController* player);
 	void gameUpdate();
 
 	//Properties about the field of view and the distance the camera is from the plane (player object)

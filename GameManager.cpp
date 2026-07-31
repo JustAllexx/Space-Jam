@@ -6,6 +6,7 @@
 #include "DrawObjects/NoteHighlight.h"
 
 #include <fstream>
+#include <memory>
 
 //The index of each note counting up from 0
 const std::map<std::string, int> notePairings{
@@ -23,7 +24,7 @@ const std::map<std::string, int> notePairings{
 	{"G#", 11}
 };
 
-GameManager::GameManager() {}
+GameManager::GameManager(std::unique_ptr<SceneManager> inSceneManager) : sceneManager(std::move(inSceneManager)) {}
 
 //The function that loads the song file
 void GameManager::loadSongJson(const char* path, std::string& songTitle, Json::Value& notes)
@@ -37,7 +38,7 @@ void GameManager::loadSongJson(const char* path, std::string& songTitle, Json::V
 }
 
 //This function is called in the Main Module to start the game, takes in 3 parameters: the path of the Songs Notes in Json form, the path of the sound file to play over the song, and the player class
-void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath, PlayerController* player, SceneManager* objectManager)
+void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath, PlayerController* player)
 {
 	std::string songTitle;
 	Json::Value notes;
@@ -65,8 +66,8 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath, 
 
 		DrawObject* noteObject = new NoteTarget(0.f, height, time, 40.f, &songSource, player);
 		DrawObject* noteHighlight = new NoteHighlight(time, noteObject, &songSource);
-		objectManager->addObjectToQueue(noteObject);
-		objectManager->addObjectToQueue(noteHighlight);
+		sceneManager->addObjectToQueue(noteObject);
+		sceneManager->addObjectToQueue(noteHighlight);
 	}
 	//Finally plays the song
 	songSource.playAudioBuffer(noteSongPath);
@@ -83,6 +84,8 @@ void GameManager::gameUpdate()
 		GUIManager::scoreScreen_FinalScoreText->text = std::to_string(currentPlayer->playerScore);
 		GUIManager::showScoreMenu();
 	}
+
+	sceneManager->renderQueue();
 }
 
 

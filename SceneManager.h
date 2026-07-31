@@ -26,6 +26,7 @@ private:
 	float deltaTime{0.f};
 public:
 	SceneManager(GLuint shaderProgram);
+	~SceneManager() = default;
 
 	//Add objects to the GUIManager Queue
 	void addObjectToQueue(DrawObject* obj);
