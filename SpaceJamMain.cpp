@@ -1,4 +1,5 @@
 #include "SpaceJamMain.h"
+#include "DrawObjects/DrawObject.h"
 #include "ObjectManager.h"
 #include "AudioManager.h"
 #include "DrawObjects/PlayerController.h"
@@ -66,6 +67,7 @@ GLuint screenVAO, screenVBO;
 AudioManager audioManager;
 //Remove this later
 std::optional<PlayerController> player;
+std::optional<ObjectManager> objectManager;
 
 std::map<unsigned char, bool> keyMap;
 
@@ -319,7 +321,7 @@ void display() {
 	glUniform3f(lightPosPos, player->posX, player->posY+2.f, 0.f);
 
 	GameManager::gameUpdate();
-	ObjectManager::renderQueue();
+	objectManager->renderQueue();
 
 	if (bRenderGui) {
 		glUseProgram(textShaderProgram);
@@ -445,7 +447,7 @@ void keyUp(unsigned char key, [[maybe_unused]] int x, [[maybe_unused]] int y) {
 //Function that is called to start the game, calls the startGame function of the GameManager
 void startGame() {
 	GUIManager::showGameGUI();
-	GameManager::startGame("Counting Stars Audio/notes30s.json", "Counting Stars Audio/CS_30s.ogg", &player.value());
+	GameManager::startGame("Counting Stars Audio/notes30s.json", "Counting Stars Audio/CS_30s.ogg", &player.value(), &objectManager.value());
 }
 
 //Terminates the program (with a 0 to signify no errors occured), the function that is called when quit is pressed from the main menu
@@ -541,12 +543,13 @@ int main(int argc, char** argv) {
 	createPrograms();
 
 	//Class initialisation functions
+	objectManager.emplace();
+	objectManager->Init(shaderProgram);
 	// Again, TODO: Replace this optional, it is only temporary
 	player.emplace();
 	player->Setup();
-	ObjectManager::addObjectToQueue(&player.value());
+	objectManager->addObjectToQueue(&player.value());
 
-	ObjectManager::Init(shaderProgram);
 	GUIManager::Setup(textShaderProgram);
 	OptionsManager::Initialise();
 
@@ -570,8 +573,8 @@ int main(int argc, char** argv) {
 	background->setRotationalVelocity(glm::vec3(0.f, 0.01f, 0.f));
 	
 	//Add to render queue
-	ObjectManager::addObjectToQueue(background);
-	ObjectManager::addObjectToQueue(MoonObj);
+	objectManager->addObjectToQueue(background);
+	objectManager->addObjectToQueue(MoonObj);
 
 	//Start capturing audio for pitch calculations
 	audioManager.StartCapture();

@@ -14,10 +14,14 @@ class DrawObject;
 //Object Manager Class
 class ObjectManager
 {
+private:
+	std::vector<DrawObject*> objRenderQueue;
 public:
+	ObjectManager();
+
 	//Add objects to the GUIManager Queue
-	static void addObjectToQueue(DrawObject* obj);
-	static void renderQueue();
-	static void renderQueue(std::vector<DrawObject*> &rendQueue);
-	static void Init(GLuint program);
+	void addObjectToQueue(DrawObject* obj);
+	void renderQueue();
+	void renderQueue(std::vector<DrawObject*> &rendQueue);
+	void Init(GLuint program);
 };

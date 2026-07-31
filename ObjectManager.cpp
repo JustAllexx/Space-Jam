@@ -5,7 +5,7 @@
 #include <glm/fwd.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-std::vector<DrawObject*> objRenderQueue;
+//std::vector<DrawObject*> objRenderQueue;
 glm::mat4 objModelview;
 glm::mat4 objIdentity = glm::mat4(1.f);
 std::vector <glm::mat4> objModelviewStack;
@@ -15,6 +15,8 @@ float objRot;
 int newTime = 0;
 int oldTIme = 0;
 float deltaTime = 0.f;
+
+ObjectManager::ObjectManager() {};
 
 //Adds DrawObject to the render queue
 void ObjectManager::addObjectToQueue(DrawObject* obj)
