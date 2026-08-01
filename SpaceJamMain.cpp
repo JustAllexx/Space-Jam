@@ -43,7 +43,6 @@ GLuint projectionPos, modelviewPos;
 //The modelview describes how the local space vertices should be converted into world space (translation, rotation and scaling)
 //Projection describes how 3D vertices are converted into 2D screen coordinates
 glm::mat4 projection, modelview; 
-std::vector <glm::mat4> modelviewStack;
 
 //Similar to the integers this is where the framebuffer IDs are stored. OpenGL handles these in a similar way
 //Scroll down to the CreateFramebuffers function for an explanation of each framebuffer and its purpose
@@ -128,22 +127,6 @@ void updateGaussianKernel(float standardDeviation, GLuint program) {
 		GLuint kernelWeightIndexPosition = glGetUniformLocation(program, weightLocation.c_str());
 		//Update the value with the calculated value
 		glUniform1f(kernelWeightIndexPosition, kernelValues[j]);
-	}
-}
-
-// This function pushes the specified matrix onto the modelview stack
-void pushMatrix(glm::mat4 mat) {
-	modelviewStack.push_back(glm::mat4(mat));
-}
-
-// This function pops a matrix from the modelview stack and assigns that to the matrix passed in
-void popMatrix(glm::mat4& mat) {
-	if (modelviewStack.size()) {
-		mat = glm::mat4(modelviewStack.back());
-		modelviewStack.pop_back();
-	}
-	else { // Just to prevent errors when popping from an empty stack.
-		mat = glm::mat4(1.0f);
 	}
 }
 
