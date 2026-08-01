@@ -73,6 +73,10 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath, 
 	songSource.playAudioBuffer(noteSongPath);
 }
 
+void GameManager::render() {
+	sceneManager->renderQueue();
+}
+
 //Called every frame
 void GameManager::gameUpdate()
 {
@@ -85,7 +89,7 @@ void GameManager::gameUpdate()
 		GUIManager::showScoreMenu();
 	}
 
-	sceneManager->renderQueue();
+	//sceneManager->renderQueue();
 }
 
 

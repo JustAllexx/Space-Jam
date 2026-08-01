@@ -25,6 +25,7 @@ public:
 
 	void loadSongJson(const char* path, std::string& songTitle, Json::Value& notes);
 	void startGame(const char* noteJsonPath, const char* noteSongPath, PlayerController* player);
+	void render();
 	void gameUpdate();
 
 	//Properties about the field of view and the distance the camera is from the plane (player object)

@@ -305,7 +305,7 @@ void display() {
 	GLuint lightPosPos = glGetUniformLocation(shaderProgram, "lightPos");
 	glUniform3f(lightPosPos, player->posX, player->posY+2.f, 0.f);
 
-	gameManager->gameUpdate();
+	gameManager->render();
 	//objectManager->renderQueue();
 
 	if (bRenderGui) {
@@ -388,6 +388,8 @@ void mouseMotion(int x, int y) {
 
 //This is the function that is called to indicate a new frame should be rendered
 void newFrame(int value) {	
+	gameManager->gameUpdate();
+
 	//Calculates the time since the last frame in seconds and stores the value in a float
 	newt = glutGet(GLUT_ELAPSED_TIME);
 	dt = static_cast<float>(newt - oldt) / 1000.f;
