@@ -1,4 +1,5 @@
 #include "GameManager.h"
+#include "AudioManager.h"
 #include "GUIManager.h"
 #include "SceneManager.h"
 #include "DrawObjects/PlayerController.h"
@@ -24,7 +25,9 @@ const std::map<std::string, int> notePairings{
 	{"G#", 11}
 };
 
-GameManager::GameManager(std::unique_ptr<SceneManager> inSceneManager) : sceneManager(std::move(inSceneManager)) {}
+GameManager::GameManager(std::unique_ptr<SceneManager> inSceneManager, std::map<unsigned char, bool>& inKeyMap,
+	PlayerController* inPlayer, AudioManager* inAudioManager) : currentPlayer(inPlayer), songSource(inAudioManager), sceneManager(std::move(inSceneManager)),
+		keyMap(inKeyMap) {}
 
 //The function that loads the song file
 void GameManager::loadSongJson(const char* path, std::string& songTitle, Json::Value& notes)
@@ -43,7 +46,7 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath, 
 	std::string songTitle;
 	Json::Value notes;
 	loadSongJson(noteJsonPath, songTitle, notes);
-	currentPlayer = player;
+	//currentPlayer = player;
 	//Resets the players score to 0
 	currentPlayer->playerScore = 0;
 	*currentPlayer->playerScoreText = "0";
@@ -52,7 +55,7 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath, 
 
 	//songSource = AudioManager();
 	// IMPORTANT: For now the audio identifier will be the sound path, this will change later
-	songSource.addAudioBuffer(noteSongPath, noteSongPath);
+	songSource->addAudioBuffer(noteSongPath, noteSongPath);
 
 	int x = notes.size();
 	//This loop places down all the notes in a file into the object manager queues so that they can be rendered and sent towards the player
@@ -64,13 +67,13 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath, 
 
 		float height = AudioManager::getHeightOfNote(noteIndex, fovy, dist);
 
-		DrawObject* noteObject = new NoteTarget(0.f, height, time, 40.f, &songSource, player);
-		DrawObject* noteHighlight = new NoteHighlight(time, noteObject, &songSource);
+		DrawObject* noteObject = new NoteTarget(0.f, height, time, 40.f, songSource, player);
+		DrawObject* noteHighlight = new NoteHighlight(time, noteObject, songSource);
 		sceneManager->addObjectToQueue(noteObject);
 		sceneManager->addObjectToQueue(noteHighlight);
 	}
 	//Finally plays the song
-	songSource.playAudioBuffer(noteSongPath);
+	songSource->playAudioBuffer(noteSongPath);
 }
 
 void GameManager::render() {
@@ -80,9 +83,30 @@ void GameManager::render() {
 //Called every frame
 void GameManager::gameUpdate()
 {
-	float currentPlayPosition =  songSource.getPlayPos();
+	double note, volume;
+	note = 0.f;
+	volume = 0.f;
+	//If the audio manager returns 0, that means that no new frequency can be calculated because the capture buffer isn't filled yet
+	//Or that the frequency calculated did not dip below the harmony threshold, so couldn't return an accurate value
+	//This function also returns a volume, if the average volume (or gain) of the capture buffer was not above 400.f, then we ignore the value because the capture taken was too quiet
+	songSource->updateFrequency(note, volume);
+	if (note != 0 && volume > 400) {
+		//Equation for calculating the piano key value of a frequency
+		double key = (12 * log2(note / 440.f) + 49);
+		//Can use this to determine the note was being sung
+		key = std::fmod(key, 12);
+		int keyInd = static_cast<int>(std::round(key));
+		//this is passed on to a static function that calculates the height that the player should be on screen based on the value of the note sung
+		float targetY = AudioManager::getHeightOfNote(keyInd, fovy, dist);
+		currentPlayer->setTargetY(targetY);
+	}
+	//Update the players movement
+	//Keymap contains what keys are being pressed down during this frame, dt is the time since last frame
+	currentPlayer->controlUpdate(keyMap, sceneManager->getDeltaTime());
+
+	float currentPlayPosition =  songSource->getPlayPos();
 	//The code that checks if the game should finish
-	if (gamePlaying == true && currentPlayPosition == 0 && songSource.isPlaying() == false) {
+	if (gamePlaying == true && currentPlayPosition == 0 && songSource->isPlaying() == false) {
 		gamePlaying = false;
 		//If the game is finished update the score screen and direct the player to it
 		GUIManager::scoreScreen_FinalScoreText->text = std::to_string(currentPlayer->playerScore);

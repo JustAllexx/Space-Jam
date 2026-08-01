@@ -1,4 +1,5 @@
 #include "PlayerController.h"
+#include <iostream>
 
 //Default Player Constructor Function
 PlayerController::PlayerController() : DrawObject("Models/planeUV2.obj", "Textures/goldenPlane2.png", 1.f, 0.7f,
@@ -6,8 +7,8 @@ PlayerController::PlayerController() : DrawObject("Models/planeUV2.obj", "Textur
 {
 	//Constants about player movement
 	velocityX = 20.f;
-	posX = 0.f;
-	posY = 0.f;
+	//posX = 0.f;
+	//posY = 0.f;
 	velocityY = 40.f;
 	targetY = 0.f;
 	playerScore = 0;
@@ -21,16 +22,16 @@ void PlayerController::Update([[maybe_unused]] float deltaTime) {
 }
 
 //Function is called every frame
-void PlayerController::controlUpdate(std::map<unsigned char, bool> keyMap, float dt) {
+void PlayerController::controlUpdate(std::map<unsigned char, bool>& keyMap, float dt) {
 	//if the user is pressing a or d, the plane will move accordingly
 	//Keymap stores all the keys which are being held down by the user. keyMap['a'] returns true if a is being pressed
-	if (keyMap['a']) {
+	if (keyMap.at('a')) {
 		posX -= velocityX * dt;
 	}
-	else if (keyMap['d']) {
+	else if (keyMap.at('d')) {
 		posX += velocityX * dt;
 	}
-
+	
 	if (abs(targetY - posY) < velocityY * dt) {
 		posY = targetY;
 	}

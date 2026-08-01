@@ -390,32 +390,6 @@ void mouseMotion(int x, int y) {
 void newFrame(int value) {	
 	gameManager->gameUpdate();
 
-	//Calculates the time since the last frame in seconds and stores the value in a float
-	newt = glutGet(GLUT_ELAPSED_TIME);
-	dt = static_cast<float>(newt - oldt) / 1000.f;
-	oldt = newt;
-	
-	//Asks the audio manager if there is a new frequency to be calculated
-	double note, volume;
-	note = 0.f;
-	volume = 0.f;
-	//If the audio manager returns 0, that means that no new frequency can be calculated because the capture buffer isn't filled yet
-	//Or that the frequency calculated did not dip below the harmony threshold, so couldn't return an accurate value
-	//This function also returns a volume, if the average volume (or gain) of the capture buffer was not above 400.f, then we ignore the value because the capture taken was too quiet
-	audioManager.updateFrequency(note, volume);
-	if (note != 0 && volume > 400) {
-		//Equation for calculating the piano key value of a frequency
-		double key = (12 * log2(note / 440.f) + 49);
-		//Can use this to determine the note was being sung
-		key = std::fmod(key, 12);
-		int keyInd = static_cast<int>(std::round(key));
-		//this is passed on to a static function that calculates the height that the player should be on screen based on the value of the note sung
-		float targetY = AudioManager::getHeightOfNote(keyInd, gameManager->fovy, gameManager->dist);
-		player->targetY = targetY;
-	}
-	//Update the players movement
-	//Keymap contains what keys are being pressed down during this frame, dt is the time since last frame
-	player->controlUpdate(keyMap, dt);
 	//Call the display function
 	glutPostRedisplay();
 	unsigned int nextFrameTime = static_cast<unsigned int>(1000.f / 60.f);
@@ -547,7 +521,9 @@ int main(int argc, char** argv) {
 	sceneManager->addObjectToQueue(background);
 	sceneManager->addObjectToQueue(MoonObj);
 
-	gameManager.emplace(std::move(sceneManager));
+	keyMap.emplace('a', false);
+	keyMap.emplace('d', false);
+	gameManager.emplace(std::move(sceneManager), keyMap, &player.value(), &audioManager);
 
 
 	GUIManager::Setup(textShaderProgram);

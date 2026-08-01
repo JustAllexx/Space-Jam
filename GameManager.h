@@ -8,6 +8,7 @@
 #include <numbers>
 #include <string>
 #include <glm/glm.hpp>
+#include <map>
 
 //Forward declare player controller
 class PlayerController;
@@ -19,9 +20,12 @@ class GameManager
 {
 private:
 	PlayerController* currentPlayer{nullptr};
+	AudioManager* songSource{nullptr};
 	std::unique_ptr<SceneManager> sceneManager;
+	std::map<unsigned char, bool>& keyMap;
 public:
-	GameManager(std::unique_ptr<SceneManager> inSceneManager);
+	GameManager(std::unique_ptr<SceneManager> inSceneManager, std::map<unsigned char, bool>& inKeyMap, PlayerController* inPlayerController,
+		AudioManager* inSongSource);
 
 	void loadSongJson(const char* path, std::string& songTitle, Json::Value& notes);
 	void startGame(const char* noteJsonPath, const char* noteSongPath, PlayerController* player);
@@ -36,6 +40,5 @@ public:
 	std::string* scoreStr{nullptr};
 	bool gamePlaying{false};
 
-	AudioManager songSource;
 };
 
