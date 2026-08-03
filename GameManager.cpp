@@ -26,8 +26,8 @@ const std::map<std::string, int> notePairings{
 };
 
 GameManager::GameManager(std::unique_ptr<SceneManager> inSceneManager, std::map<unsigned char, bool>& inKeyMap,
-	PlayerController* inPlayer, AudioManager* inAudioManager) : currentPlayer(inPlayer), songSource(inAudioManager), sceneManager(std::move(inSceneManager)),
-		keyMap(inKeyMap) {}
+	PlayerController* inPlayer, AudioManager* inAudioManager, GUIManager* inGUIManager) : currentPlayer(inPlayer), songSource(inAudioManager), guiManager(inGUIManager),
+		sceneManager(std::move(inSceneManager)), keyMap(inKeyMap) {}
 
 //The function that loads the song file
 void GameManager::loadSongJson(const char* path, std::string& songTitle, Json::Value& notes)
@@ -109,8 +109,8 @@ void GameManager::gameUpdate()
 	if (gamePlaying == true && currentPlayPosition == 0 && songSource->isPlaying() == false) {
 		gamePlaying = false;
 		//If the game is finished update the score screen and direct the player to it
-		GUIManager::scoreScreen_FinalScoreText->text = std::to_string(currentPlayer->playerScore);
-		GUIManager::showScoreMenu();
+		guiManager->scoreScreen_FinalScoreText->text = std::to_string(currentPlayer->playerScore);
+		guiManager->showScoreMenu();
 	}
 
 	//sceneManager->renderQueue();

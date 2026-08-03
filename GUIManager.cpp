@@ -203,6 +203,8 @@ void imageGUI::Render() {
 	glEnable(GL_DEPTH_TEST);
 }
 
+GUIManager::GUIManager() {}
+
 //The setup function for the GUI Manager
 void GUIManager::Setup(GLuint program) {
 	//Uses FT to load fonts
@@ -276,6 +278,7 @@ void GUIManager::Setup(GLuint program) {
 
 //Iterates over the guiRenderQueue and calls the render function of every GUI Element that is meant to be on screen
 void GUIManager::renderQueue() {
+	std::cout << "Size of GUI queue: " << guiRenderQueue.size() << std::endl;
 	for (size_t i = 0; i < guiRenderQueue.size(); i++) {
 		if (guiRenderQueue[i]) {
 			guiRenderQueue[i]->Render();
@@ -313,6 +316,7 @@ void GUIManager::checkCollisions(int mousePosX, int mousePosY, bool clicked) {
 	-Every Create function creates a series of instances of GUIObjects and appends them to an array which is then copied onto the renderQueue when the scene is meant to be shown
 
 */
+/*
 buttonGUI* GUIManager::samplesOptionLeftClick = nullptr;
 buttonGUI* GUIManager::samplesOptionRightClick = nullptr;
 buttonGUI* GUIManager::samplesOptionText = nullptr;
@@ -337,6 +341,7 @@ buttonGUI* GUIManager::scoreScreen_FinalScoreText = nullptr;
 
 std::vector<GUIObject*> GUIManager::scoreMenuVector = std::vector<GUIObject*>();
 std::vector<Clickable*> GUIManager::scoreMenuClickables = std::vector<Clickable*>();
+*/
 
 void GUIManager::createOptionsMenu()
 {
@@ -472,11 +477,12 @@ void GUIManager::createScoreMenu()
 
 	GUIObject* background = new imageGUI("Textures/holder.png", screenWidth / 2, screenHeight / 2, 10);
 
+	/*
 	buttonGUI* backButton = new buttonGUI("Back", screenWidth / 2, 100.f, 1,
 		0.5f, 0.5f, 0.5f,
 		0.7f, 0.7f, 0.7f,
 		showMainMenu);
-
+	*/
 	buttonGUI* yourScoreText = new buttonGUI("Your Score:", screenWidth / 2.f, 340.f, 1.2f,
 		0.7f, 0.7f, 0.7f,
 		0.7f, 0.7f, 0.7f
@@ -489,11 +495,11 @@ void GUIManager::createScoreMenu()
 	scoreScreen_FinalScoreText = scoreScreenText;
 
 	scoreMenuVector.push_back(background);
-	scoreMenuVector.push_back(backButton);
+	//scoreMenuVector.push_back(backButton);
 	scoreMenuVector.push_back(yourScoreText);
 	scoreMenuVector.push_back(scoreScreenText);
 
-	scoreMenuClickables.push_back(backButton);
+	//scoreMenuClickables.push_back(backButton);
 }
 
 void GUIManager::showScoreMenu()

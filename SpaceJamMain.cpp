@@ -68,6 +68,7 @@ AudioManager audioManager;
 //Remove this later
 std::optional<PlayerController> player;
 std::optional<GameManager> gameManager;
+std::optional<GUIManager> guiManager;
 std::unique_ptr<SceneManager> sceneManager;
 
 std::map<unsigned char, bool> keyMap;
@@ -312,7 +313,7 @@ void display() {
 		glUseProgram(textShaderProgram);
 		glm::mat4 textProjection = glm::ortho(0.0f, static_cast<float>(screenWidth), 0.0f, static_cast<float>(screenHeight));
 		glUniformMatrix4fv(glGetUniformLocation(textShaderProgram, "textprojection"), 1, GL_FALSE, &textProjection[0][0]);
-		GUIManager::renderQueue();
+		guiManager->renderQueue();
 		glUseProgram(shaderProgram);
 	}
 	//I don't want the depth test to be enabled for rendering framebuffers, causes the framebuffer to not be seen
@@ -376,14 +377,14 @@ void reshape(int x, int y) {
 //Called when the user clicks down on the mouse
 void mouse([[maybe_unused]] int button, int state, int x, int y) {
 	if (state == 1) {
-		GUIManager::checkCollisions(x, screenHeight - y, 1);
+		guiManager->checkCollisions(x, screenHeight - y, 1);
 	}
 }
 
 //Called when the user moves the mouse
 void mouseMotion(int x, int y) {
 	//std::cout << x << " " << y << std::endl;
-	GUIManager::checkCollisions(x, screenHeight - y, 0);
+	guiManager->checkCollisions(x, screenHeight - y, 0);
 }
 
 //This is the function that is called to indicate a new frame should be rendered
@@ -407,7 +408,7 @@ void keyUp(unsigned char key, [[maybe_unused]] int x, [[maybe_unused]] int y) {
 
 //Function that is called to start the game, calls the startGame function of the GameManager
 void startGame() {
-	GUIManager::showGameGUI();
+	guiManager->showGameGUI();
 	gameManager->startGame("Counting Stars Audio/notes30s.json", "Counting Stars Audio/CS_30s.ogg", &player.value());
 }
 
@@ -523,10 +524,11 @@ int main(int argc, char** argv) {
 
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
-	gameManager.emplace(std::move(sceneManager), keyMap, &player.value(), &audioManager);
+	guiManager.emplace();
+	gameManager.emplace(std::move(sceneManager), keyMap, &player.value(), &audioManager, &guiManager.value());
 
 
-	GUIManager::Setup(textShaderProgram);
+	guiManager->Setup(textShaderProgram);
 	OptionsManager::Initialise();
 
 	//Glut manages most user input, these commands tell glut what functions to call on an input
@@ -540,8 +542,8 @@ int main(int argc, char** argv) {
 	glutKeyboardFunc(keyPress);
 	glutKeyboardUpFunc(keyUp);
 
-	GUIManager::showMainMenu();
-
+	guiManager->createMainMenu();
+	guiManager->showMainMenu();
 
 	//Start capturing audio for pitch calculations
 	audioManager.StartCapture();
@@ -566,19 +568,19 @@ std::vector<std::string> OptionsManager::samplesOptionsText = {
 //So when the start button is clicked the start game function is called
 void OptionsManager::Initialise()
 {
-	GUIManager::MainMenu_StartButtonClick->setClickFunction(startGame);
-	GUIManager::MainMenu_OptionsButtonClick->setClickFunction(GUIManager::showOptionsMenu);
-	GUIManager::MainMenu_QuitButtonClick->setClickFunction(QuitGame);
+	guiManager->MainMenu_StartButtonClick->setClickFunction(startGame);
+	//guiManager->MainMenu_OptionsButtonClick->setClickFunction(guiManager->showOptionsMenu);
+	guiManager->MainMenu_QuitButtonClick->setClickFunction(QuitGame);
 
 	//Here we define what each button should do, what function it should call
-	GUIManager::samplesOptionLeftClick->setClickFunction(DecrementSamplesOption);
-	GUIManager::samplesOptionRightClick->setClickFunction(IncrementSamplesOption);
-	GUIManager::samplesBackClick->setClickFunction(GUIManager::showMainMenu);
-	samplesGUI = GUIManager::samplesOptionText;
+	guiManager->samplesOptionLeftClick->setClickFunction(DecrementSamplesOption);
+	guiManager->samplesOptionRightClick->setClickFunction(IncrementSamplesOption);
+	//guiManager->samplesBackClick->setClickFunction(guiManager->showMainMenu);
+	samplesGUI = guiManager->samplesOptionText;
 
 	//Here we assign the string pointer of the score button gui to the player score text
 	//This is what increments when a note is hit
-	player->playerScoreText = &(GUIManager::GameGUI_ScoreText->text);
+	player->playerScoreText = &(guiManager->GameGUI_ScoreText->text);
 }
 
 void OptionsManager::IncrementSamplesOption()

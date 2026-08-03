@@ -73,50 +73,52 @@ public:
 class GUIManager
 {
 public:
-	static void Setup(GLuint program);
-	static void renderQueue(); //Called to render GUI onscreen
-	static void checkCollisions(int mousePosX, int mousePosY, bool clicked); //Called to check if any element on the screen has been cliked
+	GUIManager();
+
+	void Setup(GLuint program);
+	void renderQueue(); //Called to render GUI onscreen
+	void checkCollisions(int mousePosX, int mousePosY, bool clicked); //Called to check if any element on the screen has been cliked
 
 	//Inititates all the Screens that are used in the programme, every GUIObject neeeds to exist to define its behaviour if clicked
-	static void createOptionsMenu();
-	static void showOptionsMenu();
+	void createOptionsMenu();
+	void showOptionsMenu();
 
-	static void createMainMenu();
-	static void showMainMenu();
+	void createMainMenu();
+	void showMainMenu();
 
-	static void createGameGUI();
-	static void showGameGUI();
+	void createGameGUI();
+	void showGameGUI();
 
-	static void createScoreMenu();
-	static void showScoreMenu();
+	void createScoreMenu();
+	void showScoreMenu();
 
 	//Game Menu
-	static std::vector<GUIObject*> gameGUIVector;
-	static std::vector<Clickable*> gameGUIClickables;
+	std::vector<GUIObject*> gameGUIVector;
+	std::vector<Clickable*> gameGUIClickables;
 
 	//Options Menu
-	static std::vector<GUIObject*> optionsMenuVector;
-	static std::vector<Clickable*> optionsMenuClickables;
+	std::vector<GUIObject*> optionsMenuVector;
+	std::vector<Clickable*> optionsMenuClickables;
 	//Main Menu
-	static std::vector<GUIObject*> mainMenuVector;
-	static std::vector<Clickable*> mainMenuClickables;
+	std::vector<GUIObject*> mainMenuVector;
+	std::vector<Clickable*> mainMenuClickables;
 	//Final Score Menu
-	static std::vector<GUIObject*> scoreMenuVector;
-	static std::vector<Clickable*> scoreMenuClickables;
+	std::vector<GUIObject*> scoreMenuVector;
+	std::vector<Clickable*> scoreMenuClickables;
 
 	//Options Menu Buttons
-	static buttonGUI* samplesOptionLeftClick;
-	static buttonGUI* samplesOptionRightClick;
-	static buttonGUI* samplesOptionText;
-	static buttonGUI* samplesBackClick;
+	buttonGUI* samplesOptionLeftClick{nullptr};
+	buttonGUI* samplesOptionRightClick{nullptr};
+	buttonGUI* samplesOptionText{nullptr};
+	buttonGUI* samplesBackClick{nullptr};
 	//Main Menu Buttons
-	static buttonGUI* MainMenu_StartButtonClick;
-	static buttonGUI* MainMenu_OptionsButtonClick;
-	static buttonGUI* MainMenu_QuitButtonClick;
+	buttonGUI* MainMenu_StartButtonClick{nullptr};
+	buttonGUI* MainMenu_OptionsButtonClick{nullptr};
+	buttonGUI* MainMenu_QuitButtonClick{nullptr};
 	//Game Menu Buttons
-	static buttonGUI* GameGUI_ScoreText;
+	buttonGUI* GameGUI_ScoreText{nullptr};
 	//Final score buttons
-	static buttonGUI* scoreScreen_FinalScoreText;
+	buttonGUI* scoreScreen_FinalScoreText{nullptr};
 
 };
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AudioManager.h"
+#include "GUIManager.h"
 #include "SceneManager.h"
 
 #include <json/json.h>
@@ -21,11 +22,12 @@ class GameManager
 private:
 	PlayerController* currentPlayer{nullptr};
 	AudioManager* songSource{nullptr};
+	GUIManager* guiManager{nullptr};
 	std::unique_ptr<SceneManager> sceneManager;
 	std::map<unsigned char, bool>& keyMap;
 public:
 	GameManager(std::unique_ptr<SceneManager> inSceneManager, std::map<unsigned char, bool>& inKeyMap, PlayerController* inPlayerController,
-		AudioManager* inSongSource);
+		AudioManager* inSongSource, GUIManager* inGUIManager);
 
 	void loadSongJson(const char* path, std::string& songTitle, Json::Value& notes);
 	void startGame(const char* noteJsonPath, const char* noteSongPath, PlayerController* player);
