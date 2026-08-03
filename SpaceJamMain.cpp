@@ -568,14 +568,21 @@ std::vector<std::string> OptionsManager::samplesOptionsText = {
 //So when the start button is clicked the start game function is called
 void OptionsManager::Initialise()
 {
+	GUIManager& value = guiManager.value();
 	guiManager->MainMenu_StartButtonClick->setClickFunction(startGame);
-	//guiManager->MainMenu_OptionsButtonClick->setClickFunction(guiManager->showOptionsMenu);
+	guiManager->MainMenu_OptionsButtonClick->setClickFunction(
+		[&] {
+			value.showOptionsMenu();
+		}
+	);
 	guiManager->MainMenu_QuitButtonClick->setClickFunction(QuitGame);
 
 	//Here we define what each button should do, what function it should call
 	guiManager->samplesOptionLeftClick->setClickFunction(DecrementSamplesOption);
 	guiManager->samplesOptionRightClick->setClickFunction(IncrementSamplesOption);
-	//guiManager->samplesBackClick->setClickFunction(guiManager->showMainMenu);
+	guiManager->samplesBackClick->setClickFunction([&] {
+		value.showMainMenu();
+	});
 	samplesGUI = guiManager->samplesOptionText;
 
 	//Here we assign the string pointer of the score button gui to the player score text

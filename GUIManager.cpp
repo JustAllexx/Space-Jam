@@ -1,5 +1,6 @@
 #include "GUIManager.h"
 #include <cmath>
+#include <functional>
 #include <limits>
 #include <stdexcept>
 
@@ -31,24 +32,26 @@ bool Clickable::checkCollision(int mousePosX, int mousePosY) {
 }
 
 //Setter functions for the function pointers of a clickable object, used for defining new button behaviour
-void Clickable::setClickFunction(void(*newClickFunction)())
+void Clickable::setClickFunction(std::function<void()> newClickFunction)
 {
 	onClick = newClickFunction;
 }
 
-void Clickable::setHoverFunction(void(*newHoverFunction)())
+void Clickable::setHoverFunction(std::function<void()> newHoverFunction)
 {
 	onHover = newHoverFunction;
 }
 
 //Construction function for the button GUI Class
-buttonGUI::buttonGUI(std::string inText, float inX, float inY, float inScale, GLfloat colR, GLfloat colG, GLfloat colB, GLfloat hovR, GLfloat hovG, GLfloat hovB, void (*f)()) {
+buttonGUI::buttonGUI(std::string inText, float inX, float inY, float inScale,
+	 GLfloat colR, GLfloat colG, GLfloat colB, GLfloat hovR, GLfloat hovG, GLfloat hovB, 
+	 std::function<void()> callback) {
 	{
 		//Sets input variables as class variables
 		x = inX; y = inY; scale = inScale;
 		text = inText;
-		if (f != nullptr) { //Blank case, if function is equal to nullptr, don't assign it to onClick
-			onClick = f;
+		if (callback != nullptr) { //Blank case, if function is equal to nullptr, don't assign it to onClick
+			onClick = callback;
 		}
 
 		colour[0] = colR; colour[1] = colG; colour[2] = colB;
@@ -278,7 +281,6 @@ void GUIManager::Setup(GLuint program) {
 
 //Iterates over the guiRenderQueue and calls the render function of every GUI Element that is meant to be on screen
 void GUIManager::renderQueue() {
-	std::cout << "Size of GUI queue: " << guiRenderQueue.size() << std::endl;
 	for (size_t i = 0; i < guiRenderQueue.size(); i++) {
 		if (guiRenderQueue[i]) {
 			guiRenderQueue[i]->Render();
@@ -294,7 +296,7 @@ void GUIManager::checkCollisions(int mousePosX, int mousePosY, bool clicked) {
 		if (check->checkCollision(mousePosX, mousePosY)) {	
 			//Check that the button has a behaviour when clicked, if the value is nullptr the button hasn't been assigned a function
 			if (clicked && check->onClick != nullptr) {
-				(*check->onClick)();
+				(check->onClick)();
 			}
 			else {
 				check->hovered = true;
@@ -305,43 +307,6 @@ void GUIManager::checkCollisions(int mousePosX, int mousePosY, bool clicked) {
 		}
 	}
 }
-
-//Avoids unresolved external symbol errors, anything defined in a header file must also be defined in the main scope, even if I intend to overwrite it later
-//These are all default values
-
-/*
-
-	-The rest of the code describes scenes and what GUIElements should compose them
-	-ButtonGUI's are defined here (out of scope) so that their behaviours can be defined in the main module
-	-Every Create function creates a series of instances of GUIObjects and appends them to an array which is then copied onto the renderQueue when the scene is meant to be shown
-
-*/
-/*
-buttonGUI* GUIManager::samplesOptionLeftClick = nullptr;
-buttonGUI* GUIManager::samplesOptionRightClick = nullptr;
-buttonGUI* GUIManager::samplesOptionText = nullptr;
-buttonGUI* GUIManager::samplesBackClick = nullptr;
-
-std::vector<GUIObject*> GUIManager::optionsMenuVector = std::vector<GUIObject*>();
-std::vector<Clickable*> GUIManager::optionsMenuClickables = std::vector<Clickable*>();
-
-buttonGUI* GUIManager::MainMenu_StartButtonClick = nullptr;
-buttonGUI* GUIManager::MainMenu_OptionsButtonClick = nullptr;
-buttonGUI* GUIManager::MainMenu_QuitButtonClick = nullptr;
-
-std::vector<GUIObject*> GUIManager::mainMenuVector = std::vector<GUIObject*>();
-std::vector<Clickable*> GUIManager::mainMenuClickables = std::vector<Clickable*>();
-
-buttonGUI* GUIManager::GameGUI_ScoreText = nullptr;
-
-std::vector<GUIObject*> GUIManager::gameGUIVector = std::vector<GUIObject*>();
-std::vector<Clickable*> GUIManager::gameGUIClickables = std::vector<Clickable*>();
-
-buttonGUI* GUIManager::scoreScreen_FinalScoreText = nullptr;
-
-std::vector<GUIObject*> GUIManager::scoreMenuVector = std::vector<GUIObject*>();
-std::vector<Clickable*> GUIManager::scoreMenuClickables = std::vector<Clickable*>();
-*/
 
 void GUIManager::createOptionsMenu()
 {
@@ -453,8 +418,6 @@ void GUIManager::createGameGUI()
 		float percentHeight = static_cast<float>(i) / 13.f;
 		float textHeight = percentHeight * screenHeight;
 
-		//std::cout << noteText[i - 1] << " " << percentHeight << std::endl;
-
 		buttonGUI* tempText = new buttonGUI(noteText[i - 1], screenWidth - 50.f, textHeight, .4f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, nullptr);
 		gameGUIVector.push_back(tempText);
 	}
@@ -477,12 +440,14 @@ void GUIManager::createScoreMenu()
 
 	GUIObject* background = new imageGUI("Textures/holder.png", screenWidth / 2, screenHeight / 2, 10);
 
-	/*
+	
 	buttonGUI* backButton = new buttonGUI("Back", screenWidth / 2, 100.f, 1,
 		0.5f, 0.5f, 0.5f,
 		0.7f, 0.7f, 0.7f,
-		showMainMenu);
-	*/
+		[this] {
+		showMainMenu();
+	});
+	
 	buttonGUI* yourScoreText = new buttonGUI("Your Score:", screenWidth / 2.f, 340.f, 1.2f,
 		0.7f, 0.7f, 0.7f,
 		0.7f, 0.7f, 0.7f
@@ -495,11 +460,11 @@ void GUIManager::createScoreMenu()
 	scoreScreen_FinalScoreText = scoreScreenText;
 
 	scoreMenuVector.push_back(background);
-	//scoreMenuVector.push_back(backButton);
+	scoreMenuVector.push_back(backButton);
 	scoreMenuVector.push_back(yourScoreText);
 	scoreMenuVector.push_back(scoreScreenText);
 
-	//scoreMenuClickables.push_back(backButton);
+	scoreMenuClickables.push_back(backButton);
 }
 
 void GUIManager::showScoreMenu()

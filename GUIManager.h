@@ -5,6 +5,7 @@
 #include <vector>
 #include <GL/glew.h>
 #include <GL/glut.h>
+#include <functional>
 
 #include <iostream>
 #include <ft2build.h>
@@ -33,11 +34,15 @@ public:
 	bool checkCollision(int mousePosX, int mousePosY); //Check if a collission has occured
 	//Each clickable object contains 2 function pointers, these pointers contain the memory location of a function, these functions are called whenever the button is clicked or hovered over
 	//Setter functions for the Click function pointer and the hover function pointer
-	void setClickFunction(void(*newClickFunction)());
-	void setHoverFunction(void(*newHoverFunction)());
+	//void setClickFunction(void(*newClickFunction)());
+	//void setHoverFunction(void(*newHoverFunction)());
+	void setClickFunction(std::function<void()> newClickFunction);
+	void setHoverFunction(std::function<void()> newHoverFunction);
 	//Function pointers
-	void (*onHover)();
-	void (*onClick)();
+	//void (*onHover)();
+	//void (*onClick)();
+	std::function<void()> onClick;
+	std::function<void()> onHover;
 };
 
 //The button class inherits from the GUIObject class because it is an onscreen element, it also inherits from the Clickable class because it can be clicked
@@ -52,7 +57,10 @@ public:
 	bool enable;
 	std::string text;
 	//The constructor for the buttonGUI Class
-	buttonGUI(std::string inText, float inX, float inY, float inScale, GLfloat colR, GLfloat colG, GLfloat colB, GLfloat hovR, GLfloat hovG, GLfloat hovB, void (*f)());
+	//buttonGUI(std::string inText, float inX, float inY, float inScale, GLfloat colR, GLfloat colG, GLfloat colB, GLfloat hovR, GLfloat hovG, GLfloat hovB, void (*f)());
+	buttonGUI(std::string inText, float inX, float inY, float inScale, 
+		GLfloat colR, GLfloat colG, GLfloat colB, GLfloat hovR, GLfloat hovG, GLfloat hovB, 
+		std::function<void()> callbackFunc);
 	void Render(); //Override for the GUIObject Render Function
 };
 
