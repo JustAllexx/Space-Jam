@@ -57,7 +57,7 @@ GLuint screenVAO, screenVBO;
 std::optional<GameManager> gameManager;
 std::optional<GUIManager> guiManager;
 std::optional<OptionsManager> optionsManager;
-std::unique_ptr<SceneManager> sceneManager;
+//std::unique_ptr<SceneManager> sceneManager;
 
 std::map<unsigned char, bool> keyMap;
 
@@ -460,12 +460,11 @@ int main(int argc, char** argv) {
 
 	//Class initialisation functions
 	//objectManager.emplace(shaderProgram);
-	sceneManager = std::make_unique<SceneManager>(shaderProgram);
 
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
 	guiManager.emplace(textShaderProgram);
-	gameManager.emplace(std::move(sceneManager), keyMap, &guiManager.value());
+	gameManager.emplace(shaderProgram, keyMap, &guiManager.value());
 	optionsManager.emplace(guiManager.value(), &gameManager.value());
 
 	optionsManager->Initialise();

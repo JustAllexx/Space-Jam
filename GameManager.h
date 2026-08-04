@@ -26,7 +26,7 @@ private:
 	std::unique_ptr<AudioManager> audioManager;
 	std::map<unsigned char, bool>& keyMap;
 public:
-	GameManager(std::unique_ptr<SceneManager> inSceneManager, std::map<unsigned char, bool>& inKeyMap, GUIManager* inGUIManager);
+	GameManager(GLuint shaderProgram, std::map<unsigned char, bool>& inKeyMap, GUIManager* inGUIManager);
 	
 	//The only class allowed to have an init, as creation of the game object and presenting the title screen should be seperate
 	void Init();
