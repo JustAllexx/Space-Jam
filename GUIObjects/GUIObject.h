@@ -23,7 +23,12 @@ protected:
 	int top, bottom, left, right;
 public:
 	bool hovered; //Is the Element being hovered over
-	bool checkCollision(int mousePosX, int mousePosY); //Check if a collission has occured
+	bool checkCollision(int mousePosX, int mousePosY) const noexcept {
+		return bottom < mousePosY && 
+		       mousePosY < top &&
+			   left < mousePosX &&
+			   mousePosX < right;
+	} //Check if a collission has occured
 	//Each clickable object contains 2 function pointers, these pointers contain the memory location of a function, these functions are called whenever the button is clicked or hovered over
 	//Setter functions for the Click function pointer and the hover function pointer
 	void setClickFunction(std::function<void()> newClickFunction) noexcept {onClick = newClickFunction;};

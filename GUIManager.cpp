@@ -13,16 +13,6 @@ const glm::vec3 white(1.0f, 1.0f, 1.0f);
 const glm::vec3 lightGray(0.7f, 0.7f, 0.7f);
 const glm::vec3 darkGray(0.5f, 0.5f, 0.5f);
 
-//Code that takes in a mouse location and outputs whether the click was within a clickable objects region
-bool Clickable::checkCollision(int mousePosX, int mousePosY) {
-	return bottom < mousePosY&& mousePosY < top&&
-		left < mousePosX&& mousePosX < right;
-}
-
-GUIObject::GUIObject(GLuint inGUIShader) : GUIShader(inGUIShader) {
-	isTextPos = glGetUniformLocation(GUIShader, "isText");
-}
-
 //Construction function for the button GUI Class
 GUIButton::GUIButton(std::string inText, float inX, float inY, float inScale,
 	 glm::vec3 inColour, glm::vec3 inHoverColour, 
