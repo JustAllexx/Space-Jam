@@ -8,6 +8,7 @@
 #include "GameManager.h"
 #include "OptionsManager.h"
 
+#include <Utilities/ShaderLoader.h>
 #include <cmath>
 #include <memory>
 #include <optional>
@@ -23,10 +24,16 @@ const int screenWidth = 854;
 //Gaussian kernel
 const size_t kernelSize = 5;
 
+//Shader Paths
+const char* phongVert = "Shaders/PhongLighting.vert";
+const char* phongFrag = "Shaders/PhongLighting.frag";
+
 //This is where the integer locations of all the programIDs
 //Once the program has been created OpenGL gives us a unique (unsigned) integer which we can use in an API call to tell OpenGL we want to use this shader in our rendering pipeline
 //Scroll down to the CreatePrograms function for an explanation of each shader and it's purpose
-GLuint shaderProgram, textShaderProgram, screenProgram, debugProgram, gaussianProgram;
+std::optional<Program> shaderProgram;
+GLuint debugShaderProgram;
+GLuint textShaderProgram, screenProgram, debugProgram, gaussianProgram;
 GLuint projectionPos, modelviewPos;
 
 //The projection and modelview are matrices which are defined for use in the vertex shader
@@ -405,11 +412,12 @@ void createPrograms() {
 
 	glUniformMatrix4fv(glGetUniformLocation(textShaderProgram, "textprojection"), 1, GL_FALSE, &textProjection[0][0]);
 	//shaderProgram = loadProgram("vert.vert", "frag.frag");
-	shaderProgram = loadProgram("Shaders/PhongLighting.vert", "Shaders/PhongLighting.frag");
+	//debugShaderProgram = loadProgram(phongVert, phongFrag);
+	shaderProgram.emplace(phongVert, phongFrag);
 
 	// Get the positions of the uniform variables
-	projectionPos = glGetUniformLocation(shaderProgram, "projection");
-	modelviewPos = glGetUniformLocation(shaderProgram, "modelview");
+	projectionPos = glGetUniformLocation(shaderProgram->getProgramID(), "projection");
+	modelviewPos = glGetUniformLocation(shaderProgram->getProgramID(), "modelview");
 	// Pass the projection and modelview matrices to the shader
 	glUniformMatrix4fv(projectionPos, 1, GL_FALSE, &projection[0][0]);
 	glUniformMatrix4fv(modelviewPos, 1, GL_FALSE, &(modelview)[0][0]);
@@ -464,7 +472,7 @@ int main(int argc, char** argv) {
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
 	guiManager.emplace(textShaderProgram);
-	gameManager.emplace(shaderProgram, keyMap, &guiManager.value());
+	gameManager.emplace(shaderProgram->getProgramID(), keyMap, &guiManager.value());
 	optionsManager.emplace(guiManager.value(), &gameManager.value());
 
 	//Glut manages most user input, these commands tell glut what functions to call on an input
