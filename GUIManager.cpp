@@ -14,14 +14,13 @@ const glm::vec3 white(1.0f, 1.0f, 1.0f);
 const glm::vec3 lightGray(0.7f, 0.7f, 0.7f);
 const glm::vec3 darkGray(0.5f, 0.5f, 0.5f);
 
-GUIManager::GUIManager() {}
+const char* arialPath = "fonts/arial.ttf";
+GUIManager::GUIManager(GLuint program) : arialFont(arialPath), GUIShader(program) {}
 
 //The setup function for the GUI Manager
-void GUIManager::Setup(GLuint program) {
+void GUIManager::Setup() {
 	//Uses FT to load fonts
-	GUIShader = program;
-	arialFont.emplace("fonts/arial.ttf");
-	fontMap = arialFont->getMap();
+	fontMap = arialFont.getMap();
 
 	//Buffers a quad (similar to what happens in the Main Module
 	glGenVertexArrays(1, &VAO);

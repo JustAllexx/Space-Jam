@@ -24,13 +24,13 @@ private:
 	std::vector<GUIObject*> guiRenderQueue;
 	std::vector<Clickable*> clickChecks;
 	std::unordered_map<char, TypeChar> fontMap;
-	std::optional<SJ_Font> arialFont;
+	SJ_Font arialFont;
 	GLuint VAO, VBO;
 	GLuint GUIShader, isTextPos;
 public:
-	GUIManager();
+	GUIManager(GLuint program);
 
-	void Setup(GLuint program);
+	void Setup();
 	void renderQueue(); //Called to render GUI onscreen
 	void checkCollisions(int mousePosX, int mousePosY, bool clicked); //Called to check if any element on the screen has been cliked
 

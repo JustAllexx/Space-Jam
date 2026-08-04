@@ -525,11 +525,11 @@ int main(int argc, char** argv) {
 
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
-	guiManager.emplace();
+	guiManager.emplace(textShaderProgram);
 	gameManager.emplace(std::move(sceneManager), keyMap, &player.value(), &audioManager, &guiManager.value());
 
 
-	guiManager->Setup(textShaderProgram);
+	guiManager->Setup();
 	OptionsManager::Initialise();
 
 	//Glut manages most user input, these commands tell glut what functions to call on an input
