@@ -17,8 +17,8 @@
 
 using namespace std;
 
-int screenHeight = 480;
-int screenWidth = 854;
+const int screenHeight = 480;
+const int screenWidth = 854;
 
 //A constant global variable that defines the mathematical constant pi
 //3.1415....
@@ -300,25 +300,14 @@ void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear all information about what colour the image is and clear information about which pixel of the previous frame was closest to the camera
 	//If Object 1 is behind Object 2, but Object 1 is rendered after Object 2. Object 1 will appear on top of Object 2
 	//This feature is provided by OpenGL so that if a pixel is supposed to be behind another object. OpenGL will ignore it
+	//TODO: This can always stay on, so put this in some sort of setup
 	glEnable(GL_DEPTH_TEST);
 	//Load in the phong lighting shader
-	glUseProgram(shaderProgram);
 
 	GLuint lightPosPos = glGetUniformLocation(shaderProgram, "lightPos");
 	glUniform3f(lightPosPos, player->posX, player->posY+2.f, 0.f);
 
 	gameManager->render();
-	//objectManager->renderQueue();
-
-	if (bRenderGui) {
-		glUseProgram(textShaderProgram);
-		glm::mat4 textProjection = glm::ortho(0.0f, static_cast<float>(screenWidth), 0.0f, static_cast<float>(screenHeight));
-		glUniformMatrix4fv(glGetUniformLocation(textShaderProgram, "textprojection"), 1, GL_FALSE, &textProjection[0][0]);
-		guiManager->renderQueue();
-		glUseProgram(shaderProgram);
-	}
-	//I don't want the depth test to be enabled for rendering framebuffers, causes the framebuffer to not be seen
-	//glDisable(GL_DEPTH_TEST);
 	
 	//Gaussian blur
 	//The guassian blur fragment shader is called repeatedly to blur the image drawn to Colour Attachment 1, switching between blurring horizontally and vertically
@@ -367,13 +356,15 @@ void display() {
 }
 
 //The function that is called when the user changes the size of the window in which the game is in
+//TODO: Reshaping doesn't even work right now, so don't even let a user do it
 void reshape(int x, int y) {
 	glViewport(0, 0, (GLsizei)x, (GLsizei)y);
-	screenHeight = y;
-	screenWidth = x;
-	projection = glm::perspective(gameManager->fovy, (GLfloat)x/ (GLfloat)y, 1.0f, 200.0f);
+	//screenHeight = y;
+	//screenWidth = x;
+	projection = glm::perspective(gameManager->fovy, (GLfloat)screenWidth/ (GLfloat)screenHeight, 1.0f, 200.0f);
 	glUniformMatrix4fv(projectionPos, 1, GL_FALSE, &projection[0][0]);
 }
+	
 
 //Called when the user clicks down on the mouse
 void mouse([[maybe_unused]] int button, int state, int x, int y) {

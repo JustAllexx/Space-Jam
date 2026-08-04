@@ -1,6 +1,7 @@
 #include "GUIManager.h"
 #include "GUIObjects/GUIImage.h"
 #include "GUIObjects/GUIButton.h"
+#include "SceneManager.h"
 #include <algorithm>
 #include <cmath>
 #include <functional>
@@ -14,7 +15,12 @@ const glm::vec3 white(1.0f, 1.0f, 1.0f);
 const glm::vec3 lightGray(0.7f, 0.7f, 0.7f);
 const glm::vec3 darkGray(0.5f, 0.5f, 0.5f);
 
+//TODO: Absolutely remove this when implementing dynamically sizing the screen
+const float screenHeight = 480.f;
+const float screenWidth = 854.f;
+
 const char* arialPath = "fonts/arial.ttf";
+
 GUIManager::GUIManager(GLuint program) : arialFont(std::make_unique<SJ_Font>(arialPath)),
   GUIShader(program) {
 	//Buffers a quad (similar to what happens in the Main Module
@@ -35,6 +41,9 @@ GUIManager::GUIManager(GLuint program) : arialFont(std::make_unique<SJ_Font>(ari
 
 //Iterates over the guiRenderQueue and calls the render function of every GUI Element that is meant to be on screen
 void GUIManager::renderQueue() {
+	glUseProgram(GUIShader);
+	glm::mat4 textProjection = glm::ortho(0.0f, static_cast<float>(screenWidth), 0.0f, static_cast<float>(screenHeight));
+	glUniformMatrix4fv(glGetUniformLocation(GUIShader, "textprojection"), 1, GL_FALSE, &textProjection[0][0]);
 	for (size_t i = 0; i < guiRenderQueue.size(); i++) {
 		if (guiRenderQueue[i]) {
 			guiRenderQueue[i]->Render();
@@ -64,9 +73,6 @@ void GUIManager::checkCollisions(int mousePosX, int mousePosY, bool clicked) {
 
 void GUIManager::createOptionsMenu()
 {
-	float screenHeight = 480.0f;
-	float screenWidth = 854.0f;
-
 	GUIObject* background = new GUIImage("Textures\\holder.png", screenWidth / 2, screenHeight / 2, 10, VAO, VBO, GUIShader);
 	
 	GUIObject* pitchAccuracyText = new GUIButton("Audio Buffer Size", screenWidth / 2, 350.f, 1,
@@ -121,9 +127,6 @@ void GUIManager::showOptionsMenu()
 
 void GUIManager::createMainMenu()
 {
-	float screenHeight = 480.0f;
-	float screenWidth = 854.0f;
-
 	GUIObject* logoImage = new GUIImage("Textures/logo.png", screenWidth / 2, screenHeight - 100.f, 1.4f, VAO, VBO, GUIShader);
 
 	GUIButton* startButton = new GUIButton("Start", screenWidth / 2, 250, 1,
@@ -164,9 +167,6 @@ void GUIManager::showMainMenu()
 
 void GUIManager::createGameGUI()
 {
-	float screenHeight = 480.0f;
-	float screenWidth = 854.0f;
-
 	std::vector<std::string> noteText = { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#" };
 
 	for (int i = 1; i < 13; i++) {
@@ -196,9 +196,6 @@ void GUIManager::showGameGUI()
 
 void GUIManager::createScoreMenu()
 {
-	float screenHeight = 480.f;
-	float screenWidth = 854.f;
-
 	GUIObject* background = new GUIImage("Textures/holder.png", screenWidth / 2, screenHeight / 2, 10, VAO, VBO, GUIShader);
 
 	

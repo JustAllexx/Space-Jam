@@ -1,12 +1,13 @@
 #include "SceneManager.h"
 #include "DrawObjects/DrawObject.h"
+#include "GUIObjects/TypeChar.h"
 
 #include <algorithm>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/fwd.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-SceneManager::SceneManager(GLuint shaderProgram) {
+SceneManager::SceneManager(GLuint shaderProgram_) : shaderProgram(shaderProgram_){
 	objModelviewPos = glGetUniformLocation(shaderProgram, "modelview");
 	modelView = glm::lookAt(glm::vec3(0, 0, 60.f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(modelView)[0][0]);
@@ -25,6 +26,9 @@ void SceneManager::addObjectToQueue(DrawObject* obj)
 
 //Default renderQueue function called outside the class, updates the change in time 
 void SceneManager::renderQueue() {
+	//Whenever rendering a scene we always use the default shader
+	glUseProgram(shaderProgram);
+
 	glUniform1i(bloomPos, false); //Bloom should be false by default
 	currentFrameTime = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = static_cast<float>(currentFrameTime - lastFrameTime) / 1000.f;

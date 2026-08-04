@@ -79,6 +79,7 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath)
 
 void GameManager::render() {
 	sceneManager->renderQueue();
+	guiManager->renderQueue();
 }
 
 //Called every frame
