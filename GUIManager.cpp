@@ -10,23 +10,22 @@ const glm::vec3 white(1.0f, 1.0f, 1.0f);
 const glm::vec3 lightGray(0.7f, 0.7f, 0.7f);
 const glm::vec3 darkGray(0.5f, 0.5f, 0.5f);
 
-//Similar to how a framebuffer is rendered onto a quad, so are characters, every character in a string is rendered to a quad and then has a texture applied over it
-//GLuint VAO, VBO;
-
-//GUIShader is where the program id for the GUI Rendering shader is stored in OpenGL, isText is a uniform value telling the shader if it's rendering text or an image
-GLuint GUIshader, isTextPos;
-
 //Code that takes in a mouse location and outputs whether the click was within a clickable objects region
 bool Clickable::checkCollision(int mousePosX, int mousePosY) {
 	return bottom < mousePosY&& mousePosY < top&&
 		left < mousePosX&& mousePosX < right;
 }
 
+GUIObject::GUIObject(GLuint inGUIShader) : GUIShader(inGUIShader) {
+	isTextPos = glGetUniformLocation(GUIShader, "isText");
+}
+
 //Construction function for the button GUI Class
 buttonGUI::buttonGUI(std::string inText, float inX, float inY, float inScale,
 	 glm::vec3 inColour, glm::vec3 inHoverColour, 
 	 std::function<void()> callback, std::map<char, TypeChar>& inFontMap,
-	 GLuint inVAO, GLuint inVBO) : VAO(inVAO), VBO(inVBO), rFontMap(inFontMap){
+	 GLuint inVAO, GLuint inVBO, GLuint inGUIShader)
+	  : GUIObject(inGUIShader), VAO(inVAO), VBO(inVBO), rFontMap(inFontMap){
 	{
 		//Sets input variables as class variables
 		x = inX; y = inY; scale = inScale;
@@ -79,13 +78,13 @@ buttonGUI::buttonGUI(std::string inText, float inX, float inY, float inScale,
 //Renders each character in a string, renders each character indivudally 
 void buttonGUI::Render() {
 	//Tell the GUI Shader Programme that I am rendering text
-	glProgramUniform1i(GUIshader, isTextPos, 1);
+	glProgramUniform1i(GUIShader, isTextPos, 1);
 	//If the text is being hovered over, set it to the hover colour, if not to the deafult colour
 	if (hovered) {
-		glUniform3f(glGetUniformLocation(GUIshader, "textColor"), hoverColour[0], hoverColour[1], hoverColour[2]);
+		glUniform3f(glGetUniformLocation(GUIShader, "textColor"), hoverColour[0], hoverColour[1], hoverColour[2]);
 	}
 	else {
-		glUniform3f(glGetUniformLocation(GUIshader, "textColor"), colour[0], colour[1], colour[2]);
+		glUniform3f(glGetUniformLocation(GUIShader, "textColor"), colour[0], colour[1], colour[2]);
 	}
 
 	if (!enable) { //If the button is not enabled don't render it
@@ -136,7 +135,7 @@ void buttonGUI::Render() {
 }
 
 //Simple constructor function for the ImageGUI class, loads in an image using the stbi image loader then buffers it to a texture
-imageGUI::imageGUI(const char* imagePath, float inX, float inY, float inScale, GLuint inVAO, GLuint inVBO) {
+imageGUI::imageGUI(const char* imagePath, float inX, float inY, float inScale, GLuint inVAO, GLuint inVBO, GLuint inGUIShader) : GUIObject(inGUIShader) {
 	posX = inX; posY = inY; scale = inScale;
 	VAO = inVAO; VBO = inVBO;
 
@@ -158,7 +157,7 @@ imageGUI::imageGUI(const char* imagePath, float inX, float inY, float inScale, G
 void imageGUI::Render() {
 	glDisable(GL_DEPTH_TEST);
 	//Tell the GUI Program shader that I'm not rendering text and it should render an image
-	glProgramUniform1i(GUIshader, isTextPos, 0);
+	glProgramUniform1i(GUIShader, isTextPos, 0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(VAO);
@@ -194,7 +193,7 @@ GUIManager::GUIManager() {}
 void GUIManager::Setup(GLuint program) {
 	//Uses FT to load fonts
 	FT_Library ft;
-	GUIshader = program;
+	GUIShader = program;
 
 	if (FT_Init_FreeType(&ft)) { throw "Failed to open FT Library"; return; }
 
@@ -252,7 +251,7 @@ void GUIManager::Setup(GLuint program) {
 
 	guiRenderQueue = std::vector<GUIObject*>();
 	//Requests the uniform location of the isText bool in the GUI Shader
-	isTextPos = glGetUniformLocation(GUIshader, "isText");
+	isTextPos = glGetUniformLocation(GUIShader, "isText");
 
 	//Creates all the GUI scenes
 	createMainMenu();
@@ -295,35 +294,35 @@ void GUIManager::createOptionsMenu()
 	float screenHeight = 480.0f;
 	float screenWidth = 854.0f;
 
-	GUIObject* background = new imageGUI("Textures\\holder.png", screenWidth / 2, screenHeight / 2, 10, VAO, VBO);
+	GUIObject* background = new imageGUI("Textures\\holder.png", screenWidth / 2, screenHeight / 2, 10, VAO, VBO, GUIShader);
 	
 	GUIObject* pitchAccuracyText = new buttonGUI("Audio Buffer Size", screenWidth / 2, 350.f, 1,
 		lightGray,
 		lightGray,
 		nullptr,
-		fontMap, VAO, VBO);
+		fontMap, VAO, VBO, GUIShader);
 	
 	buttonGUI* samplesOptionTextTemp = new buttonGUI("1024 Samples", screenWidth / 2, 300.f, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO);
+		nullptr, fontMap, VAO, VBO, GUIShader);
 	GUIManager::samplesOptionText = samplesOptionTextTemp;
 	buttonGUI* samplesOptionLeftClickTemp = new buttonGUI("<", (screenWidth / 2) - 200.f, 300.f, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO);
+		nullptr, fontMap, VAO, VBO, GUIShader);
 	GUIManager::samplesOptionLeftClick = samplesOptionLeftClickTemp;
 
 	buttonGUI* samplesOptionRightClickTemp = new buttonGUI(">", (screenWidth / 2) + 200.f, 300.f, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO);
+		nullptr, fontMap, VAO, VBO, GUIShader);
 	GUIManager::samplesOptionRightClick = samplesOptionRightClickTemp;
 
 	buttonGUI* backButton = new buttonGUI("Back", screenWidth / 2, 100.f, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO);
+		nullptr, fontMap, VAO, VBO, GUIShader);
 	GUIManager::samplesBackClick = backButton;
 	
 	optionsMenuVector.push_back(pitchAccuracyText);
@@ -352,24 +351,24 @@ void GUIManager::createMainMenu()
 	float screenHeight = 480.0f;
 	float screenWidth = 854.0f;
 
-	GUIObject* logoImage = new imageGUI("Textures/logo.png", screenWidth / 2, screenHeight - 100.f, 1.4f, VAO, VBO);
+	GUIObject* logoImage = new imageGUI("Textures/logo.png", screenWidth / 2, screenHeight - 100.f, 1.4f, VAO, VBO, GUIShader);
 
 	buttonGUI* startButton = new buttonGUI("Start", screenWidth / 2, 250, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO);
+		nullptr, fontMap, VAO, VBO, GUIShader);
 	GUIManager::MainMenu_StartButtonClick = startButton;
 
 	buttonGUI* optionsButton = new buttonGUI("Options", screenWidth / 2, 175, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO);
+		nullptr, fontMap, VAO, VBO, GUIShader);
 	GUIManager::MainMenu_OptionsButtonClick = optionsButton;
 
 	buttonGUI* quitButton = new buttonGUI("Quit", screenWidth / 2, 100, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO);
+		nullptr, fontMap, VAO, VBO, GUIShader);
 	GUIManager::MainMenu_QuitButtonClick = quitButton;
 
 	mainMenuVector.push_back(logoImage);
@@ -404,14 +403,14 @@ void GUIManager::createGameGUI()
 		buttonGUI* tempText = new buttonGUI(noteText[i - 1], screenWidth - 50.f, textHeight, .4f,
 			 white, 
 			 white,
-			 nullptr, fontMap, VAO, VBO);
+			 nullptr, fontMap, VAO, VBO, GUIShader);
 		gameGUIVector.push_back(tempText);
 	}
 
 	buttonGUI* scoreGUI = new buttonGUI("0", screenWidth / 2, screenHeight - 100, 1.f, 
 		white, 
 		white,
-		nullptr, fontMap, VAO, VBO);
+		nullptr, fontMap, VAO, VBO, GUIShader);
 	GUIManager::GameGUI_ScoreText = scoreGUI;
 	gameGUIVector.push_back(scoreGUI);
 }
@@ -427,7 +426,7 @@ void GUIManager::createScoreMenu()
 	float screenHeight = 480.f;
 	float screenWidth = 854.f;
 
-	GUIObject* background = new imageGUI("Textures/holder.png", screenWidth / 2, screenHeight / 2, 10, VAO, VBO);
+	GUIObject* background = new imageGUI("Textures/holder.png", screenWidth / 2, screenHeight / 2, 10, VAO, VBO, GUIShader);
 
 	
 	buttonGUI* backButton = new buttonGUI("Back", screenWidth / 2, 100.f, 1,
@@ -435,17 +434,17 @@ void GUIManager::createScoreMenu()
 		lightGray,
 		[this] {
 		showMainMenu();
-	}, fontMap, VAO, VBO);
+	}, fontMap, VAO, VBO, GUIShader);
 	
 	buttonGUI* yourScoreText = new buttonGUI("Your Score:", screenWidth / 2.f, 340.f, 1.2f,
 		lightGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO);
+		nullptr, fontMap, VAO, VBO, GUIShader);
 
 	buttonGUI* scoreScreenText = new buttonGUI("0", screenWidth / 2, 250.f, 1,
 		lightGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO);
+		nullptr, fontMap, VAO, VBO, GUIShader);
 	scoreScreen_FinalScoreText = scoreScreenText;
 
 	scoreMenuVector.push_back(background);

@@ -27,7 +27,11 @@ struct TypeChar {
 };
 
 class GUIObject {
+protected:
+	GLuint GUIShader;
+	GLuint isTextPos;
 public:
+	GUIObject(GLuint GUIShader);
 	virtual void Render() {
 		return;
 	}
@@ -73,7 +77,7 @@ public:
 	buttonGUI(std::string inText, float inX, float inY, float inScale, 
 		glm::vec3 inColour, glm::vec3 inHoverColour, 
 		std::function<void()> callbackFunc, std::map<char, TypeChar>& inFontMap,
-		GLuint inVAO, GLuint inVBO);
+		GLuint inVAO, GLuint inVBO, GLuint inGUIShader);
 	void Render(); //Override for the GUIObject Render Function
 };
 
@@ -86,7 +90,7 @@ private:
 	GLuint texture, VAO, VBO;
 public:
 	//Constructor function for image class
-	imageGUI(const char* imagePath, float inX, float inY, float inScale, GLuint inVAO, GLuint inVBO);
+	imageGUI(const char* imagePath, float inX, float inY, float inScale, GLuint inVAO, GLuint inVBO, GLuint inGUIShader);
 	void Render(); //Override for GUIObject Render Function
 };
 
@@ -98,6 +102,7 @@ private:
 	std::vector<Clickable*> clickChecks;
 	std::map<char, TypeChar> fontMap;
 	GLuint VAO, VBO;
+	GLuint GUIShader, isTextPos;
 public:
 	GUIManager();
 
