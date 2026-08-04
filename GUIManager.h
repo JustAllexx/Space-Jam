@@ -93,7 +93,7 @@ class GUIManager
 private:
 	std::vector<GUIObject*> guiRenderQueue;
 	std::vector<Clickable*> clickChecks;
-	//std::map<char, TypeChar> fontMap;
+	std::map<char, TypeChar> fontMap;
 public:
 	GUIManager();
 

@@ -10,7 +10,7 @@
 GLuint VAO, VBO;
 
 //
-std::map<char, TypeChar> fontMap;
+//std::map<char, TypeChar> fontMap;
 //std::vector<GUIObject*> guiRenderQueue;
 //std::vector<Clickable*> clickChecks;
 //GUIShader is where the program id for the GUI Rendering shader is stored in OpenGL, isText is a uniform value telling the shader if it's rendering text or an image
@@ -54,7 +54,7 @@ buttonGUI::buttonGUI(std::string inText, float inX, float inY, float inScale,
 		//Iterates through every character in a string
 		std::string::const_iterator tempIt;
 		for (tempIt = text.begin(); tempIt != text.end(); tempIt++) {
-			TypeChar tempChar = fontMap[*tempIt];
+			TypeChar tempChar = rFontMap[*tempIt];
 			advanceSum += static_cast<float>(tempChar.Advance >> 6) * scale;
 			//Gets the maximum height by comparing the height of every character in the text
 			maxHeight = std::max(maxHeight, tempChar.Size.y * scale);
