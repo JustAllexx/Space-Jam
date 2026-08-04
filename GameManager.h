@@ -43,5 +43,6 @@ public:
 	std::string* scoreStr{nullptr};
 	bool gamePlaying{false};
 
+	GUIManager& getGUIManager() const noexcept {return *guiManager;}
 };
 

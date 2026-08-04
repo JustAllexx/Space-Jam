@@ -2,3 +2,4 @@ build/
 Libraries/
 release/
 CMakeCache.txt
+.cache/
