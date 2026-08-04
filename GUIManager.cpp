@@ -16,12 +16,7 @@ const glm::vec3 darkGray(0.5f, 0.5f, 0.5f);
 
 const char* arialPath = "fonts/arial.ttf";
 GUIManager::GUIManager(GLuint program) : arialFont(std::make_unique<SJ_Font>(arialPath)),
-  GUIShader(program) {}
-
-//The setup function for the GUI Manager
-void GUIManager::Setup() {
-	//Uses FT to load fonts
-
+  GUIShader(program) {
 	//Buffers a quad (similar to what happens in the Main Module
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -31,16 +26,12 @@ void GUIManager::Setup() {
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 
-	guiRenderQueue = std::vector<GUIObject*>();
-	//Requests the uniform location of the isText bool in the GUI Shader
-	isTextPos = glGetUniformLocation(GUIShader, "isText");
-
 	//Creates all the GUI scenes
 	createMainMenu();
 	createOptionsMenu();
 	createGameGUI();
 	createScoreMenu();
-}
+  }
 
 //Iterates over the guiRenderQueue and calls the render function of every GUI Element that is meant to be on screen
 void GUIManager::renderQueue() {

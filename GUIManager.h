@@ -27,11 +27,10 @@ private:
 	std::unordered_map<char, TypeChar> fontMap;
 	std::unique_ptr<SJ_Font> arialFont;
 	GLuint VAO, VBO;
-	GLuint GUIShader, isTextPos;
+	GLuint GUIShader;
 public:
 	GUIManager(GLuint program);
 
-	void Setup();
 	void renderQueue(); //Called to render GUI onscreen
 	void checkCollisions(int mousePosX, int mousePosY, bool clicked); //Called to check if any element on the screen has been cliked
 
