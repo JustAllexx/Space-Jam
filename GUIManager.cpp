@@ -11,7 +11,7 @@ const glm::vec3 lightGray(0.7f, 0.7f, 0.7f);
 const glm::vec3 darkGray(0.5f, 0.5f, 0.5f);
 
 //Similar to how a framebuffer is rendered onto a quad, so are characters, every character in a string is rendered to a quad and then has a texture applied over it
-GLuint VAO, VBO;
+//GLuint VAO, VBO;
 
 //GUIShader is where the program id for the GUI Rendering shader is stored in OpenGL, isText is a uniform value telling the shader if it's rendering text or an image
 GLuint GUIshader, isTextPos;

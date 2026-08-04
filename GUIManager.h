@@ -97,6 +97,7 @@ private:
 	std::vector<GUIObject*> guiRenderQueue;
 	std::vector<Clickable*> clickChecks;
 	std::map<char, TypeChar> fontMap;
+	GLuint VAO, VBO;
 public:
 	GUIManager();
 
