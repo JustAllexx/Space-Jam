@@ -9,10 +9,6 @@
 //Similar to how a framebuffer is rendered onto a quad, so are characters, every character in a string is rendered to a quad and then has a texture applied over it
 GLuint VAO, VBO;
 
-//
-//std::map<char, TypeChar> fontMap;
-//std::vector<GUIObject*> guiRenderQueue;
-//std::vector<Clickable*> clickChecks;
 //GUIShader is where the program id for the GUI Rendering shader is stored in OpenGL, isText is a uniform value telling the shader if it's rendering text or an image
 GLuint GUIshader, isTextPos;
 
@@ -20,17 +16,6 @@ GLuint GUIshader, isTextPos;
 bool Clickable::checkCollision(int mousePosX, int mousePosY) {
 	return bottom < mousePosY&& mousePosY < top&&
 		left < mousePosX&& mousePosX < right;
-}
-
-//Setter functions for the function pointers of a clickable object, used for defining new button behaviour
-void Clickable::setClickFunction(std::function<void()> newClickFunction)
-{
-	onClick = newClickFunction;
-}
-
-void Clickable::setHoverFunction(std::function<void()> newHoverFunction)
-{
-	onHover = newHoverFunction;
 }
 
 //Construction function for the button GUI Class

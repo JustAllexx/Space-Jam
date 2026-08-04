@@ -45,8 +45,8 @@ public:
 	//Setter functions for the Click function pointer and the hover function pointer
 	//void setClickFunction(void(*newClickFunction)());
 	//void setHoverFunction(void(*newHoverFunction)());
-	void setClickFunction(std::function<void()> newClickFunction);
-	void setHoverFunction(std::function<void()> newHoverFunction);
+	void setClickFunction(std::function<void()> newClickFunction) noexcept {onClick = newClickFunction;};
+	void setHoverFunction(std::function<void()> newHoverFunction) noexcept {onHover = newHoverFunction;};
 	//Function pointers
 	//void (*onHover)();
 	//void (*onClick)();
