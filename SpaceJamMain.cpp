@@ -513,11 +513,6 @@ int main(int argc, char** argv) {
 	glutKeyboardFunc(keyPress);
 	glutKeyboardUpFunc(keyUp);
 
-	guiManager->showMainMenu();
-
-	//Start capturing audio for pitch calculations
-	audioManager.StartCapture();
-
 	//This command tells glut to start calling the newFrame function
 	gameManager->Init();
 	glutMainLoop();

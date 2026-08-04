@@ -118,5 +118,8 @@ void GameManager::gameUpdate()
 
 void GameManager::Init() {
 	sceneManager->createNightSky();
+	guiManager->showMainMenu();
+	//Obviously, song playing and audio recording concerns will be seperated at a later point
+	songSource->StartCapture();
 }
 
