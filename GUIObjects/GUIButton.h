@@ -6,6 +6,7 @@
 
 //TODO: Maybe fix this, I don't know if I am allowed to do this
 struct TypeChar;
+class SJ_Font;
 
 //The button class inherits from the GUIObject class because it is an onscreen element, it also inherits from the Clickable class because it can be clicked
 class GUIButton : public GUIObject, public Clickable {
@@ -15,7 +16,7 @@ private:
 	GLfloat colour[3];
 	GLfloat hoverColour[3];
 	GLuint VAO, VBO;
-	std::unordered_map<char, TypeChar>& rFontMap;
+	SJ_Font& rFontMap;
 public:
 	//If a button is not enabled it will not be rendered, is enabled by default in the constructor, text stores the text that is rendered
 	bool enable;
@@ -23,7 +24,7 @@ public:
 	//The constructor for the buttonGUI Class
 	GUIButton(std::string inText, float inX, float inY, float inScale, 
 		glm::vec3 inColour, glm::vec3 inHoverColour, 
-		std::function<void()> callbackFunc, std::unordered_map<char, TypeChar>& inFontMap,
+		std::function<void()> callbackFunc, SJ_Font& inFontMap,
 		GLuint inVAO, GLuint inVBO, GLuint inGUIShader);
 	void Render(); //Override for the GUIObject Render Function
 };

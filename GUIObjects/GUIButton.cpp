@@ -1,10 +1,11 @@
 #include "GUIButton.h"
 #include "TypeChar.h"
+#include "../FontLoader.h"
 #include <stdexcept>
 
 GUIButton::GUIButton(std::string inText, float inX, float inY, float inScale,
 	 glm::vec3 inColour, glm::vec3 inHoverColour, 
-	 std::function<void()> callback, std::unordered_map<char, TypeChar>& inFontMap,
+	 std::function<void()> callback, SJ_Font& inFontMap,
 	 GLuint inVAO, GLuint inVBO, GLuint inGUIShader)
 	  : GUIObject(inGUIShader), VAO(inVAO), VBO(inVBO), rFontMap(inFontMap){
 	{
@@ -23,8 +24,9 @@ GUIButton::GUIButton(std::string inText, float inX, float inY, float inScale,
 		maxHeight = 0;
 		//Iterates through every character in a string
 		std::string::const_iterator tempIt;
+		const auto fontMap = rFontMap.getMap();
 		for (tempIt = text.begin(); tempIt != text.end(); tempIt++) {
-			TypeChar tempChar = rFontMap[*tempIt];
+			TypeChar tempChar = fontMap.at(*tempIt);
 			advanceSum += static_cast<float>(tempChar.Advance >> 6) * scale;
 			//Gets the maximum height by comparing the height of every character in the text
 			maxHeight = std::max(maxHeight, tempChar.Size.y * scale);
@@ -78,10 +80,11 @@ void GUIButton::Render() {
 	float charx = x;
 
 	std::string::const_iterator c;
+	const auto fontMap = rFontMap.getMap();
 	for (c = text.begin(); c != text.end(); c++)
 	{
 		//The character struct for each character being rendered
-		TypeChar ch = rFontMap[*c];
+		TypeChar ch = fontMap.at(*c);
 
 		float xpos = (charx - advanceSum) + ch.Bearing.x * scale;
 		float ypos = (y - (maxHeight / 2)) - (ch.Size.y - ch.Bearing.y) * scale;

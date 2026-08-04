@@ -15,12 +15,12 @@ const glm::vec3 lightGray(0.7f, 0.7f, 0.7f);
 const glm::vec3 darkGray(0.5f, 0.5f, 0.5f);
 
 const char* arialPath = "fonts/arial.ttf";
-GUIManager::GUIManager(GLuint program) : arialFont(arialPath), GUIShader(program) {}
+GUIManager::GUIManager(GLuint program) : arialFont(std::make_unique<SJ_Font>(arialPath)),
+  GUIShader(program) {}
 
 //The setup function for the GUI Manager
 void GUIManager::Setup() {
 	//Uses FT to load fonts
-	fontMap = arialFont.getMap();
 
 	//Buffers a quad (similar to what happens in the Main Module
 	glGenVertexArrays(1, &VAO);
@@ -82,29 +82,29 @@ void GUIManager::createOptionsMenu()
 		lightGray,
 		lightGray,
 		nullptr,
-		fontMap, VAO, VBO, GUIShader);
+		*arialFont, VAO, VBO, GUIShader);
 	
 	GUIButton* samplesOptionTextTemp = new GUIButton("1024 Samples", screenWidth / 2, 300.f, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO, GUIShader);
+		nullptr, *arialFont, VAO, VBO, GUIShader);
 	GUIManager::samplesOptionText = samplesOptionTextTemp;
 	GUIButton* samplesOptionLeftClickTemp = new GUIButton("<", (screenWidth / 2) - 200.f, 300.f, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO, GUIShader);
+		nullptr, *arialFont, VAO, VBO, GUIShader);
 	GUIManager::samplesOptionLeftClick = samplesOptionLeftClickTemp;
 
 	GUIButton* samplesOptionRightClickTemp = new GUIButton(">", (screenWidth / 2) + 200.f, 300.f, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO, GUIShader);
+		nullptr, *arialFont, VAO, VBO, GUIShader);
 	GUIManager::samplesOptionRightClick = samplesOptionRightClickTemp;
 
 	GUIButton* backButton = new GUIButton("Back", screenWidth / 2, 100.f, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO, GUIShader);
+		nullptr, *arialFont, VAO, VBO, GUIShader);
 	GUIManager::samplesBackClick = backButton;
 	
 	optionsMenuVector.push_back(pitchAccuracyText);
@@ -138,19 +138,19 @@ void GUIManager::createMainMenu()
 	GUIButton* startButton = new GUIButton("Start", screenWidth / 2, 250, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO, GUIShader);
+		nullptr, *arialFont, VAO, VBO, GUIShader);
 	GUIManager::MainMenu_StartButtonClick = startButton;
 
 	GUIButton* optionsButton = new GUIButton("Options", screenWidth / 2, 175, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO, GUIShader);
+		nullptr, *arialFont, VAO, VBO, GUIShader);
 	GUIManager::MainMenu_OptionsButtonClick = optionsButton;
 
 	GUIButton* quitButton = new GUIButton("Quit", screenWidth / 2, 100, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO, GUIShader);
+		nullptr, *arialFont, VAO, VBO, GUIShader);
 	GUIManager::MainMenu_QuitButtonClick = quitButton;
 
 	mainMenuVector.push_back(logoImage);
@@ -185,14 +185,14 @@ void GUIManager::createGameGUI()
 		GUIButton* tempText = new GUIButton(noteText[i - 1], screenWidth - 50.f, textHeight, .4f,
 			 white, 
 			 white,
-			 nullptr, fontMap, VAO, VBO, GUIShader);
+			 nullptr, *arialFont, VAO, VBO, GUIShader);
 		gameGUIVector.push_back(tempText);
 	}
 
 	GUIButton* scoreGUI = new GUIButton("0", screenWidth / 2, screenHeight - 100, 1.f, 
 		white, 
 		white,
-		nullptr, fontMap, VAO, VBO, GUIShader);
+		nullptr, *arialFont, VAO, VBO, GUIShader);
 	GUIManager::GameGUI_ScoreText = scoreGUI;
 	gameGUIVector.push_back(scoreGUI);
 }
@@ -216,17 +216,17 @@ void GUIManager::createScoreMenu()
 		lightGray,
 		[this] {
 		showMainMenu();
-	}, fontMap, VAO, VBO, GUIShader);
+	}, *arialFont, VAO, VBO, GUIShader);
 	
 	GUIButton* yourScoreText = new GUIButton("Your Score:", screenWidth / 2.f, 340.f, 1.2f,
 		lightGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO, GUIShader);
+		nullptr, *arialFont, VAO, VBO, GUIShader);
 
 	GUIButton* scoreScreenText = new GUIButton("0", screenWidth / 2, 250.f, 1,
 		lightGray,
 		lightGray,
-		nullptr, fontMap, VAO, VBO, GUIShader);
+		nullptr, *arialFont, VAO, VBO, GUIShader);
 	scoreScreen_FinalScoreText = scoreScreenText;
 
 	scoreMenuVector.push_back(background);

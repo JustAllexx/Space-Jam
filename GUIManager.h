@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <GL/glut.h>
+#include <memory>
 #include <optional>
 #include <vector>
 #include <ft2build.h>
@@ -24,7 +25,7 @@ private:
 	std::vector<GUIObject*> guiRenderQueue;
 	std::vector<Clickable*> clickChecks;
 	std::unordered_map<char, TypeChar> fontMap;
-	SJ_Font arialFont;
+	std::unique_ptr<SJ_Font> arialFont;
 	GLuint VAO, VBO;
 	GLuint GUIShader, isTextPos;
 public:
