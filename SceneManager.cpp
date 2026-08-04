@@ -6,6 +6,12 @@
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/fwd.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <numbers>
+
+const char* skyModelPath = "Models/nightSkyObj.obj";
+const char* skyTexturePath = "Textures/nightsky.png";
+const char* moonModelPath = "Models/moon.obj";
+const char* moonTexturePath = "Textures/moon.png";
 
 SceneManager::SceneManager(GLuint shaderProgram_) : shaderProgram(shaderProgram_){
 	objModelviewPos = glGetUniformLocation(shaderProgram, "modelview");
@@ -75,4 +81,14 @@ void SceneManager::renderQueue(std::vector<DrawObject*> &rendQueue)
             return obj->IsDestroy();
         }),
     rendQueue.end());
+}
+
+void SceneManager::createNightSky() {
+	DrawObject* background = new DrawObject(skyModelPath, skyTexturePath, 1.f, 1.f, false, glm::vec3(0.f, 4.f, 0.0f), glm::vec3(4.f, 4.f, 4.f), glm::vec3(0.f, std::numbers::pi, 0.f));
+	DrawObject* moonObj = new DrawObject("Models/moon.obj", "Textures/moon.png", 1.f, 1.f, true, glm::vec3(50.f, 50.f, -100.f), glm::vec3(30.f, 30.f, 30.f), glm::vec3(0.0f, 0.0f, 0.0f));
+	moonObj->setRotationalVelocity(glm::vec3(0.01f, 0.1f, 0.0f));
+	background->setRotationalVelocity(glm::vec3(0.f, 0.01f, 0.f));
+
+	addObjectToQueue(background);
+	addObjectToQueue(moonObj);
 }

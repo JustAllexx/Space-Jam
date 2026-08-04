@@ -114,8 +114,9 @@ void GameManager::gameUpdate()
 		guiManager->scoreScreen_FinalScoreText->text = std::to_string(currentPlayer->playerScore);
 		guiManager->showScoreMenu();
 	}
-
-	//sceneManager->renderQueue();
 }
 
+void GameManager::Init() {
+	sceneManager->createNightSky();
+}
 

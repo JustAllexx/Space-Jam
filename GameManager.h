@@ -28,7 +28,9 @@ private:
 public:
 	GameManager(std::unique_ptr<SceneManager> inSceneManager, std::map<unsigned char, bool>& inKeyMap, PlayerController* inPlayerController,
 		AudioManager* inSongSource, GUIManager* inGUIManager);
-
+	
+	//The only class allowed to have an init, as creation of the game object and presenting the title screen should be seperate
+	void Init();
 	void loadSongJson(const char* path, std::string& songTitle, Json::Value& notes);
 	void startGame(const char* noteJsonPath, const char* noteSongPath);
 	void render();

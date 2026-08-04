@@ -33,6 +33,8 @@ public:
 	void addObjectToQueue(DrawObject* obj);
 	void renderQueue();
 	void renderQueue(std::vector<DrawObject*> &rendQueue);
+	//Most likely temporary creation function
+	void createNightSky();
 
 	float getDeltaTime() const noexcept {return deltaTime;}
 };
