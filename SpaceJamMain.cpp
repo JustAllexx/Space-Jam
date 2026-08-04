@@ -59,6 +59,7 @@ GLuint screenVAO, screenVBO;
 std::optional<PlayerController> player;
 std::optional<GameManager> gameManager;
 std::optional<GUIManager> guiManager;
+std::optional<OptionsManager> optionsManager;
 std::unique_ptr<SceneManager> sceneManager;
 
 std::map<unsigned char, bool> keyMap;
@@ -488,9 +489,10 @@ int main(int argc, char** argv) {
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
 	guiManager.emplace(textShaderProgram);
+	optionsManager.emplace(guiManager.value());
 	gameManager.emplace(std::move(sceneManager), keyMap, &player.value(), &guiManager.value());
 
-	OptionsManager::Initialise();
+	optionsManager->Initialise();
 
 	//Glut manages most user input, these commands tell glut what functions to call on an input
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
@@ -509,41 +511,30 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-//Defines the samplesGUI out of the scope of the header file
-//These members belong to the class OptionsManager, but need to be defined out of the scope of the class before they can be used, because they are static values
-GUIButton* OptionsManager::samplesGUI = nullptr;
-size_t OptionsManager::samplesOptionIndex = 0;
-std::vector<std::string> OptionsManager::samplesOptionsText = {
-	"1024 Samples",
-	"2048 Samples",
-	"4096 Samples",
-	"512 Samples"
-};
+OptionsManager::OptionsManager(GUIManager& guiManager_) : guiManager(guiManager_), samplesGUI(*guiManager.samplesOptionText) {}
 
 //In this function we define the function pointers for each function
 //So when the start button is clicked the start game function is called
 void OptionsManager::Initialise()
 {
-	GUIManager& value = guiManager.value();
-	guiManager->MainMenu_StartButtonClick->setClickFunction(startGame);
-	guiManager->MainMenu_OptionsButtonClick->setClickFunction(
+	guiManager.MainMenu_StartButtonClick->setClickFunction(startGame);
+	guiManager.MainMenu_OptionsButtonClick->setClickFunction(
 		[&] {
-			value.showOptionsMenu();
+			guiManager.showOptionsMenu();
 		}
 	);
-	guiManager->MainMenu_QuitButtonClick->setClickFunction(QuitGame);
+	guiManager.MainMenu_QuitButtonClick->setClickFunction(QuitGame);
 
 	//Here we define what each button should do, what function it should call
-	guiManager->samplesOptionLeftClick->setClickFunction(DecrementSamplesOption);
-	guiManager->samplesOptionRightClick->setClickFunction(IncrementSamplesOption);
-	guiManager->samplesBackClick->setClickFunction([&] {
-		value.showMainMenu();
+	guiManager.samplesOptionLeftClick->setClickFunction([&] {DecrementSamplesOption();});
+	guiManager.samplesOptionRightClick->setClickFunction([&] {IncrementSamplesOption();});
+	guiManager.samplesBackClick->setClickFunction([&] {
+		guiManager.showMainMenu();
 	});
-	samplesGUI = guiManager->samplesOptionText;
 
 	//Here we assign the string pointer of the score button gui to the player score text
 	//This is what increments when a note is hit
-	player->playerScoreText = &(guiManager->GameGUI_ScoreText->text);
+	player->playerScoreText = &(guiManager.GameGUI_ScoreText->text);
 }
 
 void OptionsManager::IncrementSamplesOption()
@@ -551,11 +542,11 @@ void OptionsManager::IncrementSamplesOption()
 	//In C++ the modulus operator doesn't have the desired effect with negative numbers (-1 % 4) = -1 not 3 (which is what we want)
 	//So add the size of the text vector on aswell
 	samplesOptionIndex = (samplesOptionIndex + 1 + samplesOptionsText.size()) % samplesOptionsText.size();
-	samplesGUI->text = samplesOptionsText[samplesOptionIndex];
+	samplesGUI.text = samplesOptionsText[samplesOptionIndex];
 }
 
 void OptionsManager::DecrementSamplesOption()
 {
 	samplesOptionIndex = (samplesOptionIndex - 1 + samplesOptionsText.size()) % samplesOptionsText.size();
-	samplesGUI->text = samplesOptionsText[samplesOptionIndex];
+	samplesGUI.text = samplesOptionsText[samplesOptionIndex];
 }

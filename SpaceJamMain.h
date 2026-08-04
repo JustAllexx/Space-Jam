@@ -2,6 +2,7 @@
 //This is in every header file
 #pragma once
 
+#include "GUIManager.h"
 #include <iostream>
 #include <string>
 #include <glm/glm.hpp>
@@ -27,12 +28,20 @@ std::string readShaderFile(std::string filename);
 //This class also defines all the button behaviours for every GUI Element on the screen
 class OptionsManager {
 private:
-	static size_t samplesOptionIndex;
-	static GUIButton* samplesGUI;
-	static std::vector<std::string> samplesOptionsText;
+	GUIManager& guiManager;
+	GUIButton& samplesGUI;
+
+	size_t samplesOptionIndex{0};
+	std::vector<std::string> samplesOptionsText{{
+		"1024 Samples",
+		"2048 Samples",
+		"4096 Samples",
+		"512 Samples"
+	}};
 public:
-	static void Initialise();
-	static void IncrementSamplesOption();
-	static void DecrementSamplesOption();
+	OptionsManager(GUIManager& guiManager);
+	void Initialise();
+	void IncrementSamplesOption();
+	void DecrementSamplesOption();
 };
 
