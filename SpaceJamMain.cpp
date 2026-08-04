@@ -51,7 +51,6 @@ GLuint renderFramebuffer;
 GLuint finalFramebuffer[2];
 GLuint gaussianLeftBuffer[2];
 GLuint gaussianRightBuffer[2];
-GLuint debugFramebuffer[2];
 GLuint splitColourBuffers[2];
 
 //OpenGL ID for changing values in the fragment shader
@@ -191,14 +190,6 @@ void createFramebuffers() {
 	framebufferSettings();
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gaussianRightBuffer[1], 0);
 	
-	//This framebuffer was used for debugging purposes, if I wanted to render a framebuffer early, I would bind this framebuffer.
-	//It is no longer used or needed in the code
-	glGenFramebuffers(1, &debugFramebuffer[0]);
-	glGenTextures(1, &debugFramebuffer[1]);
-	glBindFramebuffer(GL_FRAMEBUFFER, debugFramebuffer[0]);
-	glBindTexture(GL_TEXTURE_2D, debugFramebuffer[1]);
-	framebufferSettings();
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, debugFramebuffer[1], 0);
 
 	//This is the framebuffer where everything is initially rendered to
 	//The ObjectManager renders to this framebuffer, this framebuffer is not displayed to the user.
