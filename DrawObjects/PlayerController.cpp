@@ -12,7 +12,7 @@ PlayerController::PlayerController() : DrawObject("Models/planeUV2.obj", "Textur
 	velocityY = 40.f;
 	targetY = 0.f;
 	playerScore = 0;
-	playerScoreText = nullptr;
+	//playerScoreText = nullptr;
 	collisionBox.emplace(3.f, 1.5f, 6.0f);
 }
 

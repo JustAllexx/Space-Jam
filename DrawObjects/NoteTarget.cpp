@@ -29,7 +29,7 @@ void NoteTarget::Update([[maybe_unused]] float deltaTime)
 	if (CollisionBox::checkCollision(pos, colBox, planePos, currentPlayer->collisionBox.value())) {
 		if (!bToDelete) {
 			currentPlayer->playerScore += 100; //Increase score by 100
-			*currentPlayer->playerScoreText = std::to_string(currentPlayer->playerScore);
+			//*currentPlayer->playerScoreText = std::to_string(currentPlayer->playerScore);
 		}
 		bToDelete = true;
 	}

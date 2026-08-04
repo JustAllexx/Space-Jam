@@ -8,7 +8,9 @@
 #include "GUIObjects/GUIButton.h"
 
 #include <fstream>
+#include <iostream>
 #include <memory>
+#include <string>
 
 //The index of each note counting up from 0
 const std::map<std::string, int> notePairings{
@@ -50,7 +52,7 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath)
 	//currentPlayer = player;
 	//Resets the players score to 0
 	currentPlayer->playerScore = 0;
-	*currentPlayer->playerScoreText = "0";
+	//*currentPlayer->playerScoreText = "0";
 
 	gamePlaying = true;
 
@@ -105,6 +107,7 @@ void GameManager::gameUpdate()
 	//Update the players movement
 	//Keymap contains what keys are being pressed down during this frame, dt is the time since last frame
 	currentPlayer->controlUpdate(keyMap, sceneManager->getDeltaTime());
+	guiManager->GameGUI_ScoreText->text = std::to_string(currentPlayer->playerScore);
 
 	float currentPlayPosition =  audioManager->getPlayPos();
 	//The code that checks if the game should finish

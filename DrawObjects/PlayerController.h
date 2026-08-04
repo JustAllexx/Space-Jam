@@ -16,7 +16,7 @@ public:
 	void controlUpdate(std::map<unsigned char, bool>& keyMap, float dt);
 
 	int playerScore; //Score
-	std::string* playerScoreText;
+	//std::string* playerScoreText;
 
 	void setTargetY(float target) noexcept {targetY = target;}
 };

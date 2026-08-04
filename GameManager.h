@@ -21,7 +21,6 @@ class GameManager
 {
 private:
 	PlayerController* currentPlayer{nullptr};
-	//AudioManager* songSource{nullptr};
 	GUIManager* guiManager{nullptr};
 	std::unique_ptr<SceneManager> sceneManager;
 	std::unique_ptr<AudioManager> audioManager;

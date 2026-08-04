@@ -534,7 +534,7 @@ void OptionsManager::Initialise()
 
 	//Here we assign the string pointer of the score button gui to the player score text
 	//This is what increments when a note is hit
-	player->playerScoreText = &(guiManager.GameGUI_ScoreText->text);
+	//player->playerScoreText = &(guiManager.GameGUI_ScoreText->text);
 }
 
 void OptionsManager::IncrementSamplesOption()
