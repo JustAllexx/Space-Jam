@@ -9,19 +9,10 @@
 //Similar to how a framebuffer is rendered onto a quad, so are characters, every character in a string is rendered to a quad and then has a texture applied over it
 GLuint VAO, VBO;
 
-//A C++ Structure, stores details about every character that can be rendered to the screen
-//Every character in a font will have these details
-struct TypeChar {
-	GLuint TextureID;
-	glm::vec2 Size;
-	glm::vec2 Bearing;
-	unsigned int Advance;
-};
-
 //
 std::map<char, TypeChar> fontMap;
-std::vector<GUIObject*> guiRenderQueue;
-std::vector<Clickable*> clickChecks;
+//std::vector<GUIObject*> guiRenderQueue;
+//std::vector<Clickable*> clickChecks;
 //GUIShader is where the program id for the GUI Rendering shader is stored in OpenGL, isText is a uniform value telling the shader if it's rendering text or an image
 GLuint GUIshader, isTextPos;
 
