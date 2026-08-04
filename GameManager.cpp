@@ -8,6 +8,7 @@
 #include "GUIObjects/GUIButton.h"
 
 #include <fstream>
+#include <glm/ext/vector_float3.hpp>
 #include <memory>
 #include <string>
 
@@ -108,6 +109,9 @@ void GameManager::gameUpdate()
 	//Keymap contains what keys are being pressed down during this frame, dt is the time since last frame
 	currentPlayer->controlUpdate(keyMap, sceneManager->getDeltaTime());
 	guiManager->GameGUI_ScoreText->text = std::to_string(currentPlayer->playerScore);
+
+	GLuint lightPosPos = sceneManager->getLightPos();
+	glUniform3f(lightPosPos, currentPlayer->posX, currentPlayer->posY+2.f, 0.f);
 
 	float currentPlayPosition =  audioManager->getPlayPos();
 	//The code that checks if the game should finish

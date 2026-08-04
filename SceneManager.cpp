@@ -22,6 +22,7 @@ SceneManager::SceneManager(GLuint shaderProgram_) : shaderProgram(shaderProgram_
 	ambientPos = glGetUniformLocation(shaderProgram, "ambient"); //Minimum brightness of an object
 	bloomPos = glGetUniformLocation(shaderProgram, "bBloom"); //Should the object have bloom
 	brightnessPos = glGetUniformLocation(shaderProgram, "brightness");
+	lightPosPos = glGetUniformLocation(shaderProgram, "lightPos");
 };
 
 //Adds DrawObject to the render queue

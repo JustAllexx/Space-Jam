@@ -280,9 +280,6 @@ void display() {
 	glEnable(GL_DEPTH_TEST);
 	//Load in the phong lighting shader
 
-	GLuint lightPosPos = glGetUniformLocation(shaderProgram, "lightPos");
-	glUniform3f(lightPosPos, player->posX, player->posY+2.f, 0.f);
-
 	gameManager->render();
 	
 	//Gaussian blur

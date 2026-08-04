@@ -20,7 +20,7 @@ private:
 	std::vector<glm::mat4> modelViewStack;
 	glm::mat4 modelView;
 	GLuint shaderProgram;
-	GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos;
+	GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos, lightPosPos;
 	//For calculating deltaTime
 	int lastFrameTime{0};
 	int currentFrameTime{0};
@@ -37,4 +37,5 @@ public:
 	void createNightSky();
 
 	float getDeltaTime() const noexcept {return deltaTime;}
+	GLuint getLightPos() const noexcept {return lightPosPos;}
 };
