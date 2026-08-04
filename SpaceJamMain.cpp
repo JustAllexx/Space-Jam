@@ -27,13 +27,20 @@ const size_t kernelSize = 5;
 //Shader Paths
 const char* phongVert = "Shaders/PhongLighting.vert";
 const char* phongFrag = "Shaders/PhongLighting.frag";
+const char* GUIVert = "Shaders/GUIShader.vert";
+const char* GUIFrag = "Shaders/GUIShader.frag";
+const char* screenVert = "Shaders/screenShader.vert";
+const char* screenFrag = "Shaders/screenShader.frag";
+const char* gaussianVert = "Shaders/gaussianBlur.vert";
+const char* gaussianFrag = "Shaders/gaussianBlur.frag";
 
 //This is where the integer locations of all the programIDs
 //Once the program has been created OpenGL gives us a unique (unsigned) integer which we can use in an API call to tell OpenGL we want to use this shader in our rendering pipeline
 //Scroll down to the CreatePrograms function for an explanation of each shader and it's purpose
 std::optional<Program> shaderProgram;
-GLuint debugShaderProgram;
-GLuint textShaderProgram, screenProgram, debugProgram, gaussianProgram;
+std::optional<Program> guiProgram;
+std::optional<Program> screenProgram;
+std::optional<Program> gaussianProgram;
 GLuint projectionPos, modelviewPos;
 
 //The projection and modelview are matrices which are defined for use in the vertex shader
@@ -208,69 +215,6 @@ void createFramebuffers() {
 	glDrawBuffers(2, attachments);
 }
 
-// -------------------------------------------------------------	REWRITE THIS CODE -----------------------------------------------------
-//This is the code that loads shaders and compiles them using OpenGL calls.
-GLuint loadShader(GLenum shaderType, string filename) {
-	GLuint shader = glCreateShader(shaderType);
-	string shaderText = readShaderFile(filename);
-
-	const GLchar* c_str = shaderText.c_str();
-	glShaderSource(shader, 1, &c_str, NULL);
-	glCompileShader(shader);
-
-	GLint bCompiled;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &bCompiled);
-	if (!bCompiled) {
-		GLint logLength;
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
-		size_t logSize = static_cast<size_t>(logLength) + 1;
-		GLchar* log = new GLchar[logSize];
-		glGetShaderInfoLog(shader, logLength, &logLength, log);
-		cout << "Shader Compile Error\n" << log << endl;
-	}
-
-	return shader;
-}
-
-//This function creates programs
-//programs are the name for a combination of a vertex and a fragment shader, this tells OpenGL to create a program that I can use later on when rendering and to link them to each other
-GLuint createProgram(GLuint inVertexShader, GLuint inFragmentShader) {
-	//Creates a program and attaches the compiled vertex and fragment shader to it
-	GLuint program = glCreateProgram();
-	glAttachShader(program, inVertexShader);
-	glAttachShader(program, inFragmentShader);
-	GLint bLinked;
-	glLinkProgram(program);
-	glGetProgramiv(program, GL_LINK_STATUS, &bLinked);
-
-	if (bLinked) {
-		glUseProgram(program);
-	}
-	else {
-		GLint logLength;
-		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
-		size_t logSize = static_cast<size_t>(logLength) + 1;
-		GLchar* log = new GLchar[logSize];
-		glGetProgramInfoLog(program, logLength, &logLength, log);
-		cout << "Shader Compile Error\n" << log << endl;
-	}
-
-	return program;
-}
-
-//This function loads in a shader file and outputs the entire file as a string
-//This is so it can be compiled later on in the code
-//GLSL code is compiled during runtime unlike C++ code which is precompiled
-string readShaderFile(string filename) {
-	string ret;
-	fstream shaderFile(filename);
-	string nextLine;
-	while (getline(shaderFile, nextLine)) {
-		ret += nextLine + "\n";
-	}
-	return ret;
-}
-
 // ---------------------------------------------------------- GLUT FUNCTIONS ------------------------------------------------------------------
 
 //This function displays a new frame
@@ -291,7 +235,7 @@ void display() {
 	
 	//Gaussian blur
 	//The guassian blur fragment shader is called repeatedly to blur the image drawn to Colour Attachment 1, switching between blurring horizontally and vertically
-	glUseProgram(gaussianProgram);
+	glUseProgram(gaussianProgram->getProgramID());
 	int ammount = 50;
 	bool firstIteration = true;
 	bool horizontalPass = true;
@@ -319,7 +263,7 @@ void display() {
 	//This is the final render to the screen
 	//The screen program (vertex shader and fragment shader) combines the Colour Attachment 0 texture with the blurred Colour Attachment 1 texture
 	//This gives the completed bloom effect
-	glUseProgram(screenProgram);
+	glUseProgram(screenProgram->getProgramID());
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, splitColourBuffers[0]);
@@ -378,43 +322,36 @@ void keyUp(unsigned char key, [[maybe_unused]] int x, [[maybe_unused]] int y) {
 	keyMap[key] = false;
 }
 
-//Function to load a compiled program, used in the graphics pipeline for rendering to the screen
-GLuint loadProgram(const char* vertexShaderLoc, const char* fragmentShaderLoc) {
-	GLuint vertexShader = loadShader(GL_VERTEX_SHADER, vertexShaderLoc);
-	GLuint fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentShaderLoc);
-	return createProgram(vertexShader, fragmentShader);
-}
-
+//Initialise all the Shaders / Programs that Space Jam needs
 void createPrograms() {
 	//Loads in the gaussian vertex and fragment shaders, this program creates the bloom effect by blurring certain objects on the screen
 	//This gives them the appearance that they are glowing
-	gaussianProgram = loadProgram("Shaders/gaussianBlur.vert", "Shaders/gaussianBlur.frag");
-	glUseProgram(gaussianProgram);
+	//gaussianProgram = loadProgram("Shaders/gaussianBlur.vert", "Shaders/gaussianBlur.frag");
+	gaussianProgram.emplace(gaussianVert, gaussianFrag);
+	//glUseProgram(gaussianProgram);
 	//Update the weights of the kernel inside the gaussian blur program, horizontal is a boolean value which dictates whether the function should blur horizontally or vertically
-	updateGaussianKernel(3.f, gaussianProgram);
-	gaussianHorizontalPos = glGetUniformLocation(gaussianProgram, "horizontal");
+	updateGaussianKernel(3.f, gaussianProgram->getProgramID());
+	gaussianHorizontalPos = glGetUniformLocation(gaussianProgram->getProgramID(), "horizontal");
 
 	//Loads the program that is responsible for displaying the final framebuffer to the user
-	screenProgram = loadProgram("Shaders/screenShader.vert", "Shaders/screenShader.frag");
+	screenProgram.emplace(screenVert, screenFrag);
 
 	//Because the screenShader combines the bloomed texture and the rendered texture, it needs access to both textures
 	//Here I specify which colour attachment belongs to which texture
-	glUseProgram(screenProgram);
-	GLuint screenTexturePos = glGetUniformLocation(screenProgram, "screenTexture");
-	GLuint bloomBlurPos = glGetUniformLocation(screenProgram, "bloomBlur");
+	GLuint screenTexturePos = glGetUniformLocation(screenProgram->getProgramID(), "screenTexture");
+	GLuint bloomBlurPos = glGetUniformLocation(screenProgram->getProgramID(), "bloomBlur");
 	glUniform1i(screenTexturePos, 0);
 	glUniform1i(bloomBlurPos, 1);
 
 	//Program responsible for displaying text (and all GUI Elements)
 	//Uses orthogonal projection instead of perspective projection (like the objects in the scene). (Orthogonal projection makes it so that no matter how far away an object is from the screen, it's the same size)
-	textShaderProgram = loadProgram("Shaders/GUIShader.vert", "Shaders/GUIShader.frag");
+	//textShaderProgram = loadProgram("Shaders/GUIShader.vert", "Shaders/GUIShader.frag");
+	guiProgram.emplace(GUIVert, GUIFrag);
 	glm::mat4 textProjection = glm::ortho(0.0f, static_cast<float>(500.0f), 0.0f, static_cast<float>(500.0f));
+	glUniformMatrix4fv(glGetUniformLocation(guiProgram->getProgramID(), "textprojection"), 1, GL_FALSE, &textProjection[0][0]);
 
-	glUniformMatrix4fv(glGetUniformLocation(textShaderProgram, "textprojection"), 1, GL_FALSE, &textProjection[0][0]);
-	//shaderProgram = loadProgram("vert.vert", "frag.frag");
-	//debugShaderProgram = loadProgram(phongVert, phongFrag);
+	//Shader program initialisation
 	shaderProgram.emplace(phongVert, phongFrag);
-
 	// Get the positions of the uniform variables
 	projectionPos = glGetUniformLocation(shaderProgram->getProgramID(), "projection");
 	modelviewPos = glGetUniformLocation(shaderProgram->getProgramID(), "modelview");
@@ -471,7 +408,7 @@ int main(int argc, char** argv) {
 
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
-	guiManager.emplace(textShaderProgram);
+	guiManager.emplace(guiProgram->getProgramID());
 	gameManager.emplace(shaderProgram->getProgramID(), keyMap, &guiManager.value());
 	optionsManager.emplace(guiManager.value(), &gameManager.value());
 

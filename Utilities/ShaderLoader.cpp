@@ -1,7 +1,6 @@
 #include "Utilities/ShaderLoader.h"
 #include <GUIObjects/TypeChar.h>
 #include <stdexcept>
-#include <iostream>
 
 Shader::Shader(GLenum shaderType, const char* shaderPath) : 
  shaderID(glCreateShader(shaderType)){
@@ -38,8 +37,7 @@ Program::Program(const char* vertexPath, const char* fragPath) :
 		    GLchar* log = new GLchar[logSize];
             glGetProgramInfoLog(programID, logLength, &logLength, log);
             throw std::runtime_error(log);
-        } else {
-            //TODO: I hate this, make programs check if the current program is already used before using again
-            glUseProgram(programID);
-        }
+        } 
+
+        glUseProgram(programID);
     }
