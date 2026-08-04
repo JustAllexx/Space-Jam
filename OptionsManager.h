@@ -24,7 +24,6 @@ private:
 	}};
 public:
 	OptionsManager(GUIManager& guiManager, GameManager* gameManager);
-	void Initialise();
 	void IncrementSamplesOption();
 	void DecrementSamplesOption();
 };

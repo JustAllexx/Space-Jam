@@ -7,14 +7,9 @@ const char* countingStarsNotes = "Counting Stars Audio/notes30s.json";
 const char* countingStarsAudio = "Counting Stars Audio/CS_30s.ogg";
 
 OptionsManager::OptionsManager(GUIManager& guiManager_, GameManager* gameManager_) : guiManager(guiManager_), samplesGUI(*guiManager.samplesOptionText),
- gameManager(gameManager_) {}
-
-//In this function we define the function pointers for each function
-//So when the start button is clicked the start game function is called
-void OptionsManager::Initialise()
-{
+ gameManager(gameManager_) {
 	guiManager.MainMenu_StartButtonClick->setClickFunction([&] {
-		gameManager->startGame(countingStarsNotes, countingStarsAudio);
+	gameManager->startGame(countingStarsNotes, countingStarsAudio);
 	});
 	guiManager.MainMenu_OptionsButtonClick->setClickFunction(
 		[&] {
@@ -29,7 +24,7 @@ void OptionsManager::Initialise()
 	guiManager.samplesBackClick->setClickFunction([&] {
 		guiManager.showMainMenu();
 	});
-}
+ }
 
 void OptionsManager::IncrementSamplesOption()
 {

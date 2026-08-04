@@ -467,8 +467,6 @@ int main(int argc, char** argv) {
 	gameManager.emplace(shaderProgram, keyMap, &guiManager.value());
 	optionsManager.emplace(guiManager.value(), &gameManager.value());
 
-	optionsManager->Initialise();
-
 	//Glut manages most user input, these commands tell glut what functions to call on an input
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 	glutDisplayFunc(display);
