@@ -61,6 +61,7 @@ private:
 	float advanceSum, x, y, scale, maxHeight;
 	GLfloat colour[3];
 	GLfloat hoverColour[3];
+	std::map<char, TypeChar>& rFontMap;
 public:
 	//If a button is not enabled it will not be rendered, is enabled by default in the constructor, text stores the text that is rendered
 	bool enable;
@@ -69,7 +70,7 @@ public:
 	//buttonGUI(std::string inText, float inX, float inY, float inScale, GLfloat colR, GLfloat colG, GLfloat colB, GLfloat hovR, GLfloat hovG, GLfloat hovB, void (*f)());
 	buttonGUI(std::string inText, float inX, float inY, float inScale, 
 		GLfloat colR, GLfloat colG, GLfloat colB, GLfloat hovR, GLfloat hovG, GLfloat hovB, 
-		std::function<void()> callbackFunc);
+		std::function<void()> callbackFunc, std::map<char, TypeChar>& inFontMap);
 	void Render(); //Override for the GUIObject Render Function
 };
 

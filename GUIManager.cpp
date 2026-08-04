@@ -36,7 +36,7 @@ void Clickable::setHoverFunction(std::function<void()> newHoverFunction)
 //Construction function for the button GUI Class
 buttonGUI::buttonGUI(std::string inText, float inX, float inY, float inScale,
 	 GLfloat colR, GLfloat colG, GLfloat colB, GLfloat hovR, GLfloat hovG, GLfloat hovB, 
-	 std::function<void()> callback) {
+	 std::function<void()> callback, std::map<char, TypeChar>& inFontMap) : rFontMap(inFontMap){
 	{
 		//Sets input variables as class variables
 		x = inX; y = inY; scale = inScale;
@@ -111,7 +111,7 @@ void buttonGUI::Render() {
 	for (c = text.begin(); c != text.end(); c++)
 	{
 		//The character struct for each character being rendered
-		TypeChar ch = fontMap[*c];
+		TypeChar ch = rFontMap[*c];
 
 		float xpos = (charx - advanceSum) + ch.Bearing.x * scale;
 		float ypos = (y - (maxHeight / 2)) - (ch.Size.y - ch.Bearing.y) * scale;
@@ -309,29 +309,30 @@ void GUIManager::createOptionsMenu()
 	GUIObject* pitchAccuracyText = new buttonGUI("Audio Buffer Size", screenWidth / 2, 350.f, 1,
 		0.7f, 0.7f, 0.7f,
 		0.7f, 0.7f, 0.7f,
-		nullptr);
+		nullptr,
+		fontMap);
 	
 	buttonGUI* samplesOptionTextTemp = new buttonGUI("1024 Samples", screenWidth / 2, 300.f, 1,
 		0.5f, 0.5f, 0.5f,
 		0.7f, 0.7f, 0.7f,
-		nullptr);
+		nullptr, fontMap);
 	GUIManager::samplesOptionText = samplesOptionTextTemp;
 	buttonGUI* samplesOptionLeftClickTemp = new buttonGUI("<", (screenWidth / 2) - 200.f, 300.f, 1,
 		0.5f, 0.5f, 0.5f,
 		0.7f, 0.7f, 0.7f,
-		nullptr);
+		nullptr, fontMap);
 	GUIManager::samplesOptionLeftClick = samplesOptionLeftClickTemp;
 
 	buttonGUI* samplesOptionRightClickTemp = new buttonGUI(">", (screenWidth / 2) + 200.f, 300.f, 1,
 		0.5f, 0.5f, 0.5f,
 		0.7f, 0.7f, 0.7f,
-		nullptr);
+		nullptr, fontMap);
 	GUIManager::samplesOptionRightClick = samplesOptionRightClickTemp;
 
 	buttonGUI* backButton = new buttonGUI("Back", screenWidth / 2, 100.f, 1,
 		0.5f, 0.5f, 0.5f,
 		0.7f, 0.7f, 0.7f,
-		nullptr);
+		nullptr, fontMap);
 	GUIManager::samplesBackClick = backButton;
 	
 	optionsMenuVector.push_back(pitchAccuracyText);
@@ -365,19 +366,19 @@ void GUIManager::createMainMenu()
 	buttonGUI* startButton = new buttonGUI("Start", screenWidth / 2, 250, 1,
 		0.5f, 0.5f, 0.5f,
 		0.7f, 0.7f, 0.7f,
-		nullptr);
+		nullptr, fontMap);
 	GUIManager::MainMenu_StartButtonClick = startButton;
 
 	buttonGUI* optionsButton = new buttonGUI("Options", screenWidth / 2, 175, 1,
 		0.5f, 0.5f, 0.5f,
 		0.7f, 0.7f, 0.7f,
-		nullptr);
+		nullptr, fontMap);
 	GUIManager::MainMenu_OptionsButtonClick = optionsButton;
 
 	buttonGUI* quitButton = new buttonGUI("Quit", screenWidth / 2, 100, 1,
 		0.5f, 0.5f, 0.5f,
 		0.7f, 0.7f, 0.7f,
-		nullptr);
+		nullptr, fontMap);
 	GUIManager::MainMenu_QuitButtonClick = quitButton;
 
 	mainMenuVector.push_back(logoImage);
@@ -409,11 +410,11 @@ void GUIManager::createGameGUI()
 		float percentHeight = static_cast<float>(i) / 13.f;
 		float textHeight = percentHeight * screenHeight;
 
-		buttonGUI* tempText = new buttonGUI(noteText[i - 1], screenWidth - 50.f, textHeight, .4f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, nullptr);
+		buttonGUI* tempText = new buttonGUI(noteText[i - 1], screenWidth - 50.f, textHeight, .4f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, nullptr, fontMap);
 		gameGUIVector.push_back(tempText);
 	}
 
-	buttonGUI* scoreGUI = new buttonGUI("0", screenWidth / 2, screenHeight - 100, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, nullptr);
+	buttonGUI* scoreGUI = new buttonGUI("0", screenWidth / 2, screenHeight - 100, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, nullptr, fontMap);
 	GUIManager::GameGUI_ScoreText = scoreGUI;
 	gameGUIVector.push_back(scoreGUI);
 }
@@ -437,17 +438,17 @@ void GUIManager::createScoreMenu()
 		0.7f, 0.7f, 0.7f,
 		[this] {
 		showMainMenu();
-	});
+	}, fontMap);
 	
 	buttonGUI* yourScoreText = new buttonGUI("Your Score:", screenWidth / 2.f, 340.f, 1.2f,
 		0.7f, 0.7f, 0.7f,
 		0.7f, 0.7f, 0.7f
-		, nullptr);
+		, nullptr, fontMap);
 
 	buttonGUI* scoreScreenText = new buttonGUI("0", screenWidth / 2, 250.f, 1,
 		0.7f, 0.7f, 0.7f,
 		0.7f, 0.7f, 0.7f,
-		nullptr);
+		nullptr, fontMap);
 	scoreScreen_FinalScoreText = scoreScreenText;
 
 	scoreMenuVector.push_back(background);
