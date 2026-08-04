@@ -4,7 +4,7 @@
 
 GUIButton::GUIButton(std::string inText, float inX, float inY, float inScale,
 	 glm::vec3 inColour, glm::vec3 inHoverColour, 
-	 std::function<void()> callback, std::map<char, TypeChar>& inFontMap,
+	 std::function<void()> callback, std::unordered_map<char, TypeChar>& inFontMap,
 	 GLuint inVAO, GLuint inVBO, GLuint inGUIShader)
 	  : GUIObject(inGUIShader), VAO(inVAO), VBO(inVBO), rFontMap(inFontMap){
 	{

@@ -1,7 +1,7 @@
 #include "GUIImage.h"
 #include <stb/stb_image.h>
 
-std::array<std::array<float, 4>, 6> GUIImage::createVertexData(float x, float y, float size, int height, int width) {
+constexpr std::array<std::array<float, 4>, 6> GUIImage::createVertexData(float x, float y, float size, int height, int width) {
 	float h = static_cast<float>(height) * size * 0.5f;
 	float w = static_cast<float>(width) * size * 0.5f;
 	return {{

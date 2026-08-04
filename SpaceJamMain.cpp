@@ -318,7 +318,7 @@ void display() {
 		glUseProgram(shaderProgram);
 	}
 	//I don't want the depth test to be enabled for rendering framebuffers, causes the framebuffer to not be seen
-	glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_DEPTH_TEST);
 	
 	//Gaussian blur
 	//The guassian blur fragment shader is called repeatedly to blur the image drawn to Colour Attachment 1, switching between blurring horizontally and vertically
@@ -543,7 +543,6 @@ int main(int argc, char** argv) {
 	glutKeyboardFunc(keyPress);
 	glutKeyboardUpFunc(keyUp);
 
-	guiManager->createMainMenu();
 	guiManager->showMainMenu();
 
 	//Start capturing audio for pitch calculations

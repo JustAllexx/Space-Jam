@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GUIObject.h"
-#include <map>
 #include <string>
 #include <glm/glm.hpp>
 
@@ -16,7 +15,7 @@ private:
 	GLfloat colour[3];
 	GLfloat hoverColour[3];
 	GLuint VAO, VBO;
-	std::map<char, TypeChar>& rFontMap;
+	std::unordered_map<char, TypeChar>& rFontMap;
 public:
 	//If a button is not enabled it will not be rendered, is enabled by default in the constructor, text stores the text that is rendered
 	bool enable;
@@ -24,7 +23,7 @@ public:
 	//The constructor for the buttonGUI Class
 	GUIButton(std::string inText, float inX, float inY, float inScale, 
 		glm::vec3 inColour, glm::vec3 inHoverColour, 
-		std::function<void()> callbackFunc, std::map<char, TypeChar>& inFontMap,
+		std::function<void()> callbackFunc, std::unordered_map<char, TypeChar>& inFontMap,
 		GLuint inVAO, GLuint inVBO, GLuint inGUIShader);
 	void Render(); //Override for the GUIObject Render Function
 };

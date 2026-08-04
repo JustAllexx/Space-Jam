@@ -1,14 +1,16 @@
 #pragma once
 
+#include "FontLoader.h"
 #include "GUIObjects/TypeChar.h"
 
 #include <glm/ext/vector_float3.hpp>
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <GL/glut.h>
+#include <optional>
 #include <vector>
 #include <ft2build.h>
-#include <map>
+#include <unordered_map>
 
 //Forward declare
 class GUIObject;
@@ -21,7 +23,8 @@ class GUIManager
 private:
 	std::vector<GUIObject*> guiRenderQueue;
 	std::vector<Clickable*> clickChecks;
-	std::map<char, TypeChar> fontMap;
+	std::unordered_map<char, TypeChar> fontMap;
+	std::optional<SJ_Font> arialFont;
 	GLuint VAO, VBO;
 	GLuint GUIShader, isTextPos;
 public:
