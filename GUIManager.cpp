@@ -136,8 +136,9 @@ void buttonGUI::Render() {
 }
 
 //Simple constructor function for the ImageGUI class, loads in an image using the stbi image loader then buffers it to a texture
-imageGUI::imageGUI(const char* imagePath, float inX, float inY, float inScale) {
+imageGUI::imageGUI(const char* imagePath, float inX, float inY, float inScale, GLuint inVAO, GLuint inVBO) {
 	posX = inX; posY = inY; scale = inScale;
+	VAO = inVAO; VBO = inVBO;
 
 	stbi_set_flip_vertically_on_load(false);
 	int numChannels;
@@ -294,7 +295,7 @@ void GUIManager::createOptionsMenu()
 	float screenHeight = 480.0f;
 	float screenWidth = 854.0f;
 
-	GUIObject* background = new imageGUI("Textures\\holder.png", screenWidth / 2, screenHeight / 2, 10);
+	GUIObject* background = new imageGUI("Textures\\holder.png", screenWidth / 2, screenHeight / 2, 10, VAO, VBO);
 	
 	GUIObject* pitchAccuracyText = new buttonGUI("Audio Buffer Size", screenWidth / 2, 350.f, 1,
 		lightGray,
@@ -351,7 +352,7 @@ void GUIManager::createMainMenu()
 	float screenHeight = 480.0f;
 	float screenWidth = 854.0f;
 
-	GUIObject* logoImage = new imageGUI("Textures/logo.png", screenWidth / 2, screenHeight - 100.f, 1.4f);
+	GUIObject* logoImage = new imageGUI("Textures/logo.png", screenWidth / 2, screenHeight - 100.f, 1.4f, VAO, VBO);
 
 	buttonGUI* startButton = new buttonGUI("Start", screenWidth / 2, 250, 1,
 		darkGray,
@@ -426,7 +427,7 @@ void GUIManager::createScoreMenu()
 	float screenHeight = 480.f;
 	float screenWidth = 854.f;
 
-	GUIObject* background = new imageGUI("Textures/holder.png", screenWidth / 2, screenHeight / 2, 10);
+	GUIObject* background = new imageGUI("Textures/holder.png", screenWidth / 2, screenHeight / 2, 10, VAO, VBO);
 
 	
 	buttonGUI* backButton = new buttonGUI("Back", screenWidth / 2, 100.f, 1,

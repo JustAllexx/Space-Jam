@@ -83,10 +83,10 @@ private:
 	//Properties about the image, location ID of image texture
 	float posX, posY, scale;
 	int imgHeight, imgWidth;
-	GLuint texture;
+	GLuint texture, VAO, VBO;
 public:
 	//Constructor function for image class
-	imageGUI(const char* imagePath, float inX, float inY, float inScale);
+	imageGUI(const char* imagePath, float inX, float inY, float inScale, GLuint inVAO, GLuint inVBO);
 	void Render(); //Override for GUIObject Render Function
 };
 
