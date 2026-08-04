@@ -12,12 +12,11 @@
 #include <cmath>
 #include <memory>
 #include <optional>
+#include <stdexcept>
 #include <valarray>
 #include <glm/ext/vector_float3.hpp>
 //Use radians instead of degrees
 #define GLM_FORCE_RADIANS
-
-using namespace std;
 
 const int screenHeight = 480;
 const int screenWidth = 854;
@@ -90,9 +89,9 @@ float vertices[6][4] = {
 
 //Gaussian Functions
 //This function calculates the gaussian distribution for the gaussian blur fragment shader
-float gaussianDistribution(float x, float standardDeviation) {
+constexpr float gaussianDistribution(float x, float standardDeviation) {
 	//Because we're normalising the weights in the kernel so they sum to 1, the usual constant the result needs to be multiplied by is not necessary here
-	return exp((-0.5f * x * x) / (standardDeviation * standardDeviation));
+	return expf((-0.5f * x * x) / (standardDeviation * standardDeviation));
 }
 
 //This function updates the gaussian blur kernel inside the gaussian blur fragment shader
@@ -235,12 +234,13 @@ void display() {
 	
 	//Gaussian blur
 	//The guassian blur fragment shader is called repeatedly to blur the image drawn to Colour Attachment 1, switching between blurring horizontally and vertically
-	glUseProgram(gaussianProgram->getProgramID());
+	//glUseProgram(gaussianProgram->getProgramID());
+	gaussianProgram->use();
 	int ammount = 50;
 	bool firstIteration = true;
 	bool horizontalPass = true;
 	for (int i = 0; i < ammount; i++) {
-		glUniform1i(gaussianHorizontalPos, horizontalPass);
+		gaussianProgram->setInt("horizontal", horizontalPass);
 
 		if (horizontalPass) {
 			glBindFramebuffer(GL_FRAMEBUFFER, gaussianLeftBuffer[0]);
@@ -325,10 +325,7 @@ void keyUp(unsigned char key, [[maybe_unused]] int x, [[maybe_unused]] int y) {
 //Initialise all the Shaders / Programs that Space Jam needs
 void createPrograms() {
 	//Loads in the gaussian vertex and fragment shaders, this program creates the bloom effect by blurring certain objects on the screen
-	//This gives them the appearance that they are glowing
-	//gaussianProgram = loadProgram("Shaders/gaussianBlur.vert", "Shaders/gaussianBlur.frag");
 	gaussianProgram.emplace(gaussianVert, gaussianFrag);
-	//glUseProgram(gaussianProgram);
 	//Update the weights of the kernel inside the gaussian blur program, horizontal is a boolean value which dictates whether the function should blur horizontally or vertically
 	updateGaussianKernel(3.f, gaussianProgram->getProgramID());
 	gaussianHorizontalPos = glGetUniformLocation(gaussianProgram->getProgramID(), "horizontal");
@@ -377,7 +374,7 @@ int main(int argc, char** argv) {
 	//Create the window and prints to the console if anything went wrong
 	GLenum error = glewInit();
 	if (error != GLEW_OK) {
-		cout << "Error in creating window";
+		throw std::runtime_error("Unable to create GLEW window");
 	}
 	//When we clear the screen what do we write over the buffer with, tells OpenGL I want an empty buffer to completely black and transparent
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
