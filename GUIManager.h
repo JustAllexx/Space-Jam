@@ -62,6 +62,7 @@ private:
 	float advanceSum, x, y, scale, maxHeight;
 	GLfloat colour[3];
 	GLfloat hoverColour[3];
+	GLuint VAO, VBO;
 	std::map<char, TypeChar>& rFontMap;
 public:
 	//If a button is not enabled it will not be rendered, is enabled by default in the constructor, text stores the text that is rendered
@@ -71,7 +72,8 @@ public:
 	//buttonGUI(std::string inText, float inX, float inY, float inScale, GLfloat colR, GLfloat colG, GLfloat colB, GLfloat hovR, GLfloat hovG, GLfloat hovB, void (*f)());
 	buttonGUI(std::string inText, float inX, float inY, float inScale, 
 		glm::vec3 inColour, glm::vec3 inHoverColour, 
-		std::function<void()> callbackFunc, std::map<char, TypeChar>& inFontMap);
+		std::function<void()> callbackFunc, std::map<char, TypeChar>& inFontMap,
+		GLuint inVAO, GLuint inVBO);
 	void Render(); //Override for the GUIObject Render Function
 };
 

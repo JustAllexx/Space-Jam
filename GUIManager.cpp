@@ -25,7 +25,8 @@ bool Clickable::checkCollision(int mousePosX, int mousePosY) {
 //Construction function for the button GUI Class
 buttonGUI::buttonGUI(std::string inText, float inX, float inY, float inScale,
 	 glm::vec3 inColour, glm::vec3 inHoverColour, 
-	 std::function<void()> callback, std::map<char, TypeChar>& inFontMap) : rFontMap(inFontMap){
+	 std::function<void()> callback, std::map<char, TypeChar>& inFontMap,
+	 GLuint inVAO, GLuint inVBO) : VAO(inVAO), VBO(inVBO), rFontMap(inFontMap){
 	{
 		//Sets input variables as class variables
 		x = inX; y = inY; scale = inScale;
@@ -299,29 +300,29 @@ void GUIManager::createOptionsMenu()
 		lightGray,
 		lightGray,
 		nullptr,
-		fontMap);
+		fontMap, VAO, VBO);
 	
 	buttonGUI* samplesOptionTextTemp = new buttonGUI("1024 Samples", screenWidth / 2, 300.f, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap);
+		nullptr, fontMap, VAO, VBO);
 	GUIManager::samplesOptionText = samplesOptionTextTemp;
 	buttonGUI* samplesOptionLeftClickTemp = new buttonGUI("<", (screenWidth / 2) - 200.f, 300.f, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap);
+		nullptr, fontMap, VAO, VBO);
 	GUIManager::samplesOptionLeftClick = samplesOptionLeftClickTemp;
 
 	buttonGUI* samplesOptionRightClickTemp = new buttonGUI(">", (screenWidth / 2) + 200.f, 300.f, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap);
+		nullptr, fontMap, VAO, VBO);
 	GUIManager::samplesOptionRightClick = samplesOptionRightClickTemp;
 
 	buttonGUI* backButton = new buttonGUI("Back", screenWidth / 2, 100.f, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap);
+		nullptr, fontMap, VAO, VBO);
 	GUIManager::samplesBackClick = backButton;
 	
 	optionsMenuVector.push_back(pitchAccuracyText);
@@ -355,19 +356,19 @@ void GUIManager::createMainMenu()
 	buttonGUI* startButton = new buttonGUI("Start", screenWidth / 2, 250, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap);
+		nullptr, fontMap, VAO, VBO);
 	GUIManager::MainMenu_StartButtonClick = startButton;
 
 	buttonGUI* optionsButton = new buttonGUI("Options", screenWidth / 2, 175, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap);
+		nullptr, fontMap, VAO, VBO);
 	GUIManager::MainMenu_OptionsButtonClick = optionsButton;
 
 	buttonGUI* quitButton = new buttonGUI("Quit", screenWidth / 2, 100, 1,
 		darkGray,
 		lightGray,
-		nullptr, fontMap);
+		nullptr, fontMap, VAO, VBO);
 	GUIManager::MainMenu_QuitButtonClick = quitButton;
 
 	mainMenuVector.push_back(logoImage);
@@ -402,14 +403,14 @@ void GUIManager::createGameGUI()
 		buttonGUI* tempText = new buttonGUI(noteText[i - 1], screenWidth - 50.f, textHeight, .4f,
 			 white, 
 			 white,
-			 nullptr, fontMap);
+			 nullptr, fontMap, VAO, VBO);
 		gameGUIVector.push_back(tempText);
 	}
 
 	buttonGUI* scoreGUI = new buttonGUI("0", screenWidth / 2, screenHeight - 100, 1.f, 
 		white, 
 		white,
-		nullptr, fontMap);
+		nullptr, fontMap, VAO, VBO);
 	GUIManager::GameGUI_ScoreText = scoreGUI;
 	gameGUIVector.push_back(scoreGUI);
 }
@@ -433,17 +434,17 @@ void GUIManager::createScoreMenu()
 		lightGray,
 		[this] {
 		showMainMenu();
-	}, fontMap);
+	}, fontMap, VAO, VBO);
 	
 	buttonGUI* yourScoreText = new buttonGUI("Your Score:", screenWidth / 2.f, 340.f, 1.2f,
 		lightGray,
 		lightGray,
-		nullptr, fontMap);
+		nullptr, fontMap, VAO, VBO);
 
 	buttonGUI* scoreScreenText = new buttonGUI("0", screenWidth / 2, 250.f, 1,
 		lightGray,
 		lightGray,
-		nullptr, fontMap);
+		nullptr, fontMap, VAO, VBO);
 	scoreScreen_FinalScoreText = scoreScreenText;
 
 	scoreMenuVector.push_back(background);
