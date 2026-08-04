@@ -30,7 +30,7 @@ public:
 		AudioManager* inSongSource, GUIManager* inGUIManager);
 
 	void loadSongJson(const char* path, std::string& songTitle, Json::Value& notes);
-	void startGame(const char* noteJsonPath, const char* noteSongPath, PlayerController* player);
+	void startGame(const char* noteJsonPath, const char* noteSongPath);
 	void render();
 	void gameUpdate();
 

@@ -42,7 +42,7 @@ void GameManager::loadSongJson(const char* path, std::string& songTitle, Json::V
 }
 
 //This function is called in the Main Module to start the game, takes in 3 parameters: the path of the Songs Notes in Json form, the path of the sound file to play over the song, and the player class
-void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath, PlayerController* player)
+void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath)
 {
 	std::string songTitle;
 	Json::Value notes;
@@ -68,7 +68,7 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath, 
 
 		float height = AudioManager::getHeightOfNote(noteIndex, fovy, dist);
 
-		DrawObject* noteObject = new NoteTarget(0.f, height, time, 40.f, songSource, player);
+		DrawObject* noteObject = new NoteTarget(0.f, height, time, 40.f, songSource, currentPlayer);
 		DrawObject* noteHighlight = new NoteHighlight(time, noteObject, songSource);
 		sceneManager->addObjectToQueue(noteObject);
 		sceneManager->addObjectToQueue(noteHighlight);

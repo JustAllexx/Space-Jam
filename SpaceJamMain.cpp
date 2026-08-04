@@ -410,7 +410,7 @@ void keyUp(unsigned char key, [[maybe_unused]] int x, [[maybe_unused]] int y) {
 //Function that is called to start the game, calls the startGame function of the GameManager
 void startGame() {
 	guiManager->showGameGUI();
-	gameManager->startGame("Counting Stars Audio/notes30s.json", "Counting Stars Audio/CS_30s.ogg", &player.value());
+	gameManager->startGame("Counting Stars Audio/notes30s.json", "Counting Stars Audio/CS_30s.ogg");
 }
 
 //Terminates the program (with a 0 to signify no errors occured), the function that is called when quit is pressed from the main menu
