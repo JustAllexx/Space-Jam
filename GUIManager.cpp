@@ -6,6 +6,10 @@
 
 #include FT_FREETYPE_H
 
+const glm::vec3 white(1.0f, 1.0f, 1.0f);
+const glm::vec3 lightGray(0.7f, 0.7f, 0.7f);
+const glm::vec3 darkGray(0.5f, 0.5f, 0.5f);
+
 //Similar to how a framebuffer is rendered onto a quad, so are characters, every character in a string is rendered to a quad and then has a texture applied over it
 GLuint VAO, VBO;
 
@@ -20,7 +24,7 @@ bool Clickable::checkCollision(int mousePosX, int mousePosY) {
 
 //Construction function for the button GUI Class
 buttonGUI::buttonGUI(std::string inText, float inX, float inY, float inScale,
-	 GLfloat colR, GLfloat colG, GLfloat colB, GLfloat hovR, GLfloat hovG, GLfloat hovB, 
+	 glm::vec3 inColour, glm::vec3 inHoverColour, 
 	 std::function<void()> callback, std::map<char, TypeChar>& inFontMap) : rFontMap(inFontMap){
 	{
 		//Sets input variables as class variables
@@ -30,8 +34,8 @@ buttonGUI::buttonGUI(std::string inText, float inX, float inY, float inScale,
 			onClick = callback;
 		}
 
-		colour[0] = colR; colour[1] = colG; colour[2] = colB;
-		hoverColour[0] = hovR; hoverColour[1] = hovG; hoverColour[2] = hovB;
+		colour[0] = inColour.r; colour[1] = inColour.g; colour[2] = inColour.b;
+		hoverColour[0] = inHoverColour.r; hoverColour[1] = inHoverColour.g; hoverColour[2] = inHoverColour.b;
 
 		//Advance Sum calculates how big the text is based on the "advance" and "scale" of each character loaded in by the font loader
 		advanceSum = 0;
@@ -292,31 +296,31 @@ void GUIManager::createOptionsMenu()
 	GUIObject* background = new imageGUI("Textures\\holder.png", screenWidth / 2, screenHeight / 2, 10);
 	
 	GUIObject* pitchAccuracyText = new buttonGUI("Audio Buffer Size", screenWidth / 2, 350.f, 1,
-		0.7f, 0.7f, 0.7f,
-		0.7f, 0.7f, 0.7f,
+		lightGray,
+		lightGray,
 		nullptr,
 		fontMap);
 	
 	buttonGUI* samplesOptionTextTemp = new buttonGUI("1024 Samples", screenWidth / 2, 300.f, 1,
-		0.5f, 0.5f, 0.5f,
-		0.7f, 0.7f, 0.7f,
+		darkGray,
+		lightGray,
 		nullptr, fontMap);
 	GUIManager::samplesOptionText = samplesOptionTextTemp;
 	buttonGUI* samplesOptionLeftClickTemp = new buttonGUI("<", (screenWidth / 2) - 200.f, 300.f, 1,
-		0.5f, 0.5f, 0.5f,
-		0.7f, 0.7f, 0.7f,
+		darkGray,
+		lightGray,
 		nullptr, fontMap);
 	GUIManager::samplesOptionLeftClick = samplesOptionLeftClickTemp;
 
 	buttonGUI* samplesOptionRightClickTemp = new buttonGUI(">", (screenWidth / 2) + 200.f, 300.f, 1,
-		0.5f, 0.5f, 0.5f,
-		0.7f, 0.7f, 0.7f,
+		darkGray,
+		lightGray,
 		nullptr, fontMap);
 	GUIManager::samplesOptionRightClick = samplesOptionRightClickTemp;
 
 	buttonGUI* backButton = new buttonGUI("Back", screenWidth / 2, 100.f, 1,
-		0.5f, 0.5f, 0.5f,
-		0.7f, 0.7f, 0.7f,
+		darkGray,
+		lightGray,
 		nullptr, fontMap);
 	GUIManager::samplesBackClick = backButton;
 	
@@ -349,20 +353,20 @@ void GUIManager::createMainMenu()
 	GUIObject* logoImage = new imageGUI("Textures/logo.png", screenWidth / 2, screenHeight - 100.f, 1.4f);
 
 	buttonGUI* startButton = new buttonGUI("Start", screenWidth / 2, 250, 1,
-		0.5f, 0.5f, 0.5f,
-		0.7f, 0.7f, 0.7f,
+		darkGray,
+		lightGray,
 		nullptr, fontMap);
 	GUIManager::MainMenu_StartButtonClick = startButton;
 
 	buttonGUI* optionsButton = new buttonGUI("Options", screenWidth / 2, 175, 1,
-		0.5f, 0.5f, 0.5f,
-		0.7f, 0.7f, 0.7f,
+		darkGray,
+		lightGray,
 		nullptr, fontMap);
 	GUIManager::MainMenu_OptionsButtonClick = optionsButton;
 
 	buttonGUI* quitButton = new buttonGUI("Quit", screenWidth / 2, 100, 1,
-		0.5f, 0.5f, 0.5f,
-		0.7f, 0.7f, 0.7f,
+		darkGray,
+		lightGray,
 		nullptr, fontMap);
 	GUIManager::MainMenu_QuitButtonClick = quitButton;
 
@@ -395,11 +399,17 @@ void GUIManager::createGameGUI()
 		float percentHeight = static_cast<float>(i) / 13.f;
 		float textHeight = percentHeight * screenHeight;
 
-		buttonGUI* tempText = new buttonGUI(noteText[i - 1], screenWidth - 50.f, textHeight, .4f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, nullptr, fontMap);
+		buttonGUI* tempText = new buttonGUI(noteText[i - 1], screenWidth - 50.f, textHeight, .4f,
+			 white, 
+			 white,
+			 nullptr, fontMap);
 		gameGUIVector.push_back(tempText);
 	}
 
-	buttonGUI* scoreGUI = new buttonGUI("0", screenWidth / 2, screenHeight - 100, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, nullptr, fontMap);
+	buttonGUI* scoreGUI = new buttonGUI("0", screenWidth / 2, screenHeight - 100, 1.f, 
+		white, 
+		white,
+		nullptr, fontMap);
 	GUIManager::GameGUI_ScoreText = scoreGUI;
 	gameGUIVector.push_back(scoreGUI);
 }
@@ -419,20 +429,20 @@ void GUIManager::createScoreMenu()
 
 	
 	buttonGUI* backButton = new buttonGUI("Back", screenWidth / 2, 100.f, 1,
-		0.5f, 0.5f, 0.5f,
-		0.7f, 0.7f, 0.7f,
+		darkGray,
+		lightGray,
 		[this] {
 		showMainMenu();
 	}, fontMap);
 	
 	buttonGUI* yourScoreText = new buttonGUI("Your Score:", screenWidth / 2.f, 340.f, 1.2f,
-		0.7f, 0.7f, 0.7f,
-		0.7f, 0.7f, 0.7f
-		, nullptr, fontMap);
+		lightGray,
+		lightGray,
+		nullptr, fontMap);
 
 	buttonGUI* scoreScreenText = new buttonGUI("0", screenWidth / 2, 250.f, 1,
-		0.7f, 0.7f, 0.7f,
-		0.7f, 0.7f, 0.7f,
+		lightGray,
+		lightGray,
 		nullptr, fontMap);
 	scoreScreen_FinalScoreText = scoreScreenText;
 

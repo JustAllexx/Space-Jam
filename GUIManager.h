@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/ext/vector_float3.hpp>
 #include <string>
 #include <glm/glm.hpp>
 #include <vector>
@@ -69,7 +70,7 @@ public:
 	//The constructor for the buttonGUI Class
 	//buttonGUI(std::string inText, float inX, float inY, float inScale, GLfloat colR, GLfloat colG, GLfloat colB, GLfloat hovR, GLfloat hovG, GLfloat hovB, void (*f)());
 	buttonGUI(std::string inText, float inX, float inY, float inScale, 
-		GLfloat colR, GLfloat colG, GLfloat colB, GLfloat hovR, GLfloat hovG, GLfloat hovB, 
+		glm::vec3 inColour, glm::vec3 inHoverColour, 
 		std::function<void()> callbackFunc, std::map<char, TypeChar>& inFontMap);
 	void Render(); //Override for the GUIObject Render Function
 };
