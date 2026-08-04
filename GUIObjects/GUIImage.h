@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GUIObject.h"
-#include "../ObjectLoader.h"
+#include "Utilities/ObjectLoader.h"
 #include <array>
 
 //The class for displaying Images, is a GUI element and so inherits from the GUI Element class

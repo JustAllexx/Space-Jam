@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FontLoader.h"
+#include "Utilities/FontLoader.h"
 #include "GUIObjects/TypeChar.h"
 
 #include <glm/ext/vector_float3.hpp>
@@ -76,5 +76,3 @@ public:
 	GUIButton* scoreScreen_FinalScoreText{nullptr};
 
 };
-
-

@@ -4,9 +4,11 @@ PROJECT(SpaceJam)
 SET(CMAKE_CXX_STANDARD 20)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 ADD_EXECUTABLE(
-    SpaceJam SpaceJamMain.cpp AudioManager.cpp GameManager.cpp GUIManager.cpp ObjectLoader.cpp FontLoader.cpp SceneManager.cpp OptionsManager.cpp YIN.cpp Physics/CollisionBox.cpp
+    SpaceJam SpaceJamMain.cpp AudioManager.cpp GameManager.cpp GUIManager.cpp SceneManager.cpp OptionsManager.cpp YIN.cpp Physics/CollisionBox.cpp
+    Utilities/FontLoader.cpp Utilities/ObjectLoader.cpp
     DrawObjects/DrawObject.cpp DrawObjects/NoteHighlight.cpp DrawObjects/NoteTarget.cpp DrawObjects/PlayerController.cpp
     GUIObjects/GUIObject.cpp GUIObjects/GUIImage.cpp GUIObjects/GUIButton.cpp
 )
@@ -28,6 +30,7 @@ PKG_CHECK_MODULES(SNDFILE REQUIRED sndfile)
 TARGET_INCLUDE_DIRECTORIES(SpaceJam SYSTEM PUBLIC
     /home/alex/Documents/Projects/Space-Jam/Libraries/stb_image/include
     ${SNDFILE_INCLUDE_DIRS}
+    ${CMAKE_SOURCE_DIR}
 )
 
 TARGET_LINK_LIBRARIES(SpaceJam PRIVATE

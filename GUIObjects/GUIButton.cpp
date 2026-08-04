@@ -1,6 +1,6 @@
 #include "GUIButton.h"
 #include "TypeChar.h"
-#include "../FontLoader.h"
+#include "Utilities/FontLoader.h"
 #include <stdexcept>
 
 GUIButton::GUIButton(std::string inText, float inX, float inY, float inScale,

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ObjectLoader.h"
+#include "Utilities/ObjectLoader.h"
 #include "../Physics/CollisionBox.h"
 
 #include <optional>
