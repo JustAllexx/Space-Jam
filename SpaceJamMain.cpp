@@ -4,6 +4,7 @@
 #include "AudioManager.h"
 #include "DrawObjects/PlayerController.h"
 #include "GUIManager.h"
+#include "GUIObjects/GUIButton.h"
 #include "GameManager.h"
 
 #include <cmath>
@@ -555,7 +556,7 @@ int main(int argc, char** argv) {
 
 //Defines the samplesGUI out of the scope of the header file
 //These members belong to the class OptionsManager, but need to be defined out of the scope of the class before they can be used, because they are static values
-buttonGUI* OptionsManager::samplesGUI = nullptr;
+GUIButton* OptionsManager::samplesGUI = nullptr;
 size_t OptionsManager::samplesOptionIndex = 0;
 std::vector<std::string> OptionsManager::samplesOptionsText = {
 	"1024 Samples",

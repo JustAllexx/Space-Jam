@@ -18,7 +18,7 @@
 #include <stb/stb_image.h>
 
 //Forward Delcare GUI objects
-class buttonGUI;
+class GUIButton;
 
 
 std::string readShaderFile(std::string filename);
@@ -28,7 +28,7 @@ std::string readShaderFile(std::string filename);
 class OptionsManager {
 private:
 	static size_t samplesOptionIndex;
-	static buttonGUI* samplesGUI;
+	static GUIButton* samplesGUI;
 	static std::vector<std::string> samplesOptionsText;
 public:
 	static void Initialise();

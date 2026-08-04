@@ -1,8 +1,11 @@
 #include "GUIManager.h"
+#include "GUIObjects/GUIImage.h"
+#include "GUIObjects/GUIButton.h"
 #include <cmath>
 #include <functional>
 #include <limits>
 #include <stdexcept>
+#include <iostream>
 
 #include FT_FREETYPE_H
 
@@ -21,7 +24,7 @@ GUIObject::GUIObject(GLuint inGUIShader) : GUIShader(inGUIShader) {
 }
 
 //Construction function for the button GUI Class
-buttonGUI::buttonGUI(std::string inText, float inX, float inY, float inScale,
+GUIButton::GUIButton(std::string inText, float inX, float inY, float inScale,
 	 glm::vec3 inColour, glm::vec3 inHoverColour, 
 	 std::function<void()> callback, std::map<char, TypeChar>& inFontMap,
 	 GLuint inVAO, GLuint inVBO, GLuint inGUIShader)
@@ -76,7 +79,7 @@ buttonGUI::buttonGUI(std::string inText, float inX, float inY, float inScale,
 
 //Override for the ObjectGUI Render
 //Renders each character in a string, renders each character indivudally 
-void buttonGUI::Render() {
+void GUIButton::Render() {
 	//Tell the GUI Shader Programme that I am rendering text
 	glProgramUniform1i(GUIShader, isTextPos, 1);
 	//If the text is being hovered over, set it to the hover colour, if not to the deafult colour
@@ -134,8 +137,8 @@ void buttonGUI::Render() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-//Simple constructor function for the ImageGUI class, loads in an image using the stbi image loader then buffers it to a texture
-imageGUI::imageGUI(const char* imagePath, float inX, float inY, float inScale, GLuint inVAO, GLuint inVBO, GLuint inGUIShader) : GUIObject(inGUIShader) {
+//Simple constructor function for the GUIImage class, loads in an image using the stbi image loader then buffers it to a texture
+GUIImage::GUIImage(const char* imagePath, float inX, float inY, float inScale, GLuint inVAO, GLuint inVBO, GLuint inGUIShader) : GUIObject(inGUIShader) {
 	posX = inX; posY = inY; scale = inScale;
 	VAO = inVAO; VBO = inVBO;
 
@@ -154,7 +157,7 @@ imageGUI::imageGUI(const char* imagePath, float inX, float inY, float inScale, G
 }
 
 //Render Function for ImagGUI class, an override for the GUIObject class, very similar to rendering a quad for a character, but calculates the coordinates of the quad slightly differently
-void imageGUI::Render() {
+void GUIImage::Render() {
 	glDisable(GL_DEPTH_TEST);
 	//Tell the GUI Program shader that I'm not rendering text and it should render an image
 	glProgramUniform1i(GUIShader, isTextPos, 0);
@@ -294,32 +297,32 @@ void GUIManager::createOptionsMenu()
 	float screenHeight = 480.0f;
 	float screenWidth = 854.0f;
 
-	GUIObject* background = new imageGUI("Textures\\holder.png", screenWidth / 2, screenHeight / 2, 10, VAO, VBO, GUIShader);
+	GUIObject* background = new GUIImage("Textures\\holder.png", screenWidth / 2, screenHeight / 2, 10, VAO, VBO, GUIShader);
 	
-	GUIObject* pitchAccuracyText = new buttonGUI("Audio Buffer Size", screenWidth / 2, 350.f, 1,
+	GUIObject* pitchAccuracyText = new GUIButton("Audio Buffer Size", screenWidth / 2, 350.f, 1,
 		lightGray,
 		lightGray,
 		nullptr,
 		fontMap, VAO, VBO, GUIShader);
 	
-	buttonGUI* samplesOptionTextTemp = new buttonGUI("1024 Samples", screenWidth / 2, 300.f, 1,
+	GUIButton* samplesOptionTextTemp = new GUIButton("1024 Samples", screenWidth / 2, 300.f, 1,
 		darkGray,
 		lightGray,
 		nullptr, fontMap, VAO, VBO, GUIShader);
 	GUIManager::samplesOptionText = samplesOptionTextTemp;
-	buttonGUI* samplesOptionLeftClickTemp = new buttonGUI("<", (screenWidth / 2) - 200.f, 300.f, 1,
+	GUIButton* samplesOptionLeftClickTemp = new GUIButton("<", (screenWidth / 2) - 200.f, 300.f, 1,
 		darkGray,
 		lightGray,
 		nullptr, fontMap, VAO, VBO, GUIShader);
 	GUIManager::samplesOptionLeftClick = samplesOptionLeftClickTemp;
 
-	buttonGUI* samplesOptionRightClickTemp = new buttonGUI(">", (screenWidth / 2) + 200.f, 300.f, 1,
+	GUIButton* samplesOptionRightClickTemp = new GUIButton(">", (screenWidth / 2) + 200.f, 300.f, 1,
 		darkGray,
 		lightGray,
 		nullptr, fontMap, VAO, VBO, GUIShader);
 	GUIManager::samplesOptionRightClick = samplesOptionRightClickTemp;
 
-	buttonGUI* backButton = new buttonGUI("Back", screenWidth / 2, 100.f, 1,
+	GUIButton* backButton = new GUIButton("Back", screenWidth / 2, 100.f, 1,
 		darkGray,
 		lightGray,
 		nullptr, fontMap, VAO, VBO, GUIShader);
@@ -351,21 +354,21 @@ void GUIManager::createMainMenu()
 	float screenHeight = 480.0f;
 	float screenWidth = 854.0f;
 
-	GUIObject* logoImage = new imageGUI("Textures/logo.png", screenWidth / 2, screenHeight - 100.f, 1.4f, VAO, VBO, GUIShader);
+	GUIObject* logoImage = new GUIImage("Textures/logo.png", screenWidth / 2, screenHeight - 100.f, 1.4f, VAO, VBO, GUIShader);
 
-	buttonGUI* startButton = new buttonGUI("Start", screenWidth / 2, 250, 1,
+	GUIButton* startButton = new GUIButton("Start", screenWidth / 2, 250, 1,
 		darkGray,
 		lightGray,
 		nullptr, fontMap, VAO, VBO, GUIShader);
 	GUIManager::MainMenu_StartButtonClick = startButton;
 
-	buttonGUI* optionsButton = new buttonGUI("Options", screenWidth / 2, 175, 1,
+	GUIButton* optionsButton = new GUIButton("Options", screenWidth / 2, 175, 1,
 		darkGray,
 		lightGray,
 		nullptr, fontMap, VAO, VBO, GUIShader);
 	GUIManager::MainMenu_OptionsButtonClick = optionsButton;
 
-	buttonGUI* quitButton = new buttonGUI("Quit", screenWidth / 2, 100, 1,
+	GUIButton* quitButton = new GUIButton("Quit", screenWidth / 2, 100, 1,
 		darkGray,
 		lightGray,
 		nullptr, fontMap, VAO, VBO, GUIShader);
@@ -400,14 +403,14 @@ void GUIManager::createGameGUI()
 		float percentHeight = static_cast<float>(i) / 13.f;
 		float textHeight = percentHeight * screenHeight;
 
-		buttonGUI* tempText = new buttonGUI(noteText[i - 1], screenWidth - 50.f, textHeight, .4f,
+		GUIButton* tempText = new GUIButton(noteText[i - 1], screenWidth - 50.f, textHeight, .4f,
 			 white, 
 			 white,
 			 nullptr, fontMap, VAO, VBO, GUIShader);
 		gameGUIVector.push_back(tempText);
 	}
 
-	buttonGUI* scoreGUI = new buttonGUI("0", screenWidth / 2, screenHeight - 100, 1.f, 
+	GUIButton* scoreGUI = new GUIButton("0", screenWidth / 2, screenHeight - 100, 1.f, 
 		white, 
 		white,
 		nullptr, fontMap, VAO, VBO, GUIShader);
@@ -426,22 +429,22 @@ void GUIManager::createScoreMenu()
 	float screenHeight = 480.f;
 	float screenWidth = 854.f;
 
-	GUIObject* background = new imageGUI("Textures/holder.png", screenWidth / 2, screenHeight / 2, 10, VAO, VBO, GUIShader);
+	GUIObject* background = new GUIImage("Textures/holder.png", screenWidth / 2, screenHeight / 2, 10, VAO, VBO, GUIShader);
 
 	
-	buttonGUI* backButton = new buttonGUI("Back", screenWidth / 2, 100.f, 1,
+	GUIButton* backButton = new GUIButton("Back", screenWidth / 2, 100.f, 1,
 		darkGray,
 		lightGray,
 		[this] {
 		showMainMenu();
 	}, fontMap, VAO, VBO, GUIShader);
 	
-	buttonGUI* yourScoreText = new buttonGUI("Your Score:", screenWidth / 2.f, 340.f, 1.2f,
+	GUIButton* yourScoreText = new GUIButton("Your Score:", screenWidth / 2.f, 340.f, 1.2f,
 		lightGray,
 		lightGray,
 		nullptr, fontMap, VAO, VBO, GUIShader);
 
-	buttonGUI* scoreScreenText = new buttonGUI("0", screenWidth / 2, 250.f, 1,
+	GUIButton* scoreScreenText = new GUIButton("0", screenWidth / 2, 250.f, 1,
 		lightGray,
 		lightGray,
 		nullptr, fontMap, VAO, VBO, GUIShader);

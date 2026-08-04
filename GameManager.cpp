@@ -5,6 +5,7 @@
 #include "DrawObjects/PlayerController.h"
 #include "DrawObjects/NoteTarget.h"
 #include "DrawObjects/NoteHighlight.h"
+#include "GUIObjects/GUIButton.h"
 
 #include <fstream>
 #include <memory>
