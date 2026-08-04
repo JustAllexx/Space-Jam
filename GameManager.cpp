@@ -28,9 +28,11 @@ const std::map<std::string, int> notePairings{
 	{"G#", 11}
 };
 
-GameManager::GameManager(std::unique_ptr<SceneManager> inSceneManager, std::map<unsigned char, bool>& inKeyMap,
-	PlayerController* inPlayer, GUIManager* inGUIManager) : currentPlayer(inPlayer), guiManager(inGUIManager), sceneManager(std::move(inSceneManager)),
-		audioManager(std::make_unique<AudioManager>()), keyMap(inKeyMap) {}
+GameManager::GameManager(std::unique_ptr<SceneManager> inSceneManager, std::map<unsigned char, bool>& inKeyMap, GUIManager* inGUIManager) 
+: guiManager(inGUIManager), currentPlayer(std::make_unique<PlayerController>()), sceneManager(std::move(inSceneManager)),
+		audioManager(std::make_unique<AudioManager>()), keyMap(inKeyMap) {
+			sceneManager->addObjectToQueue(currentPlayer.get());
+		}
 
 //The function that loads the song file
 void GameManager::loadSongJson(const char* path, std::string& songTitle, Json::Value& notes)
@@ -70,7 +72,7 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath)
 
 		float height = AudioManager::getHeightOfNote(noteIndex, fovy, dist);
 
-		DrawObject* noteObject = new NoteTarget(0.f, height, time, 40.f, audioManager.get(), currentPlayer);
+		DrawObject* noteObject = new NoteTarget(0.f, height, time, 40.f, audioManager.get(), currentPlayer.get());
 		DrawObject* noteHighlight = new NoteHighlight(time, noteObject, audioManager.get());
 		sceneManager->addObjectToQueue(noteObject);
 		sceneManager->addObjectToQueue(noteHighlight);

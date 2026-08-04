@@ -53,7 +53,7 @@ GLuint RBO;
 GLuint screenVAO, screenVBO;
 
 //Remove this later
-std::optional<PlayerController> player;
+//std::optional<PlayerController> player;
 std::optional<GameManager> gameManager;
 std::optional<GUIManager> guiManager;
 std::optional<OptionsManager> optionsManager;
@@ -461,15 +461,11 @@ int main(int argc, char** argv) {
 	//Class initialisation functions
 	//objectManager.emplace(shaderProgram);
 	sceneManager = std::make_unique<SceneManager>(shaderProgram);
-	// Again, TODO: Replace this optional, it is only temporary
-	player.emplace();
-	//TODO: Game Manager should be adding player to Render Queue, not Main
-	sceneManager->addObjectToQueue(&player.value());
 
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
 	guiManager.emplace(textShaderProgram);
-	gameManager.emplace(std::move(sceneManager), keyMap, &player.value(), &guiManager.value());
+	gameManager.emplace(std::move(sceneManager), keyMap, &guiManager.value());
 	optionsManager.emplace(guiManager.value(), &gameManager.value());
 
 	optionsManager->Initialise();
