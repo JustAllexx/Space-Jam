@@ -19,16 +19,8 @@ using namespace std;
 
 const int screenHeight = 480;
 const int screenWidth = 854;
-
-//A constant global variable that defines the mathematical constant pi
-//3.1415....
-const double rotpi = 2 * acos(0.0);
+//Gaussian kernel
 const size_t kernelSize = 5;
-
-//Time keeping variables
-//dt is used by the audioManager to gauge how much time has passed since audio capture started
-int newt, oldt;
-float dt;
 
 //This is where the integer locations of all the programIDs
 //Once the program has been created OpenGL gives us a unique (unsigned) integer which we can use in an API call to tell OpenGL we want to use this shader in our rendering pipeline
@@ -63,8 +55,6 @@ GLuint gaussianHorizontalPos;
 GLuint RBO;
 GLuint screenVAO, screenVBO;
 
-//This is the audioManager instance that is responsible for recording audio to the capture buffer
-AudioManager audioManager;
 //Remove this later
 std::optional<PlayerController> player;
 std::optional<GameManager> gameManager;
@@ -498,7 +488,7 @@ int main(int argc, char** argv) {
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
 	guiManager.emplace(textShaderProgram);
-	gameManager.emplace(std::move(sceneManager), keyMap, &player.value(), &audioManager, &guiManager.value());
+	gameManager.emplace(std::move(sceneManager), keyMap, &player.value(), &guiManager.value());
 
 	OptionsManager::Initialise();
 

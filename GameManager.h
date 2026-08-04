@@ -21,13 +21,13 @@ class GameManager
 {
 private:
 	PlayerController* currentPlayer{nullptr};
-	AudioManager* songSource{nullptr};
+	//AudioManager* songSource{nullptr};
 	GUIManager* guiManager{nullptr};
 	std::unique_ptr<SceneManager> sceneManager;
+	std::unique_ptr<AudioManager> audioManager;
 	std::map<unsigned char, bool>& keyMap;
 public:
-	GameManager(std::unique_ptr<SceneManager> inSceneManager, std::map<unsigned char, bool>& inKeyMap, PlayerController* inPlayerController,
-		AudioManager* inSongSource, GUIManager* inGUIManager);
+	GameManager(std::unique_ptr<SceneManager> inSceneManager, std::map<unsigned char, bool>& inKeyMap, PlayerController* inPlayerController, GUIManager* inGUIManager);
 	
 	//The only class allowed to have an init, as creation of the game object and presenting the title screen should be seperate
 	void Init();
