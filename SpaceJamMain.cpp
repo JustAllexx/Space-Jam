@@ -26,11 +26,7 @@ const size_t kernelSize = 5;
 //This is where the integer locations of all the programIDs
 //Once the program has been created OpenGL gives us a unique (unsigned) integer which we can use in an API call to tell OpenGL we want to use this shader in our rendering pipeline
 //Scroll down to the CreatePrograms function for an explanation of each shader and it's purpose
-GLuint vertexShader, fragmentShader, shaderProgram;
-GLuint textVertexShader, textFragmentShader, textShaderProgram;
-GLuint screenVertex, screenFragment, screenProgram;
-GLuint debugVertex, debugFragment, debugProgram;
-GLuint gaussianVertex, gaussianFragment, gaussianProgram;
+GLuint shaderProgram, textShaderProgram, screenProgram, debugProgram, gaussianProgram;
 GLuint projectionPos, modelviewPos;
 
 //The projection and modelview are matrices which are defined for use in the vertex shader
@@ -380,8 +376,8 @@ void keyUp(unsigned char key, [[maybe_unused]] int x, [[maybe_unused]] int y) {
 
 //Function to load a compiled program, used in the graphics pipeline for rendering to the screen
 GLuint loadProgram(const char* vertexShaderLoc, const char* fragmentShaderLoc) {
-	vertexShader = loadShader(GL_VERTEX_SHADER, vertexShaderLoc);
-	fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentShaderLoc);
+	GLuint vertexShader = loadShader(GL_VERTEX_SHADER, vertexShaderLoc);
+	GLuint fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentShaderLoc);
 	return createProgram(vertexShader, fragmentShader);
 }
 
