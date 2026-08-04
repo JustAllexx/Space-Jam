@@ -10,8 +10,6 @@
 #include <ft2build.h>
 #include <map>
 
-#include <stb/stb_image.h>
-
 //Forward declare
 class GUIObject;
 class Clickable;

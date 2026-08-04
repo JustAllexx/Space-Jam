@@ -15,8 +15,9 @@ private:
     int numChannels{0};
     stbi_uc* data{0};
 public:
-    STBIImage(const char* filepath) {
-        stbi_set_flip_vertically_on_load(true);
+    STBIImage(const char* filepath) : STBIImage(filepath, true) {};
+    STBIImage(const char* filepath, bool flip) {
+        stbi_set_flip_vertically_on_load(flip);
         data = stbi_load(filepath, &imageWidth, &imageHeight, &numChannels, 0);
     }
     ~STBIImage() {
@@ -56,11 +57,15 @@ public:
 class Texture {
 private:
     GLuint textureID{0};
+    int width, height;
 public:
-    Texture(const char* filepath);
+    Texture(const char* filepath, bool flip);
+    Texture(const char* filepath) : Texture(filepath, true) {};
     ~Texture();
     Texture(const Texture&) = delete;
     Texture& operator=(const Texture&) = delete;
 
     GLuint getTextureID() const noexcept {return textureID;}
+    int getImageWidth() const noexcept {return width;}
+    int getImageHeight() const noexcept {return height;}
 };
