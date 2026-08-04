@@ -8,7 +8,6 @@
 #include "GUIObjects/GUIButton.h"
 
 #include <fstream>
-#include <iostream>
 #include <memory>
 #include <string>
 
@@ -77,6 +76,7 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath)
 	}
 	//Finally plays the song
 	audioManager->playAudioBuffer(noteSongPath);
+	guiManager->showGameGUI();
 }
 
 void GameManager::render() {

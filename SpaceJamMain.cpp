@@ -77,8 +77,8 @@ float vertices[6][4] = {
 	{1.f, 1.f, 1.f, 1.f}
 };
 
-//A boolean variable that controls whether or not the RenderQueue function for the GUIManager is called
-bool bRenderGui = true;
+const char* countingStarsNotes = "Counting Stars Audio/notes30s.json";
+const char* countingStarsAudio = "Counting Stars Audio/CS_30s.ogg";
 
 //Gaussian Functions
 //This function calculates the gaussian distribution for the gaussian blur fragment shader
@@ -380,17 +380,6 @@ void keyUp(unsigned char key, [[maybe_unused]] int x, [[maybe_unused]] int y) {
 	keyMap[key] = false;
 }
 
-//Function that is called to start the game, calls the startGame function of the GameManager
-void startGame() {
-	guiManager->showGameGUI();
-	gameManager->startGame("Counting Stars Audio/notes30s.json", "Counting Stars Audio/CS_30s.ogg");
-}
-
-//Terminates the program (with a 0 to signify no errors occured), the function that is called when quit is pressed from the main menu
-void QuitGame() {
-	exit(0);
-}
-
 //Function to load a compiled program, used in the graphics pipeline for rendering to the screen
 GLuint loadProgram(const char* vertexShaderLoc, const char* fragmentShaderLoc) {
 	vertexShader = loadShader(GL_VERTEX_SHADER, vertexShaderLoc);
@@ -489,8 +478,8 @@ int main(int argc, char** argv) {
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
 	guiManager.emplace(textShaderProgram);
-	optionsManager.emplace(guiManager.value());
 	gameManager.emplace(std::move(sceneManager), keyMap, &player.value(), &guiManager.value());
+	optionsManager.emplace(guiManager.value(), &gameManager.value());
 
 	optionsManager->Initialise();
 
@@ -511,19 +500,22 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-OptionsManager::OptionsManager(GUIManager& guiManager_) : guiManager(guiManager_), samplesGUI(*guiManager.samplesOptionText) {}
+OptionsManager::OptionsManager(GUIManager& guiManager_, GameManager* gameManager_) : guiManager(guiManager_), samplesGUI(*guiManager.samplesOptionText),
+ gameManager(gameManager_) {}
 
 //In this function we define the function pointers for each function
 //So when the start button is clicked the start game function is called
 void OptionsManager::Initialise()
 {
-	guiManager.MainMenu_StartButtonClick->setClickFunction(startGame);
+	guiManager.MainMenu_StartButtonClick->setClickFunction([&] {
+		gameManager->startGame(countingStarsNotes, countingStarsAudio);
+	});
 	guiManager.MainMenu_OptionsButtonClick->setClickFunction(
 		[&] {
 			guiManager.showOptionsMenu();
 		}
 	);
-	guiManager.MainMenu_QuitButtonClick->setClickFunction(QuitGame);
+	guiManager.MainMenu_QuitButtonClick->setClickFunction([] {exit(0);});
 
 	//Here we define what each button should do, what function it should call
 	guiManager.samplesOptionLeftClick->setClickFunction([&] {DecrementSamplesOption();});
@@ -531,10 +523,6 @@ void OptionsManager::Initialise()
 	guiManager.samplesBackClick->setClickFunction([&] {
 		guiManager.showMainMenu();
 	});
-
-	//Here we assign the string pointer of the score button gui to the player score text
-	//This is what increments when a note is hit
-	//player->playerScoreText = &(guiManager.GameGUI_ScoreText->text);
 }
 
 void OptionsManager::IncrementSamplesOption()
