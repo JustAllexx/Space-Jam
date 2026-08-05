@@ -263,7 +263,8 @@ void display() {
 	//This is the final render to the screen
 	//The screen program (vertex shader and fragment shader) combines the Colour Attachment 0 texture with the blurred Colour Attachment 1 texture
 	//This gives the completed bloom effect
-	glUseProgram(screenProgram->getProgramID());
+	//glUseProgram(screenProgram->getProgramID());
+	screenProgram->use();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, splitColourBuffers[0]);
