@@ -92,9 +92,9 @@ constexpr float gaussianDistribution(float x, float standardDeviation) {
 //This function updates the gaussian blur kernel inside the gaussian blur fragment shader
 //Higher values of standard deviation give a greater degree of blur while lower values give a much sharper blur
 //The program is needed as an input to update the values at the end of the function
-void updateGaussianKernel(float standardDeviation, GLuint program) {
+void updateGaussianKernel(float standardDeviation, Program& bloomProgram) {
 	//The program needs to be loaded by OpenGL to update the values
-	glUseProgram(program);
+	bloomProgram.use();
 
 	//Where the gaussian values are stored
 	std::valarray<float> kernelValues;
@@ -118,9 +118,10 @@ void updateGaussianKernel(float standardDeviation, GLuint program) {
 		//We need to access each weight value individually. So we create the weight location for the weight value we want
 		//So weight[0] is the first value of our kernel
 		std::string weightLocation = "weight[" + std::to_string(j) + "]";
-		GLuint kernelWeightIndexPosition = glGetUniformLocation(program, weightLocation.c_str());
+		//GLuint kernelWeightIndexPosition = glGetUniformLocation(program, weightLocation.c_str());
 		//Update the value with the calculated value
-		glUniform1f(kernelWeightIndexPosition, kernelValues[j]);
+		//glUniform1f(kernelWeightIndexPosition, kernelValues[j]);
+		bloomProgram.setFloat(weightLocation, kernelValues[j]);
 	}
 }
 
@@ -323,7 +324,7 @@ void createPrograms() {
 	//Loads in the gaussian vertex and fragment shaders, this program creates the bloom effect by blurring certain objects on the screen
 	//Update the weights of the kernel inside the gaussian blur program
 	gaussianProgram.emplace(gaussianVert, gaussianFrag);
-	updateGaussianKernel(3.f, gaussianProgram->getProgramID());
+	updateGaussianKernel(3.f, gaussianProgram.value());
 
 	//Loads the program that is responsible for displaying the final framebuffer to the user
 	screenProgram.emplace(screenVert, screenFrag);
