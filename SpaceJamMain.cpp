@@ -55,11 +55,6 @@ GLuint gaussianLeftBuffer[2];
 GLuint gaussianRightBuffer[2];
 GLuint splitColourBuffers[2];
 
-//OpenGL ID for changing values in the fragment shader
-//Here is where the location for the horizontal boolean value is stored in the gaussian shader program
-//This ID can be used to change the value at this location from the main code
-GLuint gaussianHorizontalPos;
-
 //OpenGL ID for the render buffer object, the vertex array object, and the vertex buffer object
 //Each one is necessary for rendering framebuffers to the screen
 GLuint RBO;
@@ -326,27 +321,24 @@ void keyUp(unsigned char key, [[maybe_unused]] int x, [[maybe_unused]] int y) {
 //Initialise all the Shaders / Programs that Space Jam needs
 void createPrograms() {
 	//Loads in the gaussian vertex and fragment shaders, this program creates the bloom effect by blurring certain objects on the screen
+	//Update the weights of the kernel inside the gaussian blur program
 	gaussianProgram.emplace(gaussianVert, gaussianFrag);
-	//Update the weights of the kernel inside the gaussian blur program, horizontal is a boolean value which dictates whether the function should blur horizontally or vertically
 	updateGaussianKernel(3.f, gaussianProgram->getProgramID());
-	gaussianHorizontalPos = glGetUniformLocation(gaussianProgram->getProgramID(), "horizontal");
 
 	//Loads the program that is responsible for displaying the final framebuffer to the user
 	screenProgram.emplace(screenVert, screenFrag);
-
 	//Because the screenShader combines the bloomed texture and the rendered texture, it needs access to both textures
 	//Here I specify which colour attachment belongs to which texture
-	GLuint screenTexturePos = glGetUniformLocation(screenProgram->getProgramID(), "screenTexture");
-	GLuint bloomBlurPos = glGetUniformLocation(screenProgram->getProgramID(), "bloomBlur");
-	glUniform1i(screenTexturePos, 0);
-	glUniform1i(bloomBlurPos, 1);
+	screenProgram->setInt("screenTexture", 0);
+	screenProgram->setInt("bloomBlur", 1);
 
 	//Program responsible for displaying text (and all GUI Elements)
 	//Uses orthogonal projection instead of perspective projection (like the objects in the scene). (Orthogonal projection makes it so that no matter how far away an object is from the screen, it's the same size)
 	//textShaderProgram = loadProgram("Shaders/GUIShader.vert", "Shaders/GUIShader.frag");
 	guiProgram.emplace(GUIVert, GUIFrag);
 	glm::mat4 textProjection = glm::ortho(0.0f, static_cast<float>(500.0f), 0.0f, static_cast<float>(500.0f));
-	glUniformMatrix4fv(glGetUniformLocation(guiProgram->getProgramID(), "textprojection"), 1, GL_FALSE, &textProjection[0][0]);
+	//glUniformMatrix4fv(glGetUniformLocation(guiProgram->getProgramID(), "textprojection"), 1, GL_FALSE, &textProjection[0][0]);
+	guiProgram->setMat4("textprojection", textProjection);
 
 	//Shader program initialisation
 	shaderProgram.emplace(phongVert, phongFrag);
