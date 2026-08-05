@@ -40,7 +40,7 @@ std::optional<Program> shaderProgram;
 std::optional<Program> guiProgram;
 std::optional<Program> screenProgram;
 std::optional<Program> gaussianProgram;
-GLuint projectionPos, modelviewPos;
+//GLuint projectionPos, modelviewPos;
 
 //The projection and modelview are matrices which are defined for use in the vertex shader
 //The modelview describes how the local space vertices should be converted into world space (translation, rotation and scaling)
@@ -118,9 +118,6 @@ void updateGaussianKernel(float standardDeviation, Program& bloomProgram) {
 		//We need to access each weight value individually. So we create the weight location for the weight value we want
 		//So weight[0] is the first value of our kernel
 		std::string weightLocation = "weight[" + std::to_string(j) + "]";
-		//GLuint kernelWeightIndexPosition = glGetUniformLocation(program, weightLocation.c_str());
-		//Update the value with the calculated value
-		//glUniform1f(kernelWeightIndexPosition, kernelValues[j]);
 		bloomProgram.setFloat(weightLocation, kernelValues[j]);
 	}
 }
@@ -283,7 +280,7 @@ void reshape(int x, int y) {
 	//screenHeight = y;
 	//screenWidth = x;
 	projection = glm::perspective(gameManager->fovy, (GLfloat)screenWidth/ (GLfloat)screenHeight, 1.0f, 200.0f);
-	glUniformMatrix4fv(projectionPos, 1, GL_FALSE, &projection[0][0]);
+	shaderProgram->setMat4("projection", projection);
 }
 	
 
@@ -333,22 +330,16 @@ void createPrograms() {
 	screenProgram->setInt("screenTexture", 0);
 	screenProgram->setInt("bloomBlur", 1);
 
-	//Program responsible for displaying text (and all GUI Elements)
-	//Uses orthogonal projection instead of perspective projection (like the objects in the scene). (Orthogonal projection makes it so that no matter how far away an object is from the screen, it's the same size)
-	//textShaderProgram = loadProgram("Shaders/GUIShader.vert", "Shaders/GUIShader.frag");
+	//Program responsible for displaying GUI Elements like text and images
+	//Uses orthogonal projection. (Orthogonal projection makes it so that no matter how far away an object is from the screen, it's the same size)
 	guiProgram.emplace(GUIVert, GUIFrag);
 	glm::mat4 textProjection = glm::ortho(0.0f, static_cast<float>(500.0f), 0.0f, static_cast<float>(500.0f));
-	//glUniformMatrix4fv(glGetUniformLocation(guiProgram->getProgramID(), "textprojection"), 1, GL_FALSE, &textProjection[0][0]);
 	guiProgram->setMat4("textprojection", textProjection);
 
 	//Shader program initialisation
 	shaderProgram.emplace(phongVert, phongFrag);
-	// Get the positions of the uniform variables
-	projectionPos = glGetUniformLocation(shaderProgram->getProgramID(), "projection");
-	modelviewPos = glGetUniformLocation(shaderProgram->getProgramID(), "modelview");
-	// Pass the projection and modelview matrices to the shader
-	glUniformMatrix4fv(projectionPos, 1, GL_FALSE, &projection[0][0]);
-	glUniformMatrix4fv(modelviewPos, 1, GL_FALSE, &(modelview)[0][0]);
+	shaderProgram->setMat4("projection", projection);
+	shaderProgram->setMat4("modelview", modelview);
 }
 
 //This is the function that is called when the program is executed
