@@ -42,8 +42,6 @@ Program::Program(const char* vertexPath, const char* fragPath) :
         glGetProgramInfoLog(programID, logLength, &logLength, log);
         throw std::runtime_error(log);
     } 
-    currentProgram = programID;
-    glUseProgram(programID);
 }
 
 void Program::setFloat(std::string uniformLoc, GLfloat value) {

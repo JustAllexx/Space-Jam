@@ -35,7 +35,6 @@ void SceneManager::addObjectToQueue(DrawObject* obj)
 //Default renderQueue function called outside the class, updates the change in time 
 void SceneManager::renderQueue() {
 	//Whenever rendering a scene we always use the default shader
-	//glUseProgram(shaderProgram);
 	shaderProgram.use();
 
 	glUniform1i(bloomPos, false); //Bloom should be false by default

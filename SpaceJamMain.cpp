@@ -227,7 +227,6 @@ void display() {
 	
 	//Gaussian blur
 	//The guassian blur fragment shader is called repeatedly to blur the image drawn to Colour Attachment 1, switching between blurring horizontally and vertically
-	//glUseProgram(gaussianProgram->getProgramID());
 	gaussianProgram->use();
 	int ammount = 50;
 	bool firstIteration = true;
@@ -256,7 +255,6 @@ void display() {
 	//This is the final render to the screen
 	//The screen program (vertex shader and fragment shader) combines the Colour Attachment 0 texture with the blurred Colour Attachment 1 texture
 	//This gives the completed bloom effect
-	//glUseProgram(screenProgram->getProgramID());
 	screenProgram->use();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glActiveTexture(GL_TEXTURE0);
