@@ -61,3 +61,9 @@ void Program::setMat4(std::string uniformLoc, glm::mat4 value) {
     GLuint loc = getUniformLocation(uniformLoc);
     glUniformMatrix4fv(loc, 1, GL_FALSE, &value[0][0]);
 }
+
+void Program::setVec3(std::string uniformLoc, glm::vec3 value) {
+    use();
+    GLuint loc = getUniformLocation(uniformLoc);
+    glUniform3f(loc, value.x, value.y, value.z);
+}

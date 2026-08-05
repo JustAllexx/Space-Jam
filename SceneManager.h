@@ -1,7 +1,7 @@
 #pragma once
 
 #include <GL/glew.h>
-//#include <GL/glut.h>
+#include <GL/glut.h>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -20,7 +20,6 @@ private:
 	std::vector<DrawObject*> objRenderQueue;
 	std::vector<glm::mat4> modelViewStack;
 	glm::mat4 modelView;
-	//GLuint shaderProgram;
 	Program& shaderProgram;
 	GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos, lightPosPos;
 	//For calculating deltaTime
@@ -39,5 +38,5 @@ public:
 	void createNightSky();
 
 	float getDeltaTime() const noexcept {return deltaTime;}
-	GLuint getLightPos() const noexcept {return lightPosPos;}
+	Program& getShaderProgram() const noexcept {return shaderProgram;}
 };

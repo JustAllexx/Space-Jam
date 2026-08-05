@@ -68,6 +68,7 @@ public:
     GLuint getProgramID() const noexcept {return programID;}
 
     void setMat4(std::string uniformLoc, glm::mat4 mat);
+    void setVec3(std::string uniformLoc, glm::vec3 value);
     void setFloat(std::string uniformLoc, GLfloat value); 
     void setInt(std::string uniformLoc, GLint value);
 };

@@ -17,6 +17,7 @@ SceneManager::SceneManager(Program& shaderProgram_) : shaderProgram(shaderProgra
 	GLuint shaderID = shaderProgram_.getProgramID();
 	objModelviewPos = glGetUniformLocation(shaderID, "modelview");
 	modelView = glm::lookAt(glm::vec3(0, 0, 60.f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	//shaderProgram.setMat4("modelview", modelView);
 	glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(modelView)[0][0]);
 
 	opacityPos = glGetUniformLocation(shaderID, "opacity"); //How "see-through" should an object be

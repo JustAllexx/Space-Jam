@@ -113,8 +113,11 @@ void GameManager::gameUpdate()
 	currentPlayer->controlUpdate(keyMap, sceneManager->getDeltaTime());
 	guiManager->GameGUI_ScoreText->text = std::to_string(currentPlayer->playerScore);
 
-	GLuint lightPosPos = sceneManager->getLightPos();
-	glUniform3f(lightPosPos, currentPlayer->posX, currentPlayer->posY+2.f, 0.f);
+	//GLuint lightPosPos = sceneManager->getLightPos();
+	//glUniform3f(lightPosPos, currentPlayer->posX, currentPlayer->posY+2.f, 0.f);
+	glm::vec3 playerLightPos(currentPlayer->posX, currentPlayer->posY + 2.f, 0.f);
+	Program& shaderProgram = sceneManager->getShaderProgram();
+	shaderProgram.setVec3("lightPos", playerLightPos);
 
 	float currentPlayPosition =  audioManager->getPlayPos();
 	//The code that checks if the game should finish
