@@ -14,17 +14,8 @@ const char* moonModelPath = "Models/moon.obj";
 const char* moonTexturePath = "Textures/moon.png";
 
 SceneManager::SceneManager(Program& shaderProgram_) : shaderProgram(shaderProgram_){
-	GLuint shaderID = shaderProgram_.getProgramID();
-	objModelviewPos = glGetUniformLocation(shaderID, "modelview");
 	modelView = glm::lookAt(glm::vec3(0, 0, 60.f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-	//shaderProgram.setMat4("modelview", modelView);
-	glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(modelView)[0][0]);
-
-	opacityPos = glGetUniformLocation(shaderID, "opacity"); //How "see-through" should an object be
-	ambientPos = glGetUniformLocation(shaderID, "ambient"); //Minimum brightness of an object
-	bloomPos = glGetUniformLocation(shaderID, "bBloom"); //Should the object have bloom
-	brightnessPos = glGetUniformLocation(shaderID, "brightness");
-	lightPosPos = glGetUniformLocation(shaderID, "lightPos");
+	shaderProgram.setMat4("modelview", modelView);
 };
 
 //Adds DrawObject to the render queue
@@ -38,7 +29,6 @@ void SceneManager::renderQueue() {
 	//Whenever rendering a scene we always use the default shader
 	shaderProgram.use();
 
-	glUniform1i(bloomPos, false); //Bloom should be false by default
 	currentFrameTime = glutGet(GLUT_ELAPSED_TIME);
 	deltaTime = static_cast<float>(currentFrameTime - lastFrameTime) / 1000.f;
 	lastFrameTime = currentFrameTime;
@@ -67,13 +57,13 @@ void SceneManager::renderQueue(std::vector<DrawObject*> &rendQueue)
 		model = glm::rotate(model, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
 
 		//Update the vertex and fragment shader
-		glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(modelView * model)[0][0]);
+		shaderProgram.setMat4("modelview", modelView * model);
 		
 		//Update the fragment shader with these details
-		glUniform1f(opacityPos, renderObj->getOpacity());
-		glUniform1f(ambientPos, renderObj->getAmbient());
-		glUniform1i(bloomPos, renderObj->isBloom());
-		glUniform1f(brightnessPos, renderObj->getBloomAmmount());
+		shaderProgram.setFloat("opacity", renderObj->getOpacity());
+		shaderProgram.setFloat("ambient", renderObj->getAmbient());
+		shaderProgram.setInt("bBloom", renderObj->isBloom());
+		shaderProgram.setFloat("brightness", renderObj->getBloomAmmount());
 		
 		//Call that object's draw function
 		renderObj->Draw();

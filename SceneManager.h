@@ -21,7 +21,7 @@ private:
 	std::vector<glm::mat4> modelViewStack;
 	glm::mat4 modelView;
 	Program& shaderProgram;
-	GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos, lightPosPos;
+	//GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos, lightPosPos;
 	//For calculating deltaTime
 	int lastFrameTime{0};
 	int currentFrameTime{0};
