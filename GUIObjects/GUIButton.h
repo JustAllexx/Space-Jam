@@ -1,12 +1,14 @@
 #pragma once
 
 #include "GUIObject.h"
+#include <Utilities/ShaderLoader.h>
 #include <string>
 #include <glm/glm.hpp>
 
 //TODO: Maybe fix this, I don't know if I am allowed to do this
 struct TypeChar;
 class SJ_Font;
+class Program;
 
 //The button class inherits from the GUIObject class because it is an onscreen element, it also inherits from the Clickable class because it can be clicked
 class GUIButton : public GUIObject, public Clickable {
@@ -25,6 +27,6 @@ public:
 	GUIButton(std::string inText, float inX, float inY, float inScale, 
 		glm::vec3 inColour, glm::vec3 inHoverColour, 
 		std::function<void()> callbackFunc, SJ_Font& inFontMap,
-		GLuint inVAO, GLuint inVBO, GLuint inGUIShader);
+		GLuint inVAO, GLuint inVBO, Program& GUIShader);
 	void Render(); //Override for the GUIObject Render Function
 };

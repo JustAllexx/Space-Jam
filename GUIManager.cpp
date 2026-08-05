@@ -2,6 +2,8 @@
 #include "GUIObjects/GUIImage.h"
 #include "GUIObjects/GUIButton.h"
 #include "SceneManager.h"
+#include "Utilities/ShaderLoader.h"
+
 #include <algorithm>
 #include <cmath>
 #include <functional>
@@ -21,8 +23,8 @@ const float screenWidth = 854.f;
 
 const char* arialPath = "fonts/arial.ttf";
 
-GUIManager::GUIManager(GLuint program) : arialFont(std::make_unique<SJ_Font>(arialPath)),
-  GUIShader(program) {
+GUIManager::GUIManager(Program& GUIShader_) : arialFont(std::make_unique<SJ_Font>(arialPath)),
+  GUIShader(GUIShader_) {
 	//Buffers a quad (similar to what happens in the Main Module
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -41,9 +43,10 @@ GUIManager::GUIManager(GLuint program) : arialFont(std::make_unique<SJ_Font>(ari
 
 //Iterates over the guiRenderQueue and calls the render function of every GUI Element that is meant to be on screen
 void GUIManager::renderQueue() {
-	glUseProgram(GUIShader);
+	GUIShader.use();
+	GLuint shaderID = GUIShader.getProgramID();
 	glm::mat4 textProjection = glm::ortho(0.0f, static_cast<float>(screenWidth), 0.0f, static_cast<float>(screenHeight));
-	glUniformMatrix4fv(glGetUniformLocation(GUIShader, "textprojection"), 1, GL_FALSE, &textProjection[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(shaderID, "textprojection"), 1, GL_FALSE, &textProjection[0][0]);
 	for (size_t i = 0; i < guiRenderQueue.size(); i++) {
 		if (guiRenderQueue[i]) {
 			guiRenderQueue[i]->Render();

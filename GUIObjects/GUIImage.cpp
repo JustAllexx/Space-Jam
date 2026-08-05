@@ -1,4 +1,5 @@
 #include "GUIImage.h"
+#include "Utilities/ShaderLoader.h"
 #include <stb/stb_image.h>
 
 constexpr std::array<std::array<float, 4>, 6> GUIImage::createVertexData(float x, float y, float size, int height, int width) {
@@ -16,8 +17,8 @@ constexpr std::array<std::array<float, 4>, 6> GUIImage::createVertexData(float x
 }
 
 //Texture flip needs to be false here
-GUIImage::GUIImage(const char* imagePath, float inX, float inY, float inScale, GLuint inVAO, GLuint inVBO, GLuint inGUIShader) 
-: GUIObject(inGUIShader), posX(inX),
+GUIImage::GUIImage(const char* imagePath, float inX, float inY, float inScale, GLuint inVAO, GLuint inVBO, Program& GUIShader_) 
+: GUIObject(GUIShader_), posX(inX),
   posY(inY), scale(inScale), texture(imagePath, false),
   imgHeight(texture.getImageHeight()), imgWidth(texture.getImageWidth()), VAO(inVAO), VBO(inVBO),
   vertexInfo(createVertexData(posX, posY, scale, imgHeight, imgWidth)) {
@@ -25,9 +26,11 @@ GUIImage::GUIImage(const char* imagePath, float inX, float inY, float inScale, G
 
 //Render Function for ImagGUI class, an override for the GUIObject class, very similar to rendering a quad for a character, but calculates the coordinates of the quad slightly differently
 void GUIImage::Render() {
+	GUIShader.use();
+	GLuint shaderID = GUIShader.getProgramID();
 	glDisable(GL_DEPTH_TEST);
 	//Tell the GUI Program shader that I'm not rendering text and it should render an image
-	glProgramUniform1i(GUIShader, isTextPos, 0);
+	glProgramUniform1i(shaderID, isTextPos, 0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(VAO);

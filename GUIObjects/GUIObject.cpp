@@ -1,5 +1,7 @@
 #include "GUIObject.h"
+#include <Utilities/ShaderLoader.h>
 
-GUIObject::GUIObject(GLuint inGUIShader) : GUIShader(inGUIShader) {
-	isTextPos = glGetUniformLocation(GUIShader, "isText");
+GUIObject::GUIObject(Program& GUIShader_) : GUIShader(GUIShader_) {
+	GLuint shaderID = GUIShader.getProgramID();
+	isTextPos = glGetUniformLocation(shaderID, "isText");
 }

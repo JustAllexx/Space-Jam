@@ -406,7 +406,7 @@ int main(int argc, char** argv) {
 
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
-	guiManager.emplace(guiProgram->getProgramID());
+	guiManager.emplace(guiProgram.value());
 	gameManager.emplace(shaderProgram.value(), keyMap, &guiManager.value());
 	optionsManager.emplace(guiManager.value(), &gameManager.value());
 

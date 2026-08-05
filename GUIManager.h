@@ -8,7 +8,6 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include <memory>
-#include <optional>
 #include <vector>
 #include <ft2build.h>
 #include <unordered_map>
@@ -17,6 +16,7 @@
 class GUIObject;
 class Clickable;
 class GUIButton;
+class Program;
 
 //GUIManager controls all the GUI Elements rendered onto the screen
 class GUIManager
@@ -27,9 +27,9 @@ private:
 	std::unordered_map<char, TypeChar> fontMap;
 	std::unique_ptr<SJ_Font> arialFont;
 	GLuint VAO, VBO;
-	GLuint GUIShader;
+	Program& GUIShader;
 public:
-	GUIManager(GLuint program);
+	GUIManager(Program& GUIShader);
 
 	void renderQueue(); //Called to render GUI onscreen
 	void checkCollisions(int mousePosX, int mousePosY, bool clicked); //Called to check if any element on the screen has been cliked

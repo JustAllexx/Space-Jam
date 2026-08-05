@@ -1,13 +1,14 @@
 #include "GUIButton.h"
 #include "TypeChar.h"
 #include "Utilities/FontLoader.h"
+#include "Utilities/ShaderLoader.h"
 #include <stdexcept>
 
 GUIButton::GUIButton(std::string inText, float inX, float inY, float inScale,
 	 glm::vec3 inColour, glm::vec3 inHoverColour, 
 	 std::function<void()> callback, SJ_Font& inFontMap,
-	 GLuint inVAO, GLuint inVBO, GLuint inGUIShader)
-	  : GUIObject(inGUIShader), VAO(inVAO), VBO(inVBO), rFontMap(inFontMap){
+	 GLuint inVAO, GLuint inVBO, Program& GUIShader_)
+	  : GUIObject(GUIShader_), VAO(inVAO), VBO(inVBO), rFontMap(inFontMap){
 	{
 		//Sets input variables as class variables
 		x = inX; y = inY; scale = inScale;
@@ -60,14 +61,16 @@ GUIButton::GUIButton(std::string inText, float inX, float inY, float inScale,
 //Override for the ObjectGUI Render
 //Renders each character in a string, renders each character indivudally 
 void GUIButton::Render() {
+	GUIShader.use();
+	GLuint shaderID = GUIShader.getProgramID();
 	//Tell the GUI Shader Programme that I am rendering text
-	glProgramUniform1i(GUIShader, isTextPos, 1);
+	glProgramUniform1i(shaderID, isTextPos, 1);
 	//If the text is being hovered over, set it to the hover colour, if not to the deafult colour
 	if (hovered) {
-		glUniform3f(glGetUniformLocation(GUIShader, "textColor"), hoverColour[0], hoverColour[1], hoverColour[2]);
+		glUniform3f(glGetUniformLocation(shaderID, "textColor"), hoverColour[0], hoverColour[1], hoverColour[2]);
 	}
 	else {
-		glUniform3f(glGetUniformLocation(GUIShader, "textColor"), colour[0], colour[1], colour[2]);
+		glUniform3f(glGetUniformLocation(shaderID, "textColor"), colour[0], colour[1], colour[2]);
 	}
 
 	if (!enable) { //If the button is not enabled don't render it

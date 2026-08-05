@@ -4,12 +4,14 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 
+class Program;
+
 class GUIObject {
 protected:
-	GLuint GUIShader;
+	Program& GUIShader;
 	GLuint isTextPos;
 public:
-	GUIObject(GLuint GUIShader);
+	GUIObject(Program& GUIShader);
 	virtual void Render() {
 		return;
 	}
