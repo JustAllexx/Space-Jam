@@ -8,7 +8,9 @@
 #include "GameManager.h"
 #include "OptionsManager.h"
 
-#include <Utilities/ShaderLoader.h>
+#include "Utilities/ShaderLoader.h"
+#include "Utilities/Framebuffer.h"
+#include "Utilities/ObjectLoader.h"
 #include <cmath>
 #include <memory>
 #include <optional>
@@ -50,6 +52,7 @@ glm::mat4 projection, modelview;
 //Similar to the integers this is where the framebuffer IDs are stored. OpenGL handles these in a similar way
 //Scroll down to the CreateFramebuffers function for an explanation of each framebuffer and its purpose
 GLuint renderFramebuffer;
+//std::optional<Framebuffer> renderFramebuffer;
 GLuint finalFramebuffer[2];
 GLuint gaussianLeftBuffer[2];
 GLuint gaussianRightBuffer[2];
@@ -184,6 +187,8 @@ void createFramebuffers() {
 
 	//This is the framebuffer where everything is initially rendered to
 	//The ObjectManager renders to this framebuffer, this framebuffer is not displayed to the user.
+	//renderFramebuffer.emplace(2);
+	
 	glGenFramebuffers(1, &renderFramebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
 	glGenTextures(2, splitColourBuffers);
@@ -195,6 +200,8 @@ void createFramebuffers() {
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, splitColourBuffers[i], 0);
 	}
+	
+
 	//This creates the renderbuffer needed to display each framebuffer
 	glGenRenderbuffers(1, &RBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, RBO);
@@ -214,6 +221,7 @@ void createFramebuffers() {
 void display() {
 	//Binds the framebuffer that I want the ObjectManager to render every object to
 	glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
+	//renderFramebuffer->bind();
 	//Tells OpenGL to clear the screen completely and replace it with black
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear all information about what colour the image is and clear information about which pixel of the previous frame was closest to the camera
@@ -238,6 +246,7 @@ void display() {
 			glBindFramebuffer(GL_FRAMEBUFFER, gaussianLeftBuffer[0]);
 			if (firstIteration) {
 				glBindTexture(GL_TEXTURE_2D, splitColourBuffers[1]);
+				//glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment1ID());
 				firstIteration = false;
 			}
 			else {
@@ -259,6 +268,7 @@ void display() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, splitColourBuffers[0]);
+	//glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment0ID());
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, gaussianRightBuffer[1]);
 	displayFramebuffer();
