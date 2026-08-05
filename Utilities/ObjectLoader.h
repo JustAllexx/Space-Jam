@@ -59,6 +59,7 @@ private:
     GLuint textureID{0};
     int width, height;
 public:
+    Texture(); //No parameters assumes you're creating a blank texture for a framebuffer
     Texture(const char* filepath, bool flip);
     Texture(const char* filepath) : Texture(filepath, true) {};
     ~Texture();

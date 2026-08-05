@@ -1,9 +1,13 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #define STB_IMAGE_IMPLEMENTATION
-#include "ObjectLoader.h"
+#include "Utilities/ObjectLoader.h"
 #include <string>
 #include <fstream>
 #include <sstream>
+
+//Temporary, until rebinding 
+const int screenHeight = 480;
+const int screenWidth = 854;
 
 //This class takes in a wavefront file path as an argument
 //The program decodes the wavefront file and outputs 3 vectors.
@@ -127,6 +131,20 @@ Mesh::~Mesh() {
 	glDeleteBuffers(1, &vertexBuffer);
 	glDeleteBuffers(1, &uvBuffer);
 	glDeleteBuffers(1, &normalBuffer);
+}
+
+Texture::Texture() {
+	//No parameter default constructor assumes you're creating a texture for a framebuffer
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	//These extra parameters are exclusively for framebuffer textures
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, screenWidth, screenHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+	//If the framebuffer should ever be rendered at a smaller size, the GPU should use linear interpolation to scale it up or down
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//If the fragment shader ever asks for a pixel that is out of bounds of the texture, it will just wrap around to the other end of the image
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
 Texture::Texture(const char* filepath, bool flip) {
