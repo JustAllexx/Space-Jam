@@ -1,6 +1,6 @@
 #include "SceneManager.h"
 #include "DrawObjects/DrawObject.h"
-#include "GUIObjects/TypeChar.h"
+#include "Utilities/ShaderLoader.h"
 
 #include <algorithm>
 #include <glm/ext/matrix_float4x4.hpp>
@@ -13,16 +13,17 @@ const char* skyTexturePath = "Textures/nightsky.png";
 const char* moonModelPath = "Models/moon.obj";
 const char* moonTexturePath = "Textures/moon.png";
 
-SceneManager::SceneManager(GLuint shaderProgram_) : shaderProgram(shaderProgram_){
-	objModelviewPos = glGetUniformLocation(shaderProgram, "modelview");
+SceneManager::SceneManager(Program& shaderProgram_) : shaderProgram(shaderProgram_){
+	GLuint shaderID = shaderProgram_.getProgramID();
+	objModelviewPos = glGetUniformLocation(shaderID, "modelview");
 	modelView = glm::lookAt(glm::vec3(0, 0, 60.f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	glUniformMatrix4fv(objModelviewPos, 1, GL_FALSE, &(modelView)[0][0]);
 
-	opacityPos = glGetUniformLocation(shaderProgram, "opacity"); //How "see-through" should an object be
-	ambientPos = glGetUniformLocation(shaderProgram, "ambient"); //Minimum brightness of an object
-	bloomPos = glGetUniformLocation(shaderProgram, "bBloom"); //Should the object have bloom
-	brightnessPos = glGetUniformLocation(shaderProgram, "brightness");
-	lightPosPos = glGetUniformLocation(shaderProgram, "lightPos");
+	opacityPos = glGetUniformLocation(shaderID, "opacity"); //How "see-through" should an object be
+	ambientPos = glGetUniformLocation(shaderID, "ambient"); //Minimum brightness of an object
+	bloomPos = glGetUniformLocation(shaderID, "bBloom"); //Should the object have bloom
+	brightnessPos = glGetUniformLocation(shaderID, "brightness");
+	lightPosPos = glGetUniformLocation(shaderID, "lightPos");
 };
 
 //Adds DrawObject to the render queue
@@ -34,7 +35,8 @@ void SceneManager::addObjectToQueue(DrawObject* obj)
 //Default renderQueue function called outside the class, updates the change in time 
 void SceneManager::renderQueue() {
 	//Whenever rendering a scene we always use the default shader
-	glUseProgram(shaderProgram);
+	//glUseProgram(shaderProgram);
+	shaderProgram.use();
 
 	glUniform1i(bloomPos, false); //Bloom should be false by default
 	currentFrameTime = glutGet(GLUT_ELAPSED_TIME);
@@ -48,6 +50,7 @@ void SceneManager::renderQueue() {
 //This type of function has a parammeter overide (has the same name as another function, but different argument requirements)
 void SceneManager::renderQueue(std::vector<DrawObject*> &rendQueue)
 {
+	shaderProgram.use();
 	//Iterate through all the objects in the render queue
 	for (size_t objIndex = 0; objIndex < rendQueue.size(); objIndex++) {
 		DrawObject* renderObj = rendQueue[objIndex];

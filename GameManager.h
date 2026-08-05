@@ -13,6 +13,7 @@
 
 //Forward declare player controller
 class PlayerController;
+class Program;
 
 //Class that is responsible for controlling the game
 //Is the owner of the object that plays the song the user listens to, and is the logic of the game
@@ -26,7 +27,7 @@ private:
 	std::unique_ptr<AudioManager> audioManager;
 	std::map<unsigned char, bool>& keyMap;
 public:
-	GameManager(GLuint shaderProgram, std::map<unsigned char, bool>& inKeyMap, GUIManager* inGUIManager);
+	GameManager(Program& shaderProgram, std::map<unsigned char, bool>& inKeyMap, GUIManager* inGUIManager);
 	
 	//The only class allowed to have an init, as creation of the game object and presenting the title screen should be seperate
 	void Init();

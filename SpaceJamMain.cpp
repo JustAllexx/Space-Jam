@@ -407,7 +407,7 @@ int main(int argc, char** argv) {
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
 	guiManager.emplace(guiProgram->getProgramID());
-	gameManager.emplace(shaderProgram->getProgramID(), keyMap, &guiManager.value());
+	gameManager.emplace(shaderProgram.value(), keyMap, &guiManager.value());
 	optionsManager.emplace(guiManager.value(), &gameManager.value());
 
 	//Glut manages most user input, these commands tell glut what functions to call on an input

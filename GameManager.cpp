@@ -6,6 +6,7 @@
 #include "DrawObjects/NoteTarget.h"
 #include "DrawObjects/NoteHighlight.h"
 #include "GUIObjects/GUIButton.h"
+#include "Utilities/ShaderLoader.h"
 
 #include <fstream>
 #include <glm/ext/vector_float3.hpp>
@@ -28,7 +29,7 @@ const std::map<std::string, int> notePairings{
 	{"G#", 11}
 };
 
-GameManager::GameManager(GLuint shaderProgram, std::map<unsigned char, bool>& inKeyMap, GUIManager* inGUIManager) 
+GameManager::GameManager(Program& shaderProgram, std::map<unsigned char, bool>& inKeyMap, GUIManager* inGUIManager) 
 : guiManager(inGUIManager), currentPlayer(std::make_unique<PlayerController>()), sceneManager(std::make_unique<SceneManager>(shaderProgram)),
 		audioManager(std::make_unique<AudioManager>()), keyMap(inKeyMap) {
 			sceneManager->addObjectToQueue(currentPlayer.get());

@@ -11,6 +11,7 @@
 
 //Forward Declarations
 class DrawObject;
+class Program;
 
 //Object Manager Class
 class SceneManager
@@ -19,14 +20,15 @@ private:
 	std::vector<DrawObject*> objRenderQueue;
 	std::vector<glm::mat4> modelViewStack;
 	glm::mat4 modelView;
-	GLuint shaderProgram;
+	//GLuint shaderProgram;
+	Program& shaderProgram;
 	GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos, lightPosPos;
 	//For calculating deltaTime
 	int lastFrameTime{0};
 	int currentFrameTime{0};
 	float deltaTime{0.f};
 public:
-	SceneManager(GLuint shaderProgram);
+	SceneManager(Program& shaderProgram);
 	~SceneManager() = default;
 
 	//Add objects to the GUIManager Queue
