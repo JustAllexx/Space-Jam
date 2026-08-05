@@ -15,8 +15,8 @@ class GUIButton : public GUIObject, public Clickable {
 private:
 	//Properties about the text being rendered (advanceSum and maxHeight are used to calculate how big the click region should be)
 	float advanceSum, x, y, scale, maxHeight;
-	GLfloat colour[3];
-	GLfloat hoverColour[3];
+	glm::vec3 colour;
+	glm::vec3 hoverColour;
 	GLuint VAO, VBO;
 	SJ_Font& rFontMap;
 public:

@@ -9,7 +9,6 @@ class Program;
 class GUIObject {
 protected:
 	Program& GUIShader;
-	GLuint isTextPos;
 public:
 	GUIObject(Program& GUIShader);
 	virtual void Render() {

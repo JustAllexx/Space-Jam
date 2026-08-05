@@ -113,8 +113,6 @@ void GameManager::gameUpdate()
 	currentPlayer->controlUpdate(keyMap, sceneManager->getDeltaTime());
 	guiManager->GameGUI_ScoreText->text = std::to_string(currentPlayer->playerScore);
 
-	//GLuint lightPosPos = sceneManager->getLightPos();
-	//glUniform3f(lightPosPos, currentPlayer->posX, currentPlayer->posY+2.f, 0.f);
 	glm::vec3 playerLightPos(currentPlayer->posX, currentPlayer->posY + 2.f, 0.f);
 	Program& shaderProgram = sceneManager->getShaderProgram();
 	shaderProgram.setVec3("lightPos", playerLightPos);

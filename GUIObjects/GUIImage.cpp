@@ -27,10 +27,9 @@ GUIImage::GUIImage(const char* imagePath, float inX, float inY, float inScale, G
 //Render Function for ImagGUI class, an override for the GUIObject class, very similar to rendering a quad for a character, but calculates the coordinates of the quad slightly differently
 void GUIImage::Render() {
 	GUIShader.use();
-	GLuint shaderID = GUIShader.getProgramID();
+	GUIShader.setInt("isText", false);
 	glDisable(GL_DEPTH_TEST);
 	//Tell the GUI Program shader that I'm not rendering text and it should render an image
-	glProgramUniform1i(shaderID, isTextPos, 0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(VAO);

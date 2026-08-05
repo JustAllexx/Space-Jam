@@ -44,9 +44,8 @@ GUIManager::GUIManager(Program& GUIShader_) : arialFont(std::make_unique<SJ_Font
 //Iterates over the guiRenderQueue and calls the render function of every GUI Element that is meant to be on screen
 void GUIManager::renderQueue() {
 	GUIShader.use();
-	GLuint shaderID = GUIShader.getProgramID();
 	glm::mat4 textProjection = glm::ortho(0.0f, static_cast<float>(screenWidth), 0.0f, static_cast<float>(screenHeight));
-	glUniformMatrix4fv(glGetUniformLocation(shaderID, "textprojection"), 1, GL_FALSE, &textProjection[0][0]);
+	GUIShader.setMat4("textprojection", textProjection);
 	for (size_t i = 0; i < guiRenderQueue.size(); i++) {
 		if (guiRenderQueue[i]) {
 			guiRenderQueue[i]->Render();
