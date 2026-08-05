@@ -56,7 +56,8 @@ GLuint renderFramebuffer;
 GLuint finalFramebuffer[2];
 GLuint gaussianLeftBuffer[2];
 GLuint gaussianRightBuffer[2];
-GLuint splitColourBuffers[2];
+//GLuint splitColourBuffers[2];
+std::optional<Texture> colourBuffers[2];
 
 //OpenGL ID for the render buffer object, the vertex array object, and the vertex buffer object
 //Each one is necessary for rendering framebuffers to the screen
@@ -191,14 +192,16 @@ void createFramebuffers() {
 	
 	glGenFramebuffers(1, &renderFramebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
-	glGenTextures(2, splitColourBuffers);
+	//glGenTextures(2, splitColourBuffers);
+	colourBuffers[0].emplace();
+	colourBuffers[1].emplace();
 	for (unsigned int i = 0; i < 2; i++) {
 		//This section is needed for the gaussian blur
 		//I attach to colour attachments to the renderBuffer, every object is rendered to Colour Attachment 0, but objects that I want blurred get rendered to Colour Attachment 1
-		glBindTexture(GL_TEXTURE_2D, splitColourBuffers[i]);
-		framebufferSettings();
+		//glBindTexture(GL_TEXTURE_2D, splitColourBuffers[i]);
+		//framebufferSettings();
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, splitColourBuffers[i], 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colourBuffers[i]->getTextureID(), 0);
 	}
 	
 
@@ -245,7 +248,7 @@ void display() {
 		if (horizontalPass) {
 			glBindFramebuffer(GL_FRAMEBUFFER, gaussianLeftBuffer[0]);
 			if (firstIteration) {
-				glBindTexture(GL_TEXTURE_2D, splitColourBuffers[1]);
+				glBindTexture(GL_TEXTURE_2D, colourBuffers[1]->getTextureID());
 				//glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment1ID());
 				firstIteration = false;
 			}
@@ -267,7 +270,7 @@ void display() {
 	screenProgram->use();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, splitColourBuffers[0]);
+	glBindTexture(GL_TEXTURE_2D, colourBuffers[0]->getTextureID());
 	//glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment0ID());
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, gaussianRightBuffer[1]);
