@@ -31,6 +31,7 @@ public:
 	//Constructor Function
 	DrawObject(const char* modelPath, const char* texturePath, float inOpacity, float inAmbient, bool hasBloom,
 		glm::vec3 inPos, glm::vec3 inScale, glm::vec3 inRotation);
+	virtual ~DrawObject() = default;
 
 	//set To true when the object should be deleted
 	std::optional<CollisionBox> collisionBox;

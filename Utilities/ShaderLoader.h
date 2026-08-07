@@ -37,12 +37,12 @@ private:
     Shader vertexShader;
     Shader fragShader;
     GLuint programID;
-    std::unordered_map<std::string, GLuint> uniformLocations;
+    std::unordered_map<std::string, GLint> uniformLocations;
 
-    GLuint getUniformLocation(std::string uniformLoc) {
+    GLint getUniformLocation(std::string uniformLoc) {
         auto it = uniformLocations.find(uniformLoc);
         if (it != uniformLocations.end()) {return it->second;}
-        GLuint loc = glGetUniformLocation(programID, uniformLoc.c_str());
+        GLint loc = glGetUniformLocation(programID, uniformLoc.c_str());
         uniformLocations[uniformLoc] = loc;
         return loc;
     }
@@ -57,10 +57,10 @@ public:
 
     void use() {
         //Not all of the code uses Programs yet so this condition is not trivially true
-        //if (currentProgram != programID) {
+        if (currentProgram != programID) {
             glUseProgram(programID);
             currentProgram = programID;
-        //}
+        }
     }
 
     GLuint getVertexShaderID() const noexcept {return vertexShader.getShaderID();}
