@@ -173,36 +173,24 @@ void display() {
 	//This feature is provided by OpenGL so that if a pixel is supposed to be behind another object. OpenGL will ignore it
 	//TODO: This can always stay on, so put this in some sort of setup
 	glEnable(GL_DEPTH_TEST);
-	//Load in the phong lighting shader
 
 	gameManager->render();
 	
 	//Gaussian blur
 	//The guassian blur fragment shader is called repeatedly to blur the image drawn to Colour Attachment 1, switching between blurring horizontally and vertically
-	
 	gaussianProgram->use();
-	int ammount = 50;
-	bool firstIteration = true;
-	bool horizontalPass = true;
-	for (int i = 0; i < ammount; i++) {
-		gaussianProgram->setInt("horizontal", horizontalPass);
-
-		if (horizontalPass) {
-			gaussianHorizontalBuffer->bind();
-			if (firstIteration) {
-				glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment1ID());
-				firstIteration = false;
-			}
-			else {
-				glBindTexture(GL_TEXTURE_2D, gaussianVerticalBuffer->getAttachment0ID());
-			}
-		}
-		else {
-			gaussianVerticalBuffer->bind();
-			glBindTexture(GL_TEXTURE_2D, gaussianHorizontalBuffer->getAttachment0ID());
-		}
+	glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment1ID());
+	for (int i = 0; i < 25; i++) {
+		gaussianHorizontalBuffer->bind();
+		gaussianProgram->setInt("horizontal", true);
 		displayFramebuffer();
-		horizontalPass = !horizontalPass;
+
+		glBindTexture(GL_TEXTURE_2D, gaussianHorizontalBuffer->getAttachment0ID());
+		gaussianVerticalBuffer->bind();
+		gaussianProgram->setInt("horizontal", false);
+		displayFramebuffer();
+
+		glBindTexture(GL_TEXTURE_2D, gaussianVerticalBuffer->getAttachment0ID());
 	}
 	
 	//This is the final render to the screen
