@@ -17,6 +17,7 @@ public:
     Framebuffer& operator=(const Framebuffer&) = delete;
 
     void bind() const {glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);}
+    static void bindRenderFramebuffer() {glBindFramebuffer(GL_FRAMEBUFFER, 0);}
     GLuint getAttachment0ID() const {return texture0->getTextureID();}
     GLuint getAttachment1ID() const {
         if (texture1.has_value()) {
