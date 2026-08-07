@@ -88,7 +88,7 @@ Mesh::Mesh(const char* filepath)
 	glGenBuffers(1, &vertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 	GLsizeiptr vertexBufferSize = static_cast<GLsizeiptr>(vertices.size() * sizeof(glm::vec3));
-	glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, &vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, vertices.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer(0,
 		3,
 		GL_FLOAT,
@@ -102,7 +102,7 @@ Mesh::Mesh(const char* filepath)
 	glGenBuffers(1, &uvBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
 	GLsizeiptr uvBufferSize = static_cast<GLsizeiptr>(uvs.size() * sizeof(glm::vec2));
-	glBufferData(GL_ARRAY_BUFFER, uvBufferSize, &uvs[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, uvBufferSize, uvs.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer(1,
 		2,
 		GL_FLOAT,
@@ -116,7 +116,7 @@ Mesh::Mesh(const char* filepath)
 	glGenBuffers(1, &normalBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
 	GLsizeiptr normalBufferSize = static_cast<GLsizeiptr>(normals.size() * sizeof(glm::vec3));
-	glBufferData(GL_ARRAY_BUFFER, normalBufferSize, &normals[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, normalBufferSize, normals.data(), GL_STATIC_DRAW);
 		glVertexAttribPointer(2,
 		3,
 		GL_FLOAT,
