@@ -23,7 +23,8 @@ class Program;
 class GameManager
 {
 private:
-	GUIManager* guiManager{nullptr};
+	//GUIManager* guiManager{nullptr};
+	std::unique_ptr<GUIManager> guiManager;
 	std::unique_ptr<PlayerController> currentPlayer;
 	std::unique_ptr<SceneManager> sceneManager;
 	std::unique_ptr<AudioManager> audioManager;
@@ -32,7 +33,7 @@ private:
 	glm::ivec2 mousePosition{0, 0};
 	std::optional<glm::ivec2> clickPosition;
 public:
-	GameManager(Program& shaderProgram, std::map<unsigned char, bool>& inKeyMap, GUIManager* inGUIManager);
+	GameManager(Program& shaderProgram, Program& guiProgram, std::map<unsigned char, bool>& inKeyMap);
 	
 	//The only class allowed to have an init, as creation of the game object and presenting the title screen should be seperate
 	void Init();

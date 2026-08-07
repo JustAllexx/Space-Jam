@@ -61,7 +61,6 @@ GLuint screenVAO, screenVBO;
 
 //Remove this later
 std::optional<GameManager> gameManager;
-std::optional<GUIManager> guiManager;
 std::optional<OptionsManager> optionsManager;
 
 std::map<unsigned char, bool> keyMap;
@@ -148,6 +147,7 @@ void createFramebuffers() {
 	renderFramebuffer.emplace(2);
 
 	//This creates the renderbuffer needed to display each framebuffer
+	
 	glGenRenderbuffers(1, &RBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, RBO);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, screenWidth, screenHeight);
@@ -325,9 +325,10 @@ int main(int argc, char** argv) {
 
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
-	guiManager.emplace(guiProgram.value());
-	gameManager.emplace(shaderProgram.value(), keyMap, &guiManager.value());
-	optionsManager.emplace(guiManager.value(), &gameManager.value());
+	//guiManager.emplace(guiProgram.value());
+	gameManager.emplace(shaderProgram.value(), guiProgram.value(), keyMap);
+	GUIManager& guiMan = gameManager->getGUIManager();
+	optionsManager.emplace(guiMan, &gameManager.value());
 
 	//Glut manages most user input, these commands tell glut what functions to call on an input
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);

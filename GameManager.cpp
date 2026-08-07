@@ -29,8 +29,8 @@ const std::map<std::string, int> notePairings{
 	{"G#", 11}
 };
 
-GameManager::GameManager(Program& shaderProgram, std::map<unsigned char, bool>& inKeyMap, GUIManager* inGUIManager) 
-: guiManager(inGUIManager), currentPlayer(std::make_unique<PlayerController>()), sceneManager(std::make_unique<SceneManager>(shaderProgram)),
+GameManager::GameManager(Program& shaderProgram, Program& guiProgram, std::map<unsigned char, bool>& inKeyMap) 
+: guiManager(std::make_unique<GUIManager>(guiProgram)), currentPlayer(std::make_unique<PlayerController>()), sceneManager(std::make_unique<SceneManager>(shaderProgram)),
 		audioManager(std::make_unique<AudioManager>()), keyMap(inKeyMap) {
 			sceneManager->addObjectToQueue(currentPlayer.get());
 		}
