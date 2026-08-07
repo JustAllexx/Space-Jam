@@ -55,7 +55,7 @@ glm::mat4 projection, modelview;
 std::optional<Framebuffer> renderFramebuffer;
 std::optional<Framebuffer> gaussianHorizontalBuffer;
 std::optional<Framebuffer> gaussianVerticalBuffer;
-GLuint finalFramebuffer[2];
+//GLuint finalFramebuffer[2];
 //GLuint gaussianLeftBuffer[2];
 //GLuint gaussianRightBuffer[2];
 //GLuint splitColourBuffers[2];
@@ -163,6 +163,8 @@ void framebufferSettings() {
 void createFramebuffers() {
 	
 	//The finalframebuffer is where the final image is rendered to, this is the image the end user sees
+	//finalFramebuffer.emplace(1);
+	/*
 	glGenFramebuffers(1, &finalFramebuffer[0]);
 	glGenTextures(1, &finalFramebuffer[1]);
 	glBindFramebuffer(GL_FRAMEBUFFER, finalFramebuffer[0]);
@@ -170,6 +172,7 @@ void createFramebuffers() {
 	framebufferSettings();
 	//Adds a texture object to the framebuffer as a colour attachment, whenever an object is rendered it will be drawn to this texture (if the framebuffer is binded)
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, finalFramebuffer[1], 0);
+	*/
 
 	//The gaussian blur requires two framebuffers that are switched between a handful of times before rendering
 	//The left buffer is concerned with horizontal blurring, the right buffer is for vertical blurring
