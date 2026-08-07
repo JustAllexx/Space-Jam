@@ -51,13 +51,13 @@ glm::mat4 projection, modelview;
 
 //Similar to the integers this is where the framebuffer IDs are stored. OpenGL handles these in a similar way
 //Scroll down to the CreateFramebuffers function for an explanation of each framebuffer and its purpose
-GLuint renderFramebuffer;
-//std::optional<Framebuffer> renderFramebuffer;
+//GLuint renderFramebuffer;
+std::optional<Framebuffer> renderFramebuffer;
 GLuint finalFramebuffer[2];
 GLuint gaussianLeftBuffer[2];
 GLuint gaussianRightBuffer[2];
 //GLuint splitColourBuffers[2];
-std::optional<Texture> colourBuffers[2];
+//std::optional<Texture> colourBuffers[2];
 
 //OpenGL ID for the render buffer object, the vertex array object, and the vertex buffer object
 //Each one is necessary for rendering framebuffers to the screen
@@ -188,8 +188,8 @@ void createFramebuffers() {
 
 	//This is the framebuffer where everything is initially rendered to
 	//The ObjectManager renders to this framebuffer, this framebuffer is not displayed to the user.
-	//renderFramebuffer.emplace(2);
-	
+	renderFramebuffer.emplace(2);
+	/*
 	glGenFramebuffers(1, &renderFramebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
 	//glGenTextures(2, splitColourBuffers);
@@ -203,7 +203,7 @@ void createFramebuffers() {
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colourBuffers[i]->getTextureID(), 0);
 	}
-	
+	*/
 
 	//This creates the renderbuffer needed to display each framebuffer
 	glGenRenderbuffers(1, &RBO);
@@ -223,8 +223,8 @@ void createFramebuffers() {
 //This calls the GUIManager and ObjectManager render queues, it also causes a Game update
 void display() {
 	//Binds the framebuffer that I want the ObjectManager to render every object to
-	glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
-	//renderFramebuffer->bind();
+	//glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
+	renderFramebuffer->bind();
 	//Tells OpenGL to clear the screen completely and replace it with black
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear all information about what colour the image is and clear information about which pixel of the previous frame was closest to the camera
@@ -238,6 +238,7 @@ void display() {
 	
 	//Gaussian blur
 	//The guassian blur fragment shader is called repeatedly to blur the image drawn to Colour Attachment 1, switching between blurring horizontally and vertically
+	
 	gaussianProgram->use();
 	int ammount = 50;
 	bool firstIteration = true;
@@ -248,8 +249,8 @@ void display() {
 		if (horizontalPass) {
 			glBindFramebuffer(GL_FRAMEBUFFER, gaussianLeftBuffer[0]);
 			if (firstIteration) {
-				glBindTexture(GL_TEXTURE_2D, colourBuffers[1]->getTextureID());
-				//glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment1ID());
+				//glBindTexture(GL_TEXTURE_2D, colourBuffers[1]->getTextureID());
+				glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment1ID());
 				firstIteration = false;
 			}
 			else {
@@ -270,8 +271,8 @@ void display() {
 	screenProgram->use();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, colourBuffers[0]->getTextureID());
-	//glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment0ID());
+	//glBindTexture(GL_TEXTURE_2D, colourBuffers[0]->getTextureID());
+	glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment0ID());
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, gaussianRightBuffer[1]);
 	displayFramebuffer();
