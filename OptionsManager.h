@@ -13,7 +13,7 @@ class OptionsManager {
 private:
 	GUIManager& guiManager;
 	GUIButton& samplesGUI;
-	GameManager* gameManager;
+	GameManager& gameManager;
 
 	size_t samplesOptionIndex{0};
 	std::vector<std::string> samplesOptionsText{{
@@ -23,7 +23,7 @@ private:
 		"512 Samples"
 	}};
 public:
-	OptionsManager(GUIManager& guiManager, GameManager* gameManager);
+	OptionsManager(GUIManager& guiManager, GameManager& gameManager);
 	void IncrementSamplesOption();
 	void DecrementSamplesOption();
 };

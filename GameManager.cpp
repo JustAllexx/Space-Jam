@@ -8,6 +8,7 @@
 #include "GUIObjects/GUIButton.h"
 #include "Utilities/ShaderLoader.h"
 
+#include <OptionsManager.h>
 #include <fstream>
 #include <glm/ext/vector_float3.hpp>
 #include <memory>
@@ -30,10 +31,15 @@ const std::map<std::string, int> notePairings{
 };
 
 GameManager::GameManager(Program& shaderProgram, Program& guiProgram, std::map<unsigned char, bool>& inKeyMap) 
-: guiManager(std::make_unique<GUIManager>(guiProgram)), currentPlayer(std::make_unique<PlayerController>()), sceneManager(std::make_unique<SceneManager>(shaderProgram)),
-		audioManager(std::make_unique<AudioManager>()), keyMap(inKeyMap) {
-			sceneManager->addObjectToQueue(currentPlayer.get());
-		}
+: guiManager(std::make_unique<GUIManager>(guiProgram)),
+  currentPlayer(std::make_unique<PlayerController>()), 
+  sceneManager(std::make_unique<SceneManager>(shaderProgram)),
+  audioManager(std::make_unique<AudioManager>()), 
+  optionsManager(std::make_unique<OptionsManager>(*guiManager, *this)),
+  keyMap(inKeyMap) 
+{
+	sceneManager->addObjectToQueue(currentPlayer.get());
+}
 
 //The function that loads the song file
 void GameManager::loadSongJson(const char* path, std::string& songTitle, Json::Value& notes)

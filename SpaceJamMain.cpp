@@ -325,10 +325,7 @@ int main(int argc, char** argv) {
 
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
-	//guiManager.emplace(guiProgram.value());
 	gameManager.emplace(shaderProgram.value(), guiProgram.value(), keyMap);
-	GUIManager& guiMan = gameManager->getGUIManager();
-	optionsManager.emplace(guiMan, &gameManager.value());
 
 	//Glut manages most user input, these commands tell glut what functions to call on an input
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);

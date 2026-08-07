@@ -4,6 +4,7 @@
 #include "GUIManager.h"
 #include "SceneManager.h"
 
+#include <OptionsManager.h>
 #include <glm/ext/vector_int2.hpp>
 #include <json/json.h>
 #include <memory>
@@ -23,11 +24,11 @@ class Program;
 class GameManager
 {
 private:
-	//GUIManager* guiManager{nullptr};
 	std::unique_ptr<GUIManager> guiManager;
 	std::unique_ptr<PlayerController> currentPlayer;
 	std::unique_ptr<SceneManager> sceneManager;
 	std::unique_ptr<AudioManager> audioManager;
+	std::unique_ptr<OptionsManager> optionsManager;
 	//Input store
 	std::map<unsigned char, bool>& keyMap;
 	glm::ivec2 mousePosition{0, 0};
@@ -55,7 +56,5 @@ public:
 	int score{0};
 	std::string* scoreStr{nullptr};
 	bool gamePlaying{false};
-
-	GUIManager& getGUIManager() const noexcept {return *guiManager;}
 };
 
