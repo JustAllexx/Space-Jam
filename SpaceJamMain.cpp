@@ -42,7 +42,6 @@ std::optional<Program> shaderProgram;
 std::optional<Program> guiProgram;
 std::optional<Program> screenProgram;
 std::optional<Program> gaussianProgram;
-//GLuint projectionPos, modelviewPos;
 
 //The projection and modelview are matrices which are defined for use in the vertex shader
 //The modelview describes how the local space vertices should be converted into world space (translation, rotation and scaling)
@@ -51,15 +50,9 @@ glm::mat4 projection, modelview;
 
 //Similar to the integers this is where the framebuffer IDs are stored. OpenGL handles these in a similar way
 //Scroll down to the CreateFramebuffers function for an explanation of each framebuffer and its purpose
-//GLuint renderFramebuffer;
 std::optional<Framebuffer> renderFramebuffer;
 std::optional<Framebuffer> gaussianHorizontalBuffer;
 std::optional<Framebuffer> gaussianVerticalBuffer;
-//GLuint finalFramebuffer[2];
-//GLuint gaussianLeftBuffer[2];
-//GLuint gaussianRightBuffer[2];
-//GLuint splitColourBuffers[2];
-//std::optional<Texture> colourBuffers[2];
 
 //OpenGL ID for the render buffer object, the vertex array object, and the vertex buffer object
 //Each one is necessary for rendering framebuffers to the screen
@@ -67,11 +60,9 @@ GLuint RBO;
 GLuint screenVAO, screenVBO;
 
 //Remove this later
-//std::optional<PlayerController> player;
 std::optional<GameManager> gameManager;
 std::optional<GUIManager> guiManager;
 std::optional<OptionsManager> optionsManager;
-//std::unique_ptr<SceneManager> sceneManager;
 
 std::map<unsigned char, bool> keyMap;
 
@@ -145,73 +136,16 @@ void displayFramebuffer() {
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-//I create a handful of framebuffers in the createFramebuffers function, this needs to be specified for every single framebuffer
-//As long as I bind the framebuffer beforehand, I can call this code to setup the framebuffer correctly and improve readability
-void framebufferSettings() {
-	//Creates a texture for the framebuffer that is the same height and width as the screen and stores all RGB and alpha value channels in a 16 bit float (each)
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, screenWidth, screenHeight, 0, GL_RGBA, GL_FLOAT, NULL);
-	//If the framebuffer should ever be rendered at a smaller size, the GPU should use linear interpolation to scale it up or down
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//If the fragment shader ever asks for a pixel that is out of bounds of the texture, it will just wrap around to the other end of the image
-	//S and T are the directions 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-}
-
 //This function is responsible for creating every framebuffer my programme is going to need
 void createFramebuffers() {
-	
-	//The finalframebuffer is where the final image is rendered to, this is the image the end user sees
-	//finalFramebuffer.emplace(1);
-	/*
-	glGenFramebuffers(1, &finalFramebuffer[0]);
-	glGenTextures(1, &finalFramebuffer[1]);
-	glBindFramebuffer(GL_FRAMEBUFFER, finalFramebuffer[0]);
-	glBindTexture(GL_TEXTURE_2D, finalFramebuffer[1]);
-	framebufferSettings();
-	//Adds a texture object to the framebuffer as a colour attachment, whenever an object is rendered it will be drawn to this texture (if the framebuffer is binded)
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, finalFramebuffer[1], 0);
-	*/
-
 	//The gaussian blur requires two framebuffers that are switched between a handful of times before rendering
-	//The left buffer is concerned with horizontal blurring, the right buffer is for vertical blurring
+	//The blurring shader is toggled between blurring horizontally and vertically
 	gaussianHorizontalBuffer.emplace(1);
-	/*
-	glGenFramebuffers(1, &gaussianLeftBuffer[0]);
-	glGenTextures(1,  &gaussianLeftBuffer[1]);
-	glBindFramebuffer(GL_FRAMEBUFFER, gaussianLeftBuffer[0]);
-	glBindTexture(GL_TEXTURE_2D, gaussianLeftBuffer[1]);
-	framebufferSettings();
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gaussianLeftBuffer[1], 0);*/
 	gaussianVerticalBuffer.emplace(1);
-	/*
-	glGenFramebuffers(1, &gaussianRightBuffer[0]);
-	glGenTextures(1, &gaussianRightBuffer[1]);
-	glBindFramebuffer(GL_FRAMEBUFFER, gaussianRightBuffer[0]);
-	glBindTexture(GL_TEXTURE_2D, gaussianRightBuffer[1]);
-	framebufferSettings();
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gaussianRightBuffer[1], 0);
-	*/
 
 	//This is the framebuffer where everything is initially rendered to
 	//The ObjectManager renders to this framebuffer, this framebuffer is not displayed to the user.
 	renderFramebuffer.emplace(2);
-	/*
-	glGenFramebuffers(1, &renderFramebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
-	//glGenTextures(2, splitColourBuffers);
-	colourBuffers[0].emplace();
-	colourBuffers[1].emplace();
-	for (unsigned int i = 0; i < 2; i++) {
-		//This section is needed for the gaussian blur
-		//I attach to colour attachments to the renderBuffer, every object is rendered to Colour Attachment 0, but objects that I want blurred get rendered to Colour Attachment 1
-		//glBindTexture(GL_TEXTURE_2D, splitColourBuffers[i]);
-		//framebufferSettings();
-
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colourBuffers[i]->getTextureID(), 0);
-	}
-	*/
 
 	//This creates the renderbuffer needed to display each framebuffer
 	glGenRenderbuffers(1, &RBO);
@@ -231,7 +165,6 @@ void createFramebuffers() {
 //This calls the GUIManager and ObjectManager render queues, it also causes a Game update
 void display() {
 	//Binds the framebuffer that I want the ObjectManager to render every object to
-	//glBindFramebuffer(GL_FRAMEBUFFER, renderFramebuffer);
 	renderFramebuffer->bind();
 	//Tells OpenGL to clear the screen completely and replace it with black
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -255,20 +188,16 @@ void display() {
 		gaussianProgram->setInt("horizontal", horizontalPass);
 
 		if (horizontalPass) {
-			//glBindFramebuffer(GL_FRAMEBUFFER, gaussianLeftBuffer[0]);
 			gaussianHorizontalBuffer->bind();
 			if (firstIteration) {
-				//glBindTexture(GL_TEXTURE_2D, colourBuffers[1]->getTextureID());
 				glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment1ID());
 				firstIteration = false;
 			}
 			else {
-				//glBindTexture(GL_TEXTURE_2D, gaussianRightBuffer[1]);
 				glBindTexture(GL_TEXTURE_2D, gaussianVerticalBuffer->getAttachment0ID());
 			}
 		}
 		else {
-			//glBindFramebuffer(GL_FRAMEBUFFER, gaussianRightBuffer[0]);
 			gaussianVerticalBuffer->bind();
 			glBindTexture(GL_TEXTURE_2D, gaussianHorizontalBuffer->getAttachment0ID());
 		}
@@ -282,7 +211,6 @@ void display() {
 	screenProgram->use();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, colourBuffers[0]->getTextureID());
 	glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment0ID());
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, gaussianVerticalBuffer->getAttachment0ID());
@@ -316,7 +244,6 @@ void mouse([[maybe_unused]] int button, int state, int x, int y) {
 
 //Called when the user moves the mouse
 void mouseMotion(int x, int y) {
-	//std::cout << x << " " << y << std::endl;
 	guiManager->checkCollisions(x, screenHeight - y, 0);
 }
 
@@ -407,9 +334,6 @@ int main(int argc, char** argv) {
 	//Creates the Framebuffers and the shader programs
 	createFramebuffers();
 	createPrograms();
-
-	//Class initialisation functions
-	//objectManager.emplace(shaderProgram);
 
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
