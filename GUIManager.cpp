@@ -4,12 +4,8 @@
 #include "SceneManager.h"
 #include "Utilities/ShaderLoader.h"
 
-#include <algorithm>
 #include <cmath>
 #include <functional>
-#include <limits>
-#include <stdexcept>
-#include <iostream>
 
 #include FT_FREETYPE_H
 
@@ -171,7 +167,7 @@ void GUIManager::createGameGUI()
 {
 	std::vector<std::string> noteText = { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#" };
 
-	for (int i = 1; i < 13; i++) {
+	for (size_t i = 1; i < 13; i++) {
 		float percentHeight = static_cast<float>(i) / 13.f;
 		float textHeight = percentHeight * screenHeight;
 

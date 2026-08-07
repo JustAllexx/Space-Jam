@@ -19,8 +19,8 @@ SJ_Font::SJ_Font(const char* fontpath) {
 		glTexImage2D(GL_TEXTURE_2D,
 			0,
 			GL_RED, //Characters don't have colour by default, so only need 1 Colour channel
-			face->glyph->bitmap.width, //Width of the specific character (or glyph)
-			face->glyph->bitmap.rows, //Height of the character
+			static_cast<GLsizei>(face->glyph->bitmap.width), //Width of the specific character (or glyph)
+			static_cast<GLsizei>(face->glyph->bitmap.rows), //Height of the character
 			0,
 			GL_RED,
 			GL_UNSIGNED_BYTE,

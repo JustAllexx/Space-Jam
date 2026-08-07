@@ -8,6 +8,7 @@
 #include "GUIObjects/GUIButton.h"
 #include "Utilities/ShaderLoader.h"
 
+#include "json/forwards.h"
 #include <OptionsManager.h>
 #include <fstream>
 #include <glm/ext/vector_float3.hpp>
@@ -69,9 +70,9 @@ void GameManager::startGame(const char* noteJsonPath, const char* noteSongPath)
 	// IMPORTANT: For now the audio identifier will be the sound path, this will change later
 	audioManager->addAudioBuffer(noteSongPath, noteSongPath);
 
-	int x = notes.size();
+	Json::ArrayIndex x = notes.size();
 	//This loop places down all the notes in a file into the object manager queues so that they can be rendered and sent towards the player
-	for (int i = 0; i < x; i++) {
+	for (Json::ArrayIndex i = 0; i < x; i++) {
 		//Extracts 2 values about each note, it's value (to calculate how high on the screen it should be, and what time it should be played at)
 		std::string noteValue = notes[i][0].asCString();
 		float time = notes[i][1].asFloat();
