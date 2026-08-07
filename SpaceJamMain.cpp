@@ -53,9 +53,11 @@ glm::mat4 projection, modelview;
 //Scroll down to the CreateFramebuffers function for an explanation of each framebuffer and its purpose
 //GLuint renderFramebuffer;
 std::optional<Framebuffer> renderFramebuffer;
+std::optional<Framebuffer> gaussianHorizontalBuffer;
+std::optional<Framebuffer> gaussianVerticalBuffer;
 GLuint finalFramebuffer[2];
-GLuint gaussianLeftBuffer[2];
-GLuint gaussianRightBuffer[2];
+//GLuint gaussianLeftBuffer[2];
+//GLuint gaussianRightBuffer[2];
 //GLuint splitColourBuffers[2];
 //std::optional<Texture> colourBuffers[2];
 
@@ -171,20 +173,23 @@ void createFramebuffers() {
 
 	//The gaussian blur requires two framebuffers that are switched between a handful of times before rendering
 	//The left buffer is concerned with horizontal blurring, the right buffer is for vertical blurring
+	gaussianHorizontalBuffer.emplace(1);
+	/*
 	glGenFramebuffers(1, &gaussianLeftBuffer[0]);
 	glGenTextures(1,  &gaussianLeftBuffer[1]);
 	glBindFramebuffer(GL_FRAMEBUFFER, gaussianLeftBuffer[0]);
 	glBindTexture(GL_TEXTURE_2D, gaussianLeftBuffer[1]);
 	framebufferSettings();
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gaussianLeftBuffer[1], 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gaussianLeftBuffer[1], 0);*/
+	gaussianVerticalBuffer.emplace(1);
+	/*
 	glGenFramebuffers(1, &gaussianRightBuffer[0]);
 	glGenTextures(1, &gaussianRightBuffer[1]);
 	glBindFramebuffer(GL_FRAMEBUFFER, gaussianRightBuffer[0]);
 	glBindTexture(GL_TEXTURE_2D, gaussianRightBuffer[1]);
 	framebufferSettings();
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gaussianRightBuffer[1], 0);
-	
+	*/
 
 	//This is the framebuffer where everything is initially rendered to
 	//The ObjectManager renders to this framebuffer, this framebuffer is not displayed to the user.
@@ -247,19 +252,22 @@ void display() {
 		gaussianProgram->setInt("horizontal", horizontalPass);
 
 		if (horizontalPass) {
-			glBindFramebuffer(GL_FRAMEBUFFER, gaussianLeftBuffer[0]);
+			//glBindFramebuffer(GL_FRAMEBUFFER, gaussianLeftBuffer[0]);
+			gaussianHorizontalBuffer->bind();
 			if (firstIteration) {
 				//glBindTexture(GL_TEXTURE_2D, colourBuffers[1]->getTextureID());
 				glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment1ID());
 				firstIteration = false;
 			}
 			else {
-				glBindTexture(GL_TEXTURE_2D, gaussianRightBuffer[1]);
+				//glBindTexture(GL_TEXTURE_2D, gaussianRightBuffer[1]);
+				glBindTexture(GL_TEXTURE_2D, gaussianVerticalBuffer->getAttachment0ID());
 			}
 		}
 		else {
-			glBindFramebuffer(GL_FRAMEBUFFER, gaussianRightBuffer[0]);
-			glBindTexture(GL_TEXTURE_2D, gaussianLeftBuffer[1]);
+			//glBindFramebuffer(GL_FRAMEBUFFER, gaussianRightBuffer[0]);
+			gaussianVerticalBuffer->bind();
+			glBindTexture(GL_TEXTURE_2D, gaussianHorizontalBuffer->getAttachment0ID());
 		}
 		displayFramebuffer();
 		horizontalPass = !horizontalPass;
@@ -274,7 +282,7 @@ void display() {
 	//glBindTexture(GL_TEXTURE_2D, colourBuffers[0]->getTextureID());
 	glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment0ID());
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, gaussianRightBuffer[1]);
+	glBindTexture(GL_TEXTURE_2D, gaussianVerticalBuffer->getAttachment0ID());
 	displayFramebuffer();
 	//Clears the vertex buffer and clears the texture buffer
 	glBindVertexArray(0);
