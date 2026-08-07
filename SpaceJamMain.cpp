@@ -226,13 +226,13 @@ void reshape(int x, int y) {
 //Called when the user clicks down on the mouse
 void mouse([[maybe_unused]] int button, int state, int x, int y) {
 	if (state == 1) {
-		guiManager->checkCollisions(x, screenHeight - y, 1);
+		gameManager->setMouseClicked({x, screenHeight - y});
 	}
 }
 
 //Called when the user moves the mouse
 void mouseMotion(int x, int y) {
-	guiManager->checkCollisions(x, screenHeight - y, 0);
+	gameManager->setMousePosition({x, screenHeight - y});
 }
 
 //This is the function that is called to indicate a new frame should be rendered
@@ -336,7 +336,7 @@ int main(int argc, char** argv) {
 	glutMouseFunc(mouse);
 	glutPassiveMotionFunc(mouseMotion);
 	//Tells the program to call a new frame every 25ms
-	glutTimerFunc(100/20, newFrame, 0);
+	glutTimerFunc(static_cast<int>(1000.f/60.f), newFrame, 0);
 	glutKeyboardFunc(keyPress);
 	glutKeyboardUpFunc(keyUp);
 

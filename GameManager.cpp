@@ -91,6 +91,13 @@ void GameManager::render() {
 //Called every frame
 void GameManager::gameUpdate()
 {
+	//First update GUI
+	if (clickPosition.has_value()) {
+		guiManager->checkCollisions(clickPosition->x, clickPosition->y, true);
+		clickPosition.reset();
+	}
+	guiManager->checkCollisions(mousePosition.x, mousePosition.y, false);
+
 	double note, volume;
 	note = 0.f;
 	volume = 0.f;

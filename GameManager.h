@@ -4,9 +4,11 @@
 #include "GUIManager.h"
 #include "SceneManager.h"
 
+#include <glm/ext/vector_int2.hpp>
 #include <json/json.h>
 #include <memory>
 #include <numbers>
+#include <optional>
 #include <string>
 #include <glm/glm.hpp>
 #include <map>
@@ -25,7 +27,10 @@ private:
 	std::unique_ptr<PlayerController> currentPlayer;
 	std::unique_ptr<SceneManager> sceneManager;
 	std::unique_ptr<AudioManager> audioManager;
+	//Input store
 	std::map<unsigned char, bool>& keyMap;
+	glm::ivec2 mousePosition{0, 0};
+	std::optional<glm::ivec2> clickPosition;
 public:
 	GameManager(Program& shaderProgram, std::map<unsigned char, bool>& inKeyMap, GUIManager* inGUIManager);
 	
@@ -35,6 +40,12 @@ public:
 	void startGame(const char* noteJsonPath, const char* noteSongPath);
 	void render();
 	void gameUpdate();
+	void setMousePosition(glm::ivec2 mousePosition_) noexcept {mousePosition = mousePosition_;}
+	void setMouseClicked(glm::ivec2 mouseClicked) noexcept {
+		if (!clickPosition.has_value()) {
+			clickPosition.emplace(mouseClicked);
+		}
+	}
 
 	//Properties about the field of view and the distance the camera is from the plane (player object)
 	const float fovy{(45.f / 180.f) * static_cast<float>(std::numbers::pi)};
