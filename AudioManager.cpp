@@ -3,7 +3,10 @@
 
 #include <al.h>
 #include <alc.h>
+#include <cassert>
+#include <cmath>
 #include <cstddef>
+#include <cstdlib>
 #include <iostream>
 #include <limits>
 #include <sndfile.h>
@@ -17,7 +20,9 @@ const ALCuint size = 1024;
 const size_t captureBufferSize = 22050;
 const std::vector<std::string> notes = { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#" };
 
-AudioManager::AudioManager() {
+AudioManager::AudioManager() : 
+	pitchDetection(std::make_unique<PitchDetection>())
+{
 	captureBuffer.resize(captureBufferSize);
 	//Connect to the two audio devices (connects to the microphone and connects to the speakers)
 	setupDevice();
@@ -164,8 +169,26 @@ void AudioManager::updateFrequency(double &note, double &volume)
 	std::vector<std::complex<double>> captureOutput(captureBuffer.data(), captureBuffer.data() + (size));
 	//Copy data over from the vector to the a valarray (which is the input type of the YIN algorithm)
 	std::valarray<std::complex<double>> captureOutputVal(captureOutput.data(), captureOutput.size());
+
+	std::vector<double> doubleCast(captureBuffer.data(), captureBuffer.data() + size);
+	
 	//Calculate the pitch with the YIN algorithm
 	float pitch = YIN::YINalgorithm(captureOutputVal);
+	auto ACF = YIN::getACF(captureOutputVal);
+	pitchDetection->calculateACF(doubleCast);
+	auto NewACF = pitchDetection->getACF();
+	bool same = true;
+	std::cout << "ACF: " << "\n";
+	
+	for (size_t i = 0; i < size; i++) {
+		std::cout << i << "\t" << NewACF[i] << "\t" << ACF[i].real() << "\t" << ACF[i].imag() << "\n";
+		double absDiff = fabs(NewACF[i] - ACF[i].real());
+		if (absDiff > 0.01) {same = false;}
+	}
+	assert(same);
+
+	//std::cout << ACF.size() << std::endl;
+	//float pitch = 0.f;
 	
 	//Change the pointer values
 	note = pitch;

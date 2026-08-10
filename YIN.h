@@ -17,6 +17,9 @@ private:
 	static std::valarray<std::complex<double>> cumulativeMeanNormalizedDifferenceFunction(std::valarray<std::complex<double>> df, int tauMax);
 	static int calculatePitch(std::valarray<std::complex<double>> cmndf, size_t tauMin, size_t tauMax);
 public:
+	//Debug
+	static std::valarray<std::complex<double>> getACF(std::valarray<std::complex<double>> buffer);
+
 	//Main call for the pitch detection algorithm
 	static float YINalgorithm(std::valarray<std::complex<double>> signal);
 };

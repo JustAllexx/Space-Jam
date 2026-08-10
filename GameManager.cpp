@@ -112,6 +112,7 @@ void GameManager::gameUpdate()
 	//Or that the frequency calculated did not dip below the harmony threshold, so couldn't return an accurate value
 	//This function also returns a volume, if the average volume (or gain) of the capture buffer was not above 400.f, then we ignore the value because the capture taken was too quiet
 	audioManager->updateFrequency(note, volume);
+	
 	if (note != 0 && volume > 400) {
 		//Equation for calculating the piano key value of a frequency
 		double key = (12 * log2(note / 440.f) + 49);

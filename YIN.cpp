@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <valarray>
 #include <bit>
+#include <iostream>
 
 //Constants needed for calculating the fourier transforms
 const double pi = acos(0.0f) * 2;
@@ -112,6 +113,29 @@ std::valarray<std::complex<double>> YIN::inverseFourierTransform(std::valarray<s
 	return Y;
 }
 
+std::valarray<std::complex<double>> YIN::getACF(std::valarray<std::complex<double>> buffer) {
+	//Find the minimum size padding of our array, returns the next biggest power of 2 for the size of the window
+	size_t chunkSize = buffer.size();
+	int power = std::bit_width(static_cast<unsigned>(chunkSize)) - 1;
+	size_t FFTpaddingSize = 1ul << power;
+
+	std::valarray<std::complex<double>> signalSquared = buffer * buffer;
+	std::valarray<std::complex<double>> signalResised = std::valarray<std::complex<double>>(FFTpaddingSize);
+	signalResised[std::slice(0, chunkSize, 1)] = buffer;
+
+
+	std::valarray<std::complex<double>> forwardFFT = fourierTransform(signalResised);
+	std::valarray<std::complex<double>> forwardFFTconj;
+	forwardFFTconj.resize(FFTpaddingSize);
+	for (size_t i = 0; i < FFTpaddingSize; i++) {
+		forwardFFTconj[i] = std::complex<double>(forwardFFT[i].real(), forwardFFT[i].imag() * -1);
+	}
+	std::valarray<std::complex<double>> convolutionInput = forwardFFT * forwardFFTconj;
+	std::valarray<std::complex<double>> convolution = inverseFourierTransform(convolutionInput);
+
+	return convolution;
+}
+
 //The difference function, the first step in the YIN algorithm
 std::valarray<std::complex<double>> YIN::differenceFunction(std::valarray<std::complex<double>> signal, size_t chunkSize, size_t tauMax) {
 
@@ -123,8 +147,10 @@ std::valarray<std::complex<double>> YIN::differenceFunction(std::valarray<std::c
 	cumSum[std::slice(1, chunkSize, 1)] = cumulativeSum(signalSquared);
 
 	//Find the minimum size padding of our array, returns the next biggest power of 2 for the size of the window
-	int power = std::bit_width(static_cast<unsigned>(chunkSize));
-	size_t FFTpaddingSize = 2ul << power;
+	//std::cout << "Chunk Size: " <<  chunkSize << std::endl;
+	int power = std::bit_width(static_cast<unsigned>(chunkSize)) - 1;
+	size_t FFTpaddingSize = 1ul << power;
+	//std::cout << "Padding Size: " << FFTpaddingSize << std::endl;
 
 	//Application of the Wiener-Khinchin formula for the efficient computation of an autocorrelation
 
@@ -145,6 +171,7 @@ std::valarray<std::complex<double>> YIN::differenceFunction(std::valarray<std::c
 	std::valarray<std::complex<double>> convolution = inverseFourierTransform(convolutionInput)[std::slice(0, tauMax, 1)];
 	convolution /= static_cast<double>(FFTpaddingSize);
 	std::complex<double> firstEnergyTerms = cumSum[chunkSize];
+
 	std::valarray<std::complex<double>> secondEnergyTerms = cumSum[std::slice(0, tauMax, 1)];
 	secondEnergyTerms = cumSum[chunkSize] - secondEnergyTerms;
 

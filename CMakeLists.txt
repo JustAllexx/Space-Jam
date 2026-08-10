@@ -7,7 +7,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 ADD_EXECUTABLE(
-    SpaceJam SpaceJamMain.cpp AudioManager.cpp GameManager.cpp GUIManager.cpp SceneManager.cpp OptionsManager.cpp YIN.cpp Physics/CollisionBox.cpp
+    SpaceJam SpaceJamMain.cpp AudioManager.cpp GameManager.cpp GUIManager.cpp SceneManager.cpp OptionsManager.cpp YIN.cpp PitchDetection.cpp
+    Physics/CollisionBox.cpp
     Utilities/FontLoader.cpp Utilities/ObjectLoader.cpp Utilities/ShaderLoader.cpp Utilities/Framebuffer.cpp
     DrawObjects/DrawObject.cpp DrawObjects/NoteHighlight.cpp DrawObjects/NoteTarget.cpp DrawObjects/PlayerController.cpp
     GUIObjects/GUIObject.cpp GUIObjects/GUIImage.cpp GUIObjects/GUIButton.cpp
@@ -28,6 +29,7 @@ FIND_PACKAGE(OpenGL REQUIRED)
 FIND_PACKAGE(GLEW REQUIRED)
 FIND_PACKAGE(GLUT REQUIRED)
 PKG_CHECK_MODULES(SNDFILE REQUIRED sndfile)
+PKG_CHECK_MODULES(FFTW3 REQUIRED IMPORTED_TARGET fftw3)
 
 TARGET_INCLUDE_DIRECTORIES(SpaceJam SYSTEM PUBLIC
     /home/alex/Documents/Projects/Space-Jam/Libraries/stb_image/include
@@ -45,6 +47,7 @@ TARGET_LINK_LIBRARIES(SpaceJam PRIVATE
     OpenAL::OpenAL
     glm::glm 
     jsoncpp_lib
+    PkgConfig::FFTW3
 )
 
 TARGET_COMPILE_OPTIONS(SpaceJam PUBLIC
