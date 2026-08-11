@@ -1,4 +1,5 @@
 #include "PitchDetection.h"
+#include <optional>
 #include <span>
 #include <vector>
 
@@ -35,12 +36,42 @@ std::vector<double> PitchDetection::calculateDifferenceFunction(std::span<double
 
     std::vector<double> differenceFunction(N);
     for (size_t i = 0; i < N; i++) {
+        //Important! Use the top one for matching implementation,  but technically the bottom term is actually correct
+        //double firstEnergyTerm = cumulativeSum[N];
         double firstEnergyTerm = cumulativeSum[N - i];
         double secondEnergyTerm = cumulativeSum[N] - cumulativeSum[i];
         differenceFunction.at(i) = firstEnergyTerm + secondEnergyTerm - (2 * acfOut[i]);
     }
 
     return differenceFunction;
+}
+
+std::vector<double> PitchDetection::calculateCMNDF(std::span<double> buffer) {
+    std::vector<double> CMNDF(sampleSize);
+
+    std::vector<double> DF = calculateDifferenceFunction(buffer);
+    CMNDF[0] = 1.f;
+    double runningTotal{0.f};
+    for (size_t tau = 1; tau < sampleSize; tau++) {
+        runningTotal += DF[tau];
+        CMNDF[tau] = static_cast<double>(tau) * DF[tau];
+        CMNDF[tau] /= runningTotal; 
+    }
+
+    return CMNDF;
+}
+
+std::optional<double> PitchDetection::pitchFromBuffer(std::span<double> buffer) {
+    std::vector<double> CMNDF = calculateCMNDF(buffer);
+    for (size_t i = tauMin; i <= tauMax; i++) {
+        if (CMNDF[i] < harmonyThreshold &&
+            CMNDF[i] < CMNDF[i - 1] &&
+            CMNDF[i] <= CMNDF[i + 1]
+        ) {
+            return sampleRate / static_cast<double>(i);
+        }
+    }
+    return std::nullopt;
 }
 
 PitchDetection::PitchDetection() : 

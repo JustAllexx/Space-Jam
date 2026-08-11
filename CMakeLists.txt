@@ -7,7 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 ADD_EXECUTABLE(
-    SpaceJam SpaceJamMain.cpp AudioManager.cpp GameManager.cpp GUIManager.cpp SceneManager.cpp OptionsManager.cpp YIN.cpp PitchDetection.cpp
+    SpaceJam SpaceJamMain.cpp AudioManager.cpp GameManager.cpp GUIManager.cpp SceneManager.cpp OptionsManager.cpp PitchDetection.cpp
     Physics/CollisionBox.cpp
     Utilities/FontLoader.cpp Utilities/ObjectLoader.cpp Utilities/ShaderLoader.cpp Utilities/Framebuffer.cpp
     DrawObjects/DrawObject.cpp DrawObjects/NoteHighlight.cpp DrawObjects/NoteTarget.cpp DrawObjects/PlayerController.cpp

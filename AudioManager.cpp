@@ -1,5 +1,4 @@
 #include "AudioManager.h"
-#include "YIN.h"
 
 #include <al.h>
 #include <alc.h>
@@ -13,7 +12,6 @@
 #include <sndfile.h>
 #include <stdexcept>
 #include <string>
-#include <valarray>
 #include <complex>
 
 const ALCuint rate = 44100;
@@ -166,45 +164,17 @@ void AudioManager::updateFrequency(double &note, double &volume)
 	
 	//If the capture buffer is full enough then copy the samples over into the capture Buffer
 	alcCaptureSamples(captureDev, static_cast<ALvoid*>(captureBuffer.data()), samplesAvailable);
-	//Copies only a sample size number of the capture buffer (to make sure the size is always a power of 2 and consistent)
-	std::vector<std::complex<double>> captureOutput(captureBuffer.data(), captureBuffer.data() + (size));
-	//Copy data over from the vector to the a valarray (which is the input type of the YIN algorithm)
-	std::valarray<std::complex<double>> captureOutputVal(captureOutput.data(), captureOutput.size());
 
 	std::vector<double> doubleCast(captureBuffer.data(), captureBuffer.data() + size);
 	
 	//Calculate the pitch with the YIN algorithm
-	float pitch = YIN::YINalgorithm(captureOutputVal);
-	/*
-	auto ACF = YIN::getACF(captureOutputVal);
-	pitchDetection->calculateACF(doubleCast);
-	auto NewACF = pitchDetection->getACF();
-	bool same = true;
-	std::cout << "ACF: " << "\n";
-	
-	for (size_t i = 0; i < size; i++) {
-		std::cout << i << "\t" << NewACF[i] << "\t" << ACF[i].real() << "\t" << ACF[i].imag() << "\n";
-		double absDiff = fabs(NewACF[i] - ACF[i].real());
-		if (absDiff > 0.01) {same = false;}
-	}
-	assert(same);*/
-	auto NewDF = pitchDetection->calculateDifferenceFunction(doubleCast);
-	auto DF = YIN::differenceFunction(captureOutputVal, captureOutputVal.size(), 1024);
-	std::cout << "DF: " << "\n";
-	for (size_t i = 0; i < size; i++) {
-		std::printf("%i: %f %f %f\n", static_cast<int>(i), NewDF[i], DF[i].real(), DF[i].imag());
-	}
-	std::cout << std::endl;
+	double pitch = pitchDetection->pitchFromBuffer(doubleCast).value_or(0.f);
 
-	//std::cout << ACF.size() << std::endl;
-	//float pitch = 0.f;
-	
-	//Change the pointer values
 	note = pitch;
 
 	//Calculate average volume
 	volume = 0.f;
-	for (const auto& samp : captureOutput) { volume += abs(samp); }
+	for (const auto& samp : doubleCast) { volume += fabs(samp); }
 	volume = volume / size;
 	
 	return;
