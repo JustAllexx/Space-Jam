@@ -6,208 +6,37 @@
 #include "GUIManager.h"
 #include "GUIObjects/GUIButton.h"
 #include "GameManager.h"
+#include "Renderer.h"
 #include "OptionsManager.h"
 
 #include "Utilities/ShaderLoader.h"
 #include "Utilities/Framebuffer.h"
 #include "Utilities/ObjectLoader.h"
 #include <cmath>
-#include <memory>
 #include <optional>
 #include <stdexcept>
-#include <valarray>
 #include <glm/ext/vector_float3.hpp>
 //Use radians instead of degrees
 #define GLM_FORCE_RADIANS
 
 const int screenHeight = 480;
 const int screenWidth = 854;
-//Gaussian kernel
-const size_t kernelSize = 5;
 
-//Shader Paths
-const char* phongVert = "Shaders/PhongLighting.vert";
-const char* phongFrag = "Shaders/PhongLighting.frag";
-const char* GUIVert = "Shaders/GUIShader.vert";
-const char* GUIFrag = "Shaders/GUIShader.frag";
-const char* screenVert = "Shaders/screenShader.vert";
-const char* screenFrag = "Shaders/screenShader.frag";
-const char* gaussianVert = "Shaders/gaussianBlur.vert";
-const char* gaussianFrag = "Shaders/gaussianBlur.frag";
-
-//This is where the integer locations of all the programIDs
-//Once the program has been created OpenGL gives us a unique (unsigned) integer which we can use in an API call to tell OpenGL we want to use this shader in our rendering pipeline
-//Scroll down to the CreatePrograms function for an explanation of each shader and it's purpose
-std::optional<Program> shaderProgram;
-std::optional<Program> guiProgram;
-std::optional<Program> screenProgram;
-std::optional<Program> gaussianProgram;
-
-//The projection and modelview are matrices which are defined for use in the vertex shader
-//The modelview describes how the local space vertices should be converted into world space (translation, rotation and scaling)
-//Projection describes how 3D vertices are converted into 2D screen coordinates
 glm::mat4 projection, modelview; 
 
-//Similar to the integers this is where the framebuffer IDs are stored. OpenGL handles these in a similar way
-//Scroll down to the CreateFramebuffers function for an explanation of each framebuffer and its purpose
-std::optional<Framebuffer> renderFramebuffer;
-std::optional<Framebuffer> gaussianHorizontalBuffer;
-std::optional<Framebuffer> gaussianVerticalBuffer;
-
-//OpenGL ID for the render buffer object, the vertex array object, and the vertex buffer object
-//Each one is necessary for rendering framebuffers to the screen
-GLuint RBO;
-GLuint screenVAO, screenVBO;
 
 //Remove this later
 std::optional<GameManager> gameManager;
+std::optional<Renderer> renderer;
 
 std::map<unsigned char, bool> keyMap;
-
-//The vertex and UV coordinates of a quad
-//This used when a framebuffer is rendered to the screen, the quad fills up the screen corner to corner
-//Then the framebuffer texture is textured onto the drawn quad
-float vertices[6][4] = {
-	{-1.f, 1.f, 0.f, 1.f},
-	{-1.f, -1.f, 0.f, 0.f},
-	{1.f, -1.f, 1.f, 0.f},
-
-	{-1.f, 1.f, 0.f, 1.f},
-	{1.f, -1.f, 1.f, 0.f},
-	{1.f, 1.f, 1.f, 1.f}
-};
-
-//Gaussian Functions
-//This function calculates the gaussian distribution for the gaussian blur fragment shader
-constexpr float gaussianDistribution(float x, float standardDeviation) {
-	//Because we're normalising the weights in the kernel so they sum to 1, the usual constant the result needs to be multiplied by is not necessary here
-	return expf((-0.5f * x * x) / (standardDeviation * standardDeviation));
-}
-
-//This function updates the gaussian blur kernel inside the gaussian blur fragment shader
-//Higher values of standard deviation give a greater degree of blur while lower values give a much sharper blur
-//The program is needed as an input to update the values at the end of the function
-void updateGaussianKernel(float standardDeviation, Program& bloomProgram) {
-	//The program needs to be loaded by OpenGL to update the values
-	bloomProgram.use();
-
-	//Where the gaussian values are stored
-	std::valarray<float> kernelValues;
-	kernelValues.resize(kernelSize);
-	kernelValues[0] = 1.f;
-	float sumValue = 1.f;
-	//Because (when x = 0) is always 1 for out version of the distribution we can avoid this calculation
-	for (size_t x = 1; x < kernelSize; x++) {
-		float gaussianValue = gaussianDistribution(static_cast<float>(x), standardDeviation);
-		kernelValues[x] = gaussianValue;
-		//Multiply by two here because the gaussian kernel is symmetrical
-		sumValue += 2 * gaussianValue;
-	}
-
-	//Normalise the kernel values so the sum of all the values (when expanded) is 1
-	kernelValues /= sumValue;
-
-	//Iterate through the kernel updating each value in the gaussian fragment shader's weight array
-	//The weight array are what are used by the shader to calculate the gaussian blur
-	for (size_t j = 0; j < kernelSize; j++) {
-		//We need to access each weight value individually. So we create the weight location for the weight value we want
-		//So weight[0] is the first value of our kernel
-		std::string weightLocation = "weight[" + std::to_string(j) + "]";
-		bloomProgram.setFloat(weightLocation, kernelValues[j]);
-	}
-}
-
-//This function is used to render a quad from corner to corner of the screen
-//This is useful because we can bind a texture before we call this function and that texture will be rendered across the whole screen
-//This can be used to render the contents of framebuffers, this is incredibly useful if I want to pass multiple fragment shaders over one image
-//Displaying a framebuffer allows me to run a shader over it again, and as often as I like until I finally display it to the user
-void displayFramebuffer() {
-	//Unbinds any previously bound vertex array object
-	glBindVertexArray(0);
-	glActiveTexture(GL_TEXTURE0); //Activates the first texture slot
-	//Binds the vertex array and buffer into OpenGL for rendering, we're telling OpenGL we want to render a quad
-	glBindVertexArray(screenVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
-	//Buffer in the vertex data of the quad I want to render to the screen.
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-	//Finally draw it, there are 6 vertices required to draw a quad, 3 for each face (since we're drawing with exclusively triangles).
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-}
-
-//This function is responsible for creating every framebuffer my programme is going to need
-void createFramebuffers() {
-	//The gaussian blur requires two framebuffers that are switched between a handful of times before rendering
-	//The blurring shader is toggled between blurring horizontally and vertically
-	gaussianHorizontalBuffer.emplace(1);
-	gaussianVerticalBuffer.emplace(1);
-
-	//This is the framebuffer where everything is initially rendered to
-	//The ObjectManager renders to this framebuffer, this framebuffer is not displayed to the user.
-	renderFramebuffer.emplace(2);
-
-	//This creates the renderbuffer needed to display each framebuffer
-	glGenRenderbuffers(1, &RBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, RBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, screenWidth, screenHeight);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RBO);
-	
-	//Tells OpenGL I'm interested in rendering to two textures (or colour attachments)
-	//The colour attachments are how I control what gets rendered to each texture
-	unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-	glDrawBuffers(2, attachments);
-}
 
 // ---------------------------------------------------------- GLUT FUNCTIONS ------------------------------------------------------------------
 
 //This function displays a new frame
 //This calls the GUIManager and ObjectManager render queues, it also causes a Game update
 void display() {
-	//Binds the framebuffer that I want the ObjectManager to render every object to
-	renderFramebuffer->bind();
-	//Tells OpenGL to clear the screen completely and replace it with black
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear all information about what colour the image is and clear information about which pixel of the previous frame was closest to the camera
-	//If Object 1 is behind Object 2, but Object 1 is rendered after Object 2. Object 1 will appear on top of Object 2
-	//This feature is provided by OpenGL so that if a pixel is supposed to be behind another object. OpenGL will ignore it
-	//TODO: This can always stay on, so put this in some sort of setup
-	glEnable(GL_DEPTH_TEST);
-
-	gameManager->render();
-	
-	//Gaussian blur
-	//The guassian blur fragment shader is called repeatedly to blur the image drawn to Colour Attachment 1, switching between blurring horizontally and vertically
-	gaussianProgram->use();
-	glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment1ID());
-	for (int i = 0; i < 25; i++) {
-		gaussianHorizontalBuffer->bind();
-		gaussianProgram->setInt("horizontal", true);
-		displayFramebuffer();
-
-		glBindTexture(GL_TEXTURE_2D, gaussianHorizontalBuffer->getAttachment0ID());
-		gaussianVerticalBuffer->bind();
-		gaussianProgram->setInt("horizontal", false);
-		displayFramebuffer();
-
-		glBindTexture(GL_TEXTURE_2D, gaussianVerticalBuffer->getAttachment0ID());
-	}
-	
-	//This is the final render to the screen
-	//The screen program (vertex shader and fragment shader) combines the Colour Attachment 0 texture with the blurred Colour Attachment 1 texture
-	//This gives the completed bloom effect
-	screenProgram->use();
-	Framebuffer::bindRenderFramebuffer();
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, renderFramebuffer->getAttachment0ID());
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, gaussianVerticalBuffer->getAttachment0ID());
-	displayFramebuffer();
-	//Clears the vertex buffer and clears the texture buffer
-	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	//Swaps the display buffer so the user is finally presented with the image
-	glutSwapBuffers();
-	//Clear any rendering commands in the GPU that may still be being processed
-	glFlush();
+	renderer->render(gameManager.value());
 }
 
 //The function that is called when the user changes the size of the window in which the game is in
@@ -217,7 +46,8 @@ void reshape(int x, int y) {
 	//screenHeight = y;
 	//screenWidth = x;
 	projection = glm::perspective(gameManager->fovy, (GLfloat)screenWidth/ (GLfloat)screenHeight, 1.0f, 200.0f);
-	shaderProgram->setMat4("projection", projection);
+	Program& shaderProgram = renderer->getShaderProgram();
+	shaderProgram.setMat4("projection", projection);
 }
 	
 
@@ -252,32 +82,6 @@ void keyUp(unsigned char key, [[maybe_unused]] int x, [[maybe_unused]] int y) {
 	keyMap[key] = false;
 }
 
-//Initialise all the Shaders / Programs that Space Jam needs
-void createPrograms() {
-	//Loads in the gaussian vertex and fragment shaders, this program creates the bloom effect by blurring certain objects on the screen
-	//Update the weights of the kernel inside the gaussian blur program
-	gaussianProgram.emplace(gaussianVert, gaussianFrag);
-	updateGaussianKernel(3.f, gaussianProgram.value());
-
-	//Loads the program that is responsible for displaying the final framebuffer to the user
-	screenProgram.emplace(screenVert, screenFrag);
-	//Because the screenShader combines the bloomed texture and the rendered texture, it needs access to both textures
-	//Here I specify which colour attachment belongs to which texture
-	screenProgram->setInt("screenTexture", 0);
-	screenProgram->setInt("bloomBlur", 1);
-
-	//Program responsible for displaying GUI Elements like text and images
-	//Uses orthogonal projection. (Orthogonal projection makes it so that no matter how far away an object is from the screen, it's the same size)
-	guiProgram.emplace(GUIVert, GUIFrag);
-	glm::mat4 textProjection = glm::ortho(0.0f, static_cast<float>(500.0f), 0.0f, static_cast<float>(500.0f));
-	guiProgram->setMat4("textprojection", textProjection);
-
-	//Shader program initialisation
-	shaderProgram.emplace(phongVert, phongFrag);
-	shaderProgram->setMat4("projection", projection);
-	shaderProgram->setMat4("modelview", modelview);
-}
-
 //This is the function that is called when the program is executed
 //argc and argv are optional arguments that can be passed through if the program is executed from the command line
 //Because I don't expect this to happen I assume both these arguments will be empty
@@ -300,16 +104,6 @@ int main(int argc, char** argv) {
 	//When we clear the screen what do we write over the buffer with, tells OpenGL I want an empty buffer to completely black and transparent
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	
-	//Creates a quad that can be rendered onto the screen
-	//Useful for displaying framebuffers
-	glGenVertexArrays(1, &screenVAO);
-	glGenBuffers(1, &screenVBO);
-	glBindVertexArray(screenVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-
 	//Describes how OpenGL should operate when drawing objects
 	glDepthFunc(GL_LESS);
 	glEnable(GL_BLEND);
@@ -317,13 +111,10 @@ int main(int argc, char** argv) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_CULL_FACE);
 
-	//Creates the Framebuffers and the shader programs
-	createFramebuffers();
-	createPrograms();
-
 	keyMap.emplace('a', false);
 	keyMap.emplace('d', false);
-	gameManager.emplace(shaderProgram.value(), guiProgram.value(), keyMap);
+	renderer.emplace();
+	gameManager.emplace(renderer->getShaderProgram(), renderer->getGUIProgram(), keyMap);
 
 	//Glut manages most user input, these commands tell glut what functions to call on an input
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
