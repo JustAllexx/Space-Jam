@@ -19,15 +19,24 @@ private:
     fftw_plan forwardPlan;
     fftw_plan inversePlan;
 
-public:
-    PitchDetection();
-    ~PitchDetection();
-
     void calculateACF(std::span<double> buffer);
     std::vector<double> calculateDifferenceFunction(std::span<double> buffer);
     std::vector<double> calculateCMNDF(std::span<double> buffer);
+public:
     std::optional<double> pitchFromBuffer(std::span<double>);
 
-    //Debug
-    double* getACF() const noexcept {return acfOut;}
+    PitchDetection() :
+        forwardFFT(static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * sampleSize))),
+        acfOut(static_cast<double*>(fftw_malloc(sizeof(double) * sampleSize))),
+        forwardPlan(fftw_plan_dft_r2c_1d(sampleSize, nullptr, nullptr, FFTW_ESTIMATE)),
+        inversePlan(fftw_plan_dft_c2r_1d(sampleSize, forwardFFT, acfOut, FFTW_ESTIMATE)) {};
+    
+    ~PitchDetection() {
+        fftw_free(forwardFFT);
+        fftw_free(acfOut);
+        fftw_destroy_plan(forwardPlan);
+        fftw_destroy_plan(inversePlan);
+    };
+    PitchDetection (const PitchDetection&) = delete;
+    PitchDetection& operator= (const PitchDetection&) = delete;
 };

@@ -36,8 +36,6 @@ std::vector<double> PitchDetection::calculateDifferenceFunction(std::span<double
 
     std::vector<double> differenceFunction(N);
     for (size_t i = 0; i < N; i++) {
-        //Important! Use the top one for matching implementation,  but technically the bottom term is actually correct
-        //double firstEnergyTerm = cumulativeSum[N];
         double firstEnergyTerm = cumulativeSum[N - i];
         double secondEnergyTerm = cumulativeSum[N] - cumulativeSum[i];
         differenceFunction.at(i) = firstEnergyTerm + secondEnergyTerm - (2 * acfOut[i]);
@@ -73,17 +71,3 @@ std::optional<double> PitchDetection::pitchFromBuffer(std::span<double> buffer) 
     }
     return std::nullopt;
 }
-
-PitchDetection::PitchDetection() : 
-    forwardFFT(static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * sampleSize))),
-    acfOut(static_cast<double*>(fftw_malloc(sizeof(double) * sampleSize))),
-    forwardPlan(fftw_plan_dft_r2c_1d(sampleSize, nullptr, nullptr, FFTW_ESTIMATE)),
-    inversePlan(fftw_plan_dft_c2r_1d(sampleSize, forwardFFT, acfOut, FFTW_ESTIMATE))
-{}
-
-PitchDetection::~PitchDetection() {
-    fftw_free(forwardFFT);
-    fftw_free(acfOut);
-    fftw_destroy_plan(forwardPlan);
-    fftw_destroy_plan(inversePlan);
-};
