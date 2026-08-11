@@ -61,7 +61,6 @@ GLuint screenVAO, screenVBO;
 
 //Remove this later
 std::optional<GameManager> gameManager;
-std::optional<OptionsManager> optionsManager;
 
 std::map<unsigned char, bool> keyMap;
 
@@ -147,7 +146,6 @@ void createFramebuffers() {
 	renderFramebuffer.emplace(2);
 
 	//This creates the renderbuffer needed to display each framebuffer
-	
 	glGenRenderbuffers(1, &RBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, RBO);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, screenWidth, screenHeight);
