@@ -1,5 +1,6 @@
 #include <fftw3.h>
 #include <span>
+#include <vector>
 
 const int sampleSize = 1024;
 
@@ -15,6 +16,7 @@ public:
     ~PitchDetection();
 
     void calculateACF(std::span<double> buffer);
+    std::vector<double> calculateDifferenceFunction(std::span<double> buffer);
     float pitchFromBuffer(std::span<double>);
 
     //Debug

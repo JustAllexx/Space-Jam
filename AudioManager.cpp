@@ -6,6 +6,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstddef>
+#include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include <limits>
@@ -174,6 +175,7 @@ void AudioManager::updateFrequency(double &note, double &volume)
 	
 	//Calculate the pitch with the YIN algorithm
 	float pitch = YIN::YINalgorithm(captureOutputVal);
+	/*
 	auto ACF = YIN::getACF(captureOutputVal);
 	pitchDetection->calculateACF(doubleCast);
 	auto NewACF = pitchDetection->getACF();
@@ -185,7 +187,14 @@ void AudioManager::updateFrequency(double &note, double &volume)
 		double absDiff = fabs(NewACF[i] - ACF[i].real());
 		if (absDiff > 0.01) {same = false;}
 	}
-	assert(same);
+	assert(same);*/
+	auto NewDF = pitchDetection->calculateDifferenceFunction(doubleCast);
+	auto DF = YIN::differenceFunction(captureOutputVal, captureOutputVal.size(), 1024);
+	std::cout << "DF: " << "\n";
+	for (size_t i = 0; i < size; i++) {
+		std::printf("%i: %f %f %f\n", static_cast<int>(i), NewDF[i], DF[i].real(), DF[i].imag());
+	}
+	std::cout << std::endl;
 
 	//std::cout << ACF.size() << std::endl;
 	//float pitch = 0.f;
