@@ -5,7 +5,7 @@ const int screenHeight = 480;
 const int screenWidth = 854;
 
 Application* Application::inst{nullptr};
-std::map<unsigned char, bool> Application::keyMap;
+std::unordered_map<unsigned char, bool> Application::keyMap;
 
 Application::Application(int argc, char** argv)
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <map>
+#include <unordered_map>
 
 #include "GameManager.h"
 #include "Renderer.h"
@@ -9,7 +9,7 @@
 class Application {
 private:
     static Application* inst;
-    static std::map<unsigned char, bool> keyMap;
+    static std::unordered_map<unsigned char, bool> keyMap;
 
     std::unique_ptr<Renderer> renderer;
     std::unique_ptr<GameManager> gameManager;

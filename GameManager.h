@@ -12,7 +12,7 @@
 #include <numbers>
 #include <optional>
 #include <string>
-#include <map>
+#include <unordered_map>
 
 //Forward declare player controller
 class PlayerController;
@@ -30,11 +30,11 @@ private:
 	std::unique_ptr<AudioManager> audioManager;
 	std::unique_ptr<OptionsManager> optionsManager;
 	//Input store
-	std::map<unsigned char, bool>& keyMap;
+	std::unordered_map<unsigned char, bool>& keyMap;
 	glm::ivec2 mousePosition{0, 0};
 	std::optional<glm::ivec2> clickPosition;
 public:
-	GameManager(Program& shaderProgram, Program& guiProgram, std::map<unsigned char, bool>& inKeyMap);
+	GameManager(Program& shaderProgram, Program& guiProgram, std::unordered_map<unsigned char, bool>& inKeyMap);
 	
 	//The only class allowed to have an init, as creation of the game object and presenting the title screen should be seperate
 	void Init();
