@@ -21,7 +21,8 @@ private:
 	ALuint source;
 	std::unordered_map<std::string, ALuint> audioBuffers;
 	std::vector<int16_t> captureBuffer;
-	std::unique_ptr<PitchDetection> pitchDetection;
+	//std::unique_ptr<PitchDetection> pitchDetection;
+	PitchDetection pitchDetection;
 	bool startedPlaying = false;
 
 	void setupDevice();
@@ -38,7 +39,6 @@ public:
 	void updateFrequency(double &note, double &volume);
 	float getPlayPos();
 	bool isPlaying() const noexcept {return startedPlaying;}
-
 
 	static float getHeightOfNote(int ind, float fovy, float dist);
 };

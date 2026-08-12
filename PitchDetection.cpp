@@ -10,7 +10,7 @@ void PitchDetection::calculateACF(std::span<double> buffer) {
     for (size_t i = 0; i < halfSize; i++) {
         const auto [re, im] = forwardFFT[i];
         forwardFFT[i][0] = re * re + im * im;
-        forwardFFT[i][1] = 0.f;
+        forwardFFT[i][1] = 0.;
     }
     fftw_execute(inversePlan);
 
@@ -23,7 +23,7 @@ std::vector<double> PitchDetection::calculateDifferenceFunction(std::span<double
     //Calculate cumulative sum
     const size_t N = buffer.size();
 
-    double total{0.f};
+    double total{0.};
     std::vector<double> cumulativeSum(N+1);
     for (size_t i = 0; i <= N; i++) {
         cumulativeSum.at(i) = total;
@@ -48,8 +48,8 @@ std::vector<double> PitchDetection::calculateCMNDF(std::span<double> buffer) {
     std::vector<double> CMNDF(sampleSize);
 
     std::vector<double> DF = calculateDifferenceFunction(buffer);
-    CMNDF[0] = 1.f;
-    double runningTotal{0.f};
+    CMNDF[0] = 1.;
+    double runningTotal{0.};
     for (size_t tau = 1; tau < sampleSize; tau++) {
         runningTotal += DF[tau];
         CMNDF[tau] = static_cast<double>(tau) * DF[tau];

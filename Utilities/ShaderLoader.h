@@ -2,10 +2,10 @@
 
 #include <GL/glew.h>
 #include <GL/glut.h>
-#include <glm/glm.hpp>
 #include <string>
 #include <fstream>
 #include <unordered_map>
+#include <glm/ext/matrix_float4x4.hpp>
 
 class Shader {
 private:

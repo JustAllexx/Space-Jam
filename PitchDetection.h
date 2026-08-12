@@ -5,12 +5,12 @@
 #include <vector>
 
 const int sampleSize = 1024;
-const double sampleRate = 44100.f;
-const double maxFrequency = 1000.f;
-const double minFrequency = 70.f;
+const double sampleRate = 44100.;
+const double maxFrequency = 1000.;
+const double minFrequency = 70.;
 const size_t tauMax = static_cast<size_t>(sampleRate / minFrequency); 
 const size_t tauMin = static_cast<size_t>(sampleRate / maxFrequency);
-const double harmonyThreshold = 0.2f;
+const double harmonyThreshold = 0.2;
 
 class PitchDetection {
 private:

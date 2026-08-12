@@ -3,9 +3,6 @@
 #include "Utilities/ShaderLoader.h"
 
 #include <algorithm>
-#include <glm/ext/matrix_float4x4.hpp>
-#include <glm/fwd.hpp>
-#include <glm/gtx/quaternion.hpp>
 #include <numbers>
 
 const char* skyModelPath = "Models/nightSkyObj.obj";

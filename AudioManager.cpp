@@ -19,9 +19,7 @@ const ALCuint size = 1024;
 const size_t captureBufferSize = 22050;
 const std::vector<std::string> notes = { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#" };
 
-AudioManager::AudioManager() : 
-	pitchDetection(std::make_unique<PitchDetection>())
-{
+AudioManager::AudioManager() {
 	captureBuffer.resize(captureBufferSize);
 	//Connect to the two audio devices (connects to the microphone and connects to the speakers)
 	setupDevice();
@@ -168,12 +166,12 @@ void AudioManager::updateFrequency(double &note, double &volume)
 	std::vector<double> doubleCast(captureBuffer.data(), captureBuffer.data() + size);
 	
 	//Calculate the pitch with the YIN algorithm
-	double pitch = pitchDetection->pitchFromBuffer(doubleCast).value_or(0.f);
+	double pitch = pitchDetection.pitchFromBuffer(doubleCast).value_or(0.f);
 
 	note = pitch;
 
 	//Calculate average volume
-	volume = 0.f;
+	volume = 0.;
 	for (const auto& samp : doubleCast) { volume += fabs(samp); }
 	volume = volume / size;
 	

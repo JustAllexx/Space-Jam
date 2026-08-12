@@ -1,5 +1,4 @@
 #include "Utilities/Framebuffer.h"
-#include <Utilities/ObjectLoader.h>
 
 Framebuffer::Framebuffer(int numAttachments) : texture0(std::make_unique<Texture>()) {
     glGenFramebuffers(1, &framebufferID);

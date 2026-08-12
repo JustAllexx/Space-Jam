@@ -1,8 +1,6 @@
 #include "Utilities/ShaderLoader.h"
 #include <GUIObjects/TypeChar.h>
-#include <glm/ext/matrix_float4x4.hpp>
 #include <stdexcept>
-#include <iostream>
 
 Shader::Shader(GLenum shaderType, const char* shaderPath) : 
     shaderID(glCreateShader(shaderType))

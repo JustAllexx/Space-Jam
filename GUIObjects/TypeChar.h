@@ -2,7 +2,6 @@
 
 #include <glm/glm.hpp>
 #include <GL/glew.h>
-#include <GL/glut.h>
 
 //The GUI Object is the parent class of all GUI Elements
 //Contains the overridable function render, this is what is called by the GUIManager when rendering a frame

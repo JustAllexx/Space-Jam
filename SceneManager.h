@@ -3,10 +3,9 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include <glm/ext/matrix_float4x4.hpp>
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include <glm/fwd.hpp>
 #include <vector>
 
 //Forward Declarations
