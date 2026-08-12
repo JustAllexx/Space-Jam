@@ -2,7 +2,6 @@
 
 #include "DrawObject.h"
 #include <map>
-#include <string>
 
 //The class that handles Player Input and moving the player object around the screen
 class PlayerController : public DrawObject
@@ -16,7 +15,6 @@ public:
 	void controlUpdate(std::map<unsigned char, bool>& keyMap, float dt);
 
 	int playerScore; //Score
-	//std::string* playerScoreText;
 
 	void setTargetY(float target) noexcept {targetY = target;}
 };

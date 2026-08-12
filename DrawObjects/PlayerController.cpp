@@ -1,5 +1,4 @@
 #include "PlayerController.h"
-#include <iostream>
 
 //Default Player Constructor Function
 PlayerController::PlayerController() : DrawObject("Models/planeUV2.obj", "Textures/goldenPlane2.png", 1.f, 0.7f,

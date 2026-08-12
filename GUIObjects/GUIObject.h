@@ -1,8 +1,6 @@
 #pragma once
 
 #include <functional>
-#include <GL/glew.h>
-#include <GL/glut.h>
 
 class Program;
 

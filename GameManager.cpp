@@ -106,8 +106,8 @@ void GameManager::gameUpdate()
 	guiManager->checkCollisions(mousePosition.x, mousePosition.y, false);
 
 	double note, volume;
-	note = 0.f;
-	volume = 0.f;
+	note = 0.;
+	volume = 0.;
 	//If the audio manager returns 0, that means that no new frequency can be calculated because the capture buffer isn't filled yet
 	//Or that the frequency calculated did not dip below the harmony threshold, so couldn't return an accurate value
 	//This function also returns a volume, if the average volume (or gain) of the capture buffer was not above 400.f, then we ignore the value because the capture taken was too quiet

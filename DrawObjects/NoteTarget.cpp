@@ -1,5 +1,5 @@
 #include "NoteTarget.h"
-#include "../AudioManager.h"
+#include "AudioManager.h"
 #include "PlayerController.h"
 
 const char* noteModelLocation = "Models/newRedCube.obj";

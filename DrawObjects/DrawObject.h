@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Utilities/ObjectLoader.h"
-#include "../Physics/CollisionBox.h"
+#include "Physics/CollisionBox.h"
 
 #include <optional>
 

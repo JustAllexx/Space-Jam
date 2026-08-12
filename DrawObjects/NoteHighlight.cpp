@@ -1,5 +1,5 @@
 #include "NoteHighlight.h"
-#include "../AudioManager.h"
+#include "AudioManager.h"
 
 //Constructor for the note highlight
 NoteHighlight::NoteHighlight(float inNoteTime, DrawObject* inParentNote, AudioManager* audioIn) :
