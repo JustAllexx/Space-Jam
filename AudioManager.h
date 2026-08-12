@@ -9,7 +9,6 @@
 #include <vector>
 #include <string_view>
 #include <unordered_map>
-#include <memory>
 
 class AudioManager
 {
@@ -21,7 +20,6 @@ private:
 	ALuint source;
 	std::unordered_map<std::string, ALuint> audioBuffers;
 	std::vector<int16_t> captureBuffer;
-	//std::unique_ptr<PitchDetection> pitchDetection;
 	PitchDetection pitchDetection;
 	bool startedPlaying = false;
 

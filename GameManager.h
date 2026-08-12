@@ -3,15 +3,15 @@
 #include "AudioManager.h"
 #include "GUIManager.h"
 #include "SceneManager.h"
+#include "DrawObjects/PlayerController.h"
+#include "OptionsManager.h"
 
-#include <OptionsManager.h>
 #include <glm/ext/vector_int2.hpp>
 #include <json/json.h>
 #include <memory>
 #include <numbers>
 #include <optional>
 #include <string>
-#include <glm/glm.hpp>
 #include <map>
 
 //Forward declare player controller

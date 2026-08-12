@@ -2,6 +2,7 @@
 //This is in every header file
 #pragma once
 
+/*
 #include "GUIManager.h"
 #include <iostream>
 #include <string>
@@ -23,4 +24,5 @@ class GUIButton;
 class GameManager;
 
 std::string readShaderFile(std::string filename);
+*/
 

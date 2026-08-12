@@ -1,6 +1,4 @@
 #include "Application.h"
-#include <GameManager.h>
-#include <memory>
 #include <stdexcept>
 
 const int screenHeight = 480;

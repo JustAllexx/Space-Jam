@@ -1,15 +1,10 @@
 #include "GameManager.h"
-#include "AudioManager.h"
-#include "GUIManager.h"
-#include "SceneManager.h"
 #include "DrawObjects/PlayerController.h"
 #include "DrawObjects/NoteTarget.h"
 #include "DrawObjects/NoteHighlight.h"
 #include "GUIObjects/GUIButton.h"
 #include "Utilities/ShaderLoader.h"
 
-#include "json/forwards.h"
-#include <OptionsManager.h>
 #include <fstream>
 #include <glm/ext/vector_float3.hpp>
 #include <memory>

@@ -1,7 +1,9 @@
+#pragma once
+
 #include <memory>
 #include <map>
+
 #include "GameManager.h"
-#include "DrawObjects/PlayerController.h"
 #include "Renderer.h"
 
 class Application {

@@ -7,7 +7,6 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <iostream>
 #include <limits>
 #include <sndfile.h>
 #include <stdexcept>
@@ -90,13 +89,10 @@ ALuint AudioManager::addAudioBuffer(std::string_view path, std::string_view audi
 	int samplerate = soundFile.getSampleRate();
 
 	//Find out what format the audio is in
-	ALenum format = AL_NONE;
+	ALenum format{AL_NONE};
 	if (channels == 1) { format = AL_FORMAT_MONO16; }
 	else if (channels == 2) { format = AL_FORMAT_STEREO16; }
-	else { 
-		std::cout << "Incorrect Format: more than 2 channels" << std::endl; 
-		return 0; 
-	}
+	else { throw std::runtime_error("Incorrect Format: more than 2 channels");}
 
 	//How big the filesize is going to be in bytes
 	size_t fileSize = static_cast<size_t>(frames) * static_cast<size_t>(channels) * sizeof(short);

@@ -4,9 +4,7 @@
 #include "GUIObjects/TypeChar.h"
 
 #include <glm/ext/vector_float3.hpp>
-#include <glm/glm.hpp>
 #include <GL/glew.h>
-#include <GL/glut.h>
 #include <memory>
 #include <vector>
 #include <ft2build.h>

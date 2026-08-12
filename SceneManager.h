@@ -1,7 +1,5 @@
 #pragma once
 
-#include <GL/glew.h>
-#include <GL/glut.h>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -20,7 +18,6 @@ private:
 	std::vector<glm::mat4> modelViewStack;
 	glm::mat4 modelView;
 	Program& shaderProgram;
-	//GLuint objModelviewPos, opacityPos, ambientPos, bloomPos, brightnessPos, lightPosPos;
 	//For calculating deltaTime
 	int lastFrameTime{0};
 	int currentFrameTime{0};
