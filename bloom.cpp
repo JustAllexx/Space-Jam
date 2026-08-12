@@ -1,5 +1,6 @@
 #include "bloom.h"
 #include "Utilities/ShaderLoader.h"
+#include <valarray>
 #include <string>
 
 const size_t kernelSize = 5;

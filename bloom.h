@@ -1,6 +1,6 @@
 #pragma once
 
-#include <valarray>
+#include <math.h>
 
 class Program;
 
