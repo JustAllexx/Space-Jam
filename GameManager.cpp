@@ -115,7 +115,7 @@ void GameManager::gameUpdate()
 	
 	if (note != 0 && volume > 400) {
 		//Equation for calculating the piano key value of a frequency
-		double key = (12 * log2(note / 440.f) + 49);
+		double key = (12 * log2(note / 440.) + 49);
 		//Can use this to determine the note was being sung
 		key = std::fmod(key, 12);
 		int keyInd = static_cast<int>(std::round(key));

@@ -62,8 +62,9 @@ void Application::newFrame(int value) {
 }
 
 void Application::reshape(int x, int y) {
-    glViewport(0, 0, (GLsizei)x, (GLsizei)y);
-	glm::mat4 projection = glm::perspective(gameManager->fovy, (GLfloat)screenWidth/ (GLfloat)screenHeight, 1.0f, 200.0f);
+    glViewport(0, 0, x, y);
+	auto aspect = static_cast<GLfloat>(screenWidth) / static_cast<GLfloat>(screenHeight);
+	glm::mat4 projection = glm::perspective(gameManager->fovy, aspect, 1.0f, 200.0f);
 	Program& shaderProgram = renderer->getShaderProgram();
 	shaderProgram.setMat4("projection", projection);
 }

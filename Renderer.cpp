@@ -73,11 +73,6 @@ void Renderer::createPrograms() {
 
 	//Shader program initialisation
 	shaderProgram.emplace(phongVert, phongFrag);
-    const float fovy = (45.f / 180.f) * static_cast<float>(std::numbers::pi);
-    projection = glm::perspective(fovy, (GLfloat)screenWidth/ (GLfloat)screenHeight, 1.0f, 200.0f);
-    modelview = glm::mat4(1.0);
-	shaderProgram->setMat4("projection", projection);
-	shaderProgram->setMat4("modelview", modelview);
 }
 
 void Renderer::displayFrameBuffer() {
