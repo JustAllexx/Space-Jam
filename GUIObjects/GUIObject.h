@@ -11,6 +11,7 @@ protected:
 	Program& GUIShader;
 public:
 	GUIObject(Program& GUIShader);
+	virtual ~GUIObject() = default;
 	virtual void Render() {
 		return;
 	}

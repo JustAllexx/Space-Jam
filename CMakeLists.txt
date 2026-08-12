@@ -52,9 +52,21 @@ TARGET_LINK_LIBRARIES(SpaceJam PRIVATE
 
 TARGET_COMPILE_OPTIONS(SpaceJam PUBLIC
     -Wall
-    -Wextra 
+    -Wextra
     -Wpedantic
     -Wconversion
-    -Wshadow
     -Wsign-conversion
+    -Wshadow
+    -Wnull-dereference
+    -Wformat=2
+    -Wundef
+    -Wdouble-promotion
+    -Wimplicit-fallthrough
+    -Wnon-virtual-dtor
+    -Woverloaded-virtual
+    -Wold-style-cast
+    -Wcast-align
+    -Wcast-qual
+    -Wpointer-arith
+    -Wunused
 )

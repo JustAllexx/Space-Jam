@@ -94,7 +94,7 @@ Mesh::Mesh(const char* filepath)
 		GL_FLOAT,
 		GL_FALSE,
 		0,
-		(void*)0
+		nullptr
 	);
 	glEnableVertexAttribArray(0);
 
@@ -108,7 +108,7 @@ Mesh::Mesh(const char* filepath)
 		GL_FLOAT,
 		GL_FALSE,
 		0,
-		(void*)0
+		nullptr
 	);
 	glEnableVertexAttribArray(1);
 
@@ -122,7 +122,7 @@ Mesh::Mesh(const char* filepath)
 		GL_FLOAT,
 		GL_FALSE,
 		0,
-		(void*)0
+		nullptr
 	);
 	glEnableVertexAttribArray(2);
 

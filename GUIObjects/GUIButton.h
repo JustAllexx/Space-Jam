@@ -28,5 +28,6 @@ public:
 		glm::vec3 inColour, glm::vec3 inHoverColour, 
 		std::function<void()> callbackFunc, SJ_Font& inFontMap,
 		GLuint inVAO, GLuint inVBO, Program& GUIShader);
-	void Render(); //Override for the GUIObject Render Function
+	
+	virtual void Render(); //Override for the GUIObject Render Function
 };
