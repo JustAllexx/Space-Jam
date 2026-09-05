@@ -1,6 +1,6 @@
 build/
 Libraries/
 release/
-CMakeCache.txt
 CMakeFiles/
 .cache/
+CMakeCache.txt
