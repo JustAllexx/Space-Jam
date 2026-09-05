@@ -8,7 +8,6 @@
 
 #include <glm/ext/vector_int2.hpp>
 #include <json/json.h>
-#include <memory>
 #include <numbers>
 #include <optional>
 #include <string>
@@ -24,11 +23,11 @@ class Program;
 class GameManager
 {
 private:
-	std::unique_ptr<GUIManager> guiManager;
-	std::unique_ptr<PlayerController> currentPlayer;
-	std::unique_ptr<SceneManager> sceneManager;
-	std::unique_ptr<AudioManager> audioManager;
-	std::unique_ptr<OptionsManager> optionsManager;
+	GUIManager guiManager;
+	PlayerController currentPlayer;
+	SceneManager sceneManager;
+	AudioManager audioManager;
+	OptionsManager optionsManager;
 	//Input store
 	std::unordered_map<unsigned char, bool>& keyMap;
 	glm::ivec2 mousePosition{0, 0};
