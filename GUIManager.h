@@ -5,7 +5,6 @@
 
 #include <glm/ext/vector_float3.hpp>
 #include <GL/glew.h>
-#include <memory>
 #include <vector>
 #include <ft2build.h>
 #include <unordered_map>
@@ -23,7 +22,7 @@ private:
 	std::vector<GUIObject*> guiRenderQueue;
 	std::vector<Clickable*> clickChecks;
 	std::unordered_map<char, TypeChar> fontMap;
-	std::unique_ptr<SJ_Font> arialFont;
+	SJ_Font arialFont;
 	GLuint VAO, VBO;
 	Program& GUIShader;
 public:
